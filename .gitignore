@@ -13,6 +13,9 @@ dist-ssr
 *.local
 
 # dotenv environment variable files
+
+.env.development
+.env.production
 .env
 .development.env
 .env.development.local
