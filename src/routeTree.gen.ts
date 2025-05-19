@@ -11,9 +11,30 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UserDashboardImport } from './routes/user-dashboard'
+import { Route as LoginFormImport } from './routes/loginForm'
+import { Route as ListingsImport } from './routes/listings'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const UserDashboardRoute = UserDashboardImport.update({
+  id: '/user-dashboard',
+  path: '/user-dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginFormRoute = LoginFormImport.update({
+  id: '/loginForm',
+  path: '/loginForm',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ListingsRoute = ListingsImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -32,6 +53,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsImport
+      parentRoute: typeof rootRoute
+    }
+    '/loginForm': {
+      id: '/loginForm'
+      path: '/loginForm'
+      fullPath: '/loginForm'
+      preLoaderRoute: typeof LoginFormImport
+      parentRoute: typeof rootRoute
+    }
+    '/user-dashboard': {
+      id: '/user-dashboard'
+      path: '/user-dashboard'
+      fullPath: '/user-dashboard'
+      preLoaderRoute: typeof UserDashboardImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +81,47 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/listings': typeof ListingsRoute
+  '/loginForm': typeof LoginFormRoute
+  '/user-dashboard': typeof UserDashboardRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/listings': typeof ListingsRoute
+  '/loginForm': typeof LoginFormRoute
+  '/user-dashboard': typeof UserDashboardRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/listings': typeof ListingsRoute
+  '/loginForm': typeof LoginFormRoute
+  '/user-dashboard': typeof UserDashboardRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/listings' | '/loginForm' | '/user-dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/listings' | '/loginForm' | '/user-dashboard'
+  id: '__root__' | '/' | '/listings' | '/loginForm' | '/user-dashboard'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ListingsRoute: typeof ListingsRoute
+  LoginFormRoute: typeof LoginFormRoute
+  UserDashboardRoute: typeof UserDashboardRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ListingsRoute: ListingsRoute,
+  LoginFormRoute: LoginFormRoute,
+  UserDashboardRoute: UserDashboardRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +134,23 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/listings",
+        "/loginForm",
+        "/user-dashboard"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/listings": {
+      "filePath": "listings.tsx"
+    },
+    "/loginForm": {
+      "filePath": "loginForm.tsx"
+    },
+    "/user-dashboard": {
+      "filePath": "user-dashboard.tsx"
     }
   }
 }
