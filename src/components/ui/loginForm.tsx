@@ -1,9 +1,9 @@
-// components/auth/LoginForm.tsx
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { Link } from "@tanstack/react-router";
 
 export function LoginForm() {
   return (
@@ -20,12 +20,14 @@ export function LoginForm() {
         <Label htmlFor="password">Password</Label>
         <Input id="password" type="password" placeholder="Enter password" />
       </div>
+      <Link to="/restore-password-step1" className="[&.active]:underline">
+        <div className="text-right text-sm text-blue-500 cursor-pointer underline">
+          Forgot password?
+        </div>
+      </Link>
 
-      <div className="text-right text-sm text-blue-500 cursor-pointer underline">
-        Forgot password?
-      </div>
 
-      <Button className="w-full">Continue</Button>
+      <Button className="w-full mt-2">Continue</Button>
 
       <div className="flex items-center gap-4">
         <div className="flex-grow h-px bg-border" />

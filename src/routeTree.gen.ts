@@ -12,6 +12,8 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UserDashboardImport } from './routes/user-dashboard'
+import { Route as RestorePasswordStep2Import } from './routes/restore-password-step2'
+import { Route as RestorePasswordStep1Import } from './routes/restore-password-step1'
 import { Route as LoginFormImport } from './routes/loginForm'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as IndexImport } from './routes/index'
@@ -21,6 +23,18 @@ import { Route as IndexImport } from './routes/index'
 const UserDashboardRoute = UserDashboardImport.update({
   id: '/user-dashboard',
   path: '/user-dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RestorePasswordStep2Route = RestorePasswordStep2Import.update({
+  id: '/restore-password-step2',
+  path: '/restore-password-step2',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RestorePasswordStep1Route = RestorePasswordStep1Import.update({
+  id: '/restore-password-step1',
+  path: '/restore-password-step1',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +81,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginFormImport
       parentRoute: typeof rootRoute
     }
+    '/restore-password-step1': {
+      id: '/restore-password-step1'
+      path: '/restore-password-step1'
+      fullPath: '/restore-password-step1'
+      preLoaderRoute: typeof RestorePasswordStep1Import
+      parentRoute: typeof rootRoute
+    }
+    '/restore-password-step2': {
+      id: '/restore-password-step2'
+      path: '/restore-password-step2'
+      fullPath: '/restore-password-step2'
+      preLoaderRoute: typeof RestorePasswordStep2Import
+      parentRoute: typeof rootRoute
+    }
     '/user-dashboard': {
       id: '/user-dashboard'
       path: '/user-dashboard'
@@ -83,6 +111,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/listings': typeof ListingsRoute
   '/loginForm': typeof LoginFormRoute
+  '/restore-password-step1': typeof RestorePasswordStep1Route
+  '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
 }
 
@@ -90,6 +120,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/listings': typeof ListingsRoute
   '/loginForm': typeof LoginFormRoute
+  '/restore-password-step1': typeof RestorePasswordStep1Route
+  '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
 }
 
@@ -98,15 +130,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/listings': typeof ListingsRoute
   '/loginForm': typeof LoginFormRoute
+  '/restore-password-step1': typeof RestorePasswordStep1Route
+  '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/listings' | '/loginForm' | '/user-dashboard'
+  fullPaths:
+    | '/'
+    | '/listings'
+    | '/loginForm'
+    | '/restore-password-step1'
+    | '/restore-password-step2'
+    | '/user-dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/listings' | '/loginForm' | '/user-dashboard'
-  id: '__root__' | '/' | '/listings' | '/loginForm' | '/user-dashboard'
+  to:
+    | '/'
+    | '/listings'
+    | '/loginForm'
+    | '/restore-password-step1'
+    | '/restore-password-step2'
+    | '/user-dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/listings'
+    | '/loginForm'
+    | '/restore-password-step1'
+    | '/restore-password-step2'
+    | '/user-dashboard'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +167,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ListingsRoute: typeof ListingsRoute
   LoginFormRoute: typeof LoginFormRoute
+  RestorePasswordStep1Route: typeof RestorePasswordStep1Route
+  RestorePasswordStep2Route: typeof RestorePasswordStep2Route
   UserDashboardRoute: typeof UserDashboardRoute
 }
 
@@ -121,6 +176,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ListingsRoute: ListingsRoute,
   LoginFormRoute: LoginFormRoute,
+  RestorePasswordStep1Route: RestorePasswordStep1Route,
+  RestorePasswordStep2Route: RestorePasswordStep2Route,
   UserDashboardRoute: UserDashboardRoute,
 }
 
@@ -137,6 +194,8 @@ export const routeTree = rootRoute
         "/",
         "/listings",
         "/loginForm",
+        "/restore-password-step1",
+        "/restore-password-step2",
         "/user-dashboard"
       ]
     },
@@ -148,6 +207,12 @@ export const routeTree = rootRoute
     },
     "/loginForm": {
       "filePath": "loginForm.tsx"
+    },
+    "/restore-password-step1": {
+      "filePath": "restore-password-step1.tsx"
+    },
+    "/restore-password-step2": {
+      "filePath": "restore-password-step2.tsx"
     },
     "/user-dashboard": {
       "filePath": "user-dashboard.tsx"
