@@ -3,7 +3,7 @@ import UserDashboard from '@/pages/UserDashboard'; // импорт компон�
 // Пример данных, которые вы хотите передать
 const user = {
   name: "Ігорь Высоцький",
-  status: "Seller",
+  status: "seller",
   email: "ihor.vysoitsky@knure.ua",
   paypal: "FAKE-CLIENT-ID-123",
   offerLimit: "4/5",

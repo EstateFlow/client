@@ -10,11 +10,11 @@ type Offer = {
   imageUrl: string;
 };
 
-export default function OfferGrid({ offers }: { offers: Offer[] }) {
+export default function OfferGrid({ offers, role }: { offers: Offer[]; role: string }) {
 return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {offers.map((offer) => (
-        <OfferCard key={offer.id} offer={offer} />
+        <OfferCard key={offer.id} offer={offer} role = {role} />
       ))}
       
       <Card className="overflow-hidden flex flex-col">

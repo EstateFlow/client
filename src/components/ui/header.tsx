@@ -73,10 +73,12 @@ function Header({ children }: HeaderProps) {
             Log In          
             </Button>
           </Link>
+          <Link to="/register-form" className="[&.active]:underline">
+              <Button variant="outline" size="sm" className="min-w-[70px] rounded-md">
+                Sign Up
+              </Button>
+          </Link>
 
-          <Button variant="outline" size="sm" className="min-w-[70px] rounded-md">
-            Sign Up
-          </Button>
         </div>
       </header>
 

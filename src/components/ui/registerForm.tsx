@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { Link } from "@tanstack/react-router";
 
 export function RegisterForm() {
   return (
@@ -42,9 +43,11 @@ export function RegisterForm() {
         Continue with Facebook
       </Button>
 
-      <div className="text-sm text-center underline">
-        I already have an account
-      </div>
+    <Link to="/loginForm" className="[&.active]:underline">
+        <div className="text-sm text-center underline">
+            I already have an account
+        </div>
+    </Link>
     </form>
   );
 }

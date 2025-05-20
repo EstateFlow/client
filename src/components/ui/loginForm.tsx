@@ -44,10 +44,11 @@ export function LoginForm() {
         <FaFacebook className="w-5 h-5" />
         Continue with Facebook
       </Button>
-
-      <div className="text-sm text-center underline">
-        I don’t have an account
-      </div>
+      <Link to="/register-form" className="[&.active]:underline">
+        <div className="text-sm text-center underline">
+          I don’t have an account
+        </div>
+      </Link>
     </form>
   );
 }
