@@ -68,7 +68,7 @@ function Header({ children }: HeaderProps) {
             🌞
           </Button>
 
-          <Link to="/loginForm" className="[&.active]:underline text-gray-700">
+          <Link to="/login-form" className="[&.active]:underline text-gray-700">
             <Button variant="default" size="sm" className="min-w-[70px] rounded-md">
             Log In          
             </Button>

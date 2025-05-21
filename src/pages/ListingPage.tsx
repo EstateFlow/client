@@ -1,4 +1,4 @@
-import ListingForm from "@/components/ui/listingForm";
+import ListingForm from "@/components/ListingForm";
 
 
 export default function ListingPage() {

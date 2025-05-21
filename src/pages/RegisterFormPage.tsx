@@ -1,4 +1,4 @@
-import { RegisterForm } from "@/components/ui/registerForm";
+import { RegisterForm } from "@/components/RegisterForm";
 
 
 export default function RestorePasswordStep1Form() {

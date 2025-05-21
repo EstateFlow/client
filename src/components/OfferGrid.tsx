@@ -1,5 +1,4 @@
-// components/OfferGrid.tsx
-import OfferCard from "@/components/ui/offerCard";
+import OfferCard from "@/components/OfferCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2 } from "lucide-react";
 type Offer = {

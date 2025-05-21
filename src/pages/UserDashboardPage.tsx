@@ -1,6 +1,6 @@
-import UserProfileCard from "@/components/ui/userProfileCard";
-import OffersTabs from "@/components/ui/offersTabs";
-import OfferGrid from "@/components/ui/offerGrid";
+import UserProfileCard from "@/components/UserProfileCard";
+import OffersTabs from "@/components/OffersTabs";
+import OfferGrid from "@/components/OfferGrid";
 import type { UserInfo, Offer } from "@/lib/types"; // предполагаем, что типы вынесены отдельно
  // предполагаем, что типы вынесены отдельно
 

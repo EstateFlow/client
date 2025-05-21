@@ -15,7 +15,7 @@ import { Route as UserDashboardImport } from './routes/user-dashboard'
 import { Route as RestorePasswordStep2Import } from './routes/restore-password-step2'
 import { Route as RestorePasswordStep1Import } from './routes/restore-password-step1'
 import { Route as RegisterFormImport } from './routes/register-form'
-import { Route as LoginFormImport } from './routes/loginForm'
+import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
 import { Route as IndexImport } from './routes/index'
@@ -47,8 +47,8 @@ const RegisterFormRoute = RegisterFormImport.update({
 } as any)
 
 const LoginFormRoute = LoginFormImport.update({
-  id: '/loginForm',
-  path: '/loginForm',
+  id: '/login-form',
+  path: '/login-form',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -95,10 +95,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsImport
       parentRoute: typeof rootRoute
     }
-    '/loginForm': {
-      id: '/loginForm'
-      path: '/loginForm'
-      fullPath: '/loginForm'
+    '/login-form': {
+      id: '/login-form'
+      path: '/login-form'
+      fullPath: '/login-form'
       preLoaderRoute: typeof LoginFormImport
       parentRoute: typeof rootRoute
     }
@@ -139,7 +139,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
-  '/loginForm': typeof LoginFormRoute
+  '/login-form': typeof LoginFormRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/restore-password-step2': typeof RestorePasswordStep2Route
@@ -150,7 +150,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
-  '/loginForm': typeof LoginFormRoute
+  '/login-form': typeof LoginFormRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/restore-password-step2': typeof RestorePasswordStep2Route
@@ -162,7 +162,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
-  '/loginForm': typeof LoginFormRoute
+  '/login-form': typeof LoginFormRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/restore-password-step2': typeof RestorePasswordStep2Route
@@ -175,7 +175,7 @@ export interface FileRouteTypes {
     | '/'
     | '/listing-page'
     | '/listings'
-    | '/loginForm'
+    | '/login-form'
     | '/register-form'
     | '/restore-password-step1'
     | '/restore-password-step2'
@@ -185,7 +185,7 @@ export interface FileRouteTypes {
     | '/'
     | '/listing-page'
     | '/listings'
-    | '/loginForm'
+    | '/login-form'
     | '/register-form'
     | '/restore-password-step1'
     | '/restore-password-step2'
@@ -195,7 +195,7 @@ export interface FileRouteTypes {
     | '/'
     | '/listing-page'
     | '/listings'
-    | '/loginForm'
+    | '/login-form'
     | '/register-form'
     | '/restore-password-step1'
     | '/restore-password-step2'
@@ -238,7 +238,7 @@ export const routeTree = rootRoute
         "/",
         "/listing-page",
         "/listings",
-        "/loginForm",
+        "/login-form",
         "/register-form",
         "/restore-password-step1",
         "/restore-password-step2",
@@ -254,8 +254,8 @@ export const routeTree = rootRoute
     "/listings": {
       "filePath": "listings.tsx"
     },
-    "/loginForm": {
-      "filePath": "loginForm.tsx"
+    "/login-form": {
+      "filePath": "login-form.tsx"
     },
     "/register-form": {
       "filePath": "register-form.tsx"

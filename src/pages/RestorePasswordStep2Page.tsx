@@ -1,4 +1,4 @@
-import { RestorePasswordStep2 } from "@/components/ui/restorePasswordStep2";
+import { RestorePasswordStep2 } from "@/components/RestorePasswordStep2";
 
 
 export default function RestorePasswordStep2Form() {

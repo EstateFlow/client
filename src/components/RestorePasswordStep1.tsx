@@ -17,7 +17,7 @@ export function RestorePasswordStep1() {
         <Link to="/restore-password-step2" className="[&.active]:underline">
             <Button className="w-full">Continue</Button>
         </Link>
-        <Link to="/loginForm" className="[&.active]:underline">
+        <Link to="/login-form" className="[&.active]:underline">
             <Button variant="ghost" className="w-full">← Back</Button>
         </Link>
       <div className="text-sm text-center underline">

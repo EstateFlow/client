@@ -43,7 +43,7 @@ export function RegisterForm() {
         Continue with Facebook
       </Button>
 
-    <Link to="/loginForm" className="[&.active]:underline">
+    <Link to="/login-form" className="[&.active]:underline">
         <div className="text-sm text-center underline">
             I already have an account
         </div>

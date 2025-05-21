@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import UserDashboard from '@/pages/UserDashboard'; // импорт компонента
+import UserDashboard from '@/pages/UserDashboardPage'; // импорт компонента
 // Пример данных, которые вы хотите передать
 const user = {
   name: "Ігорь Высоцький",
