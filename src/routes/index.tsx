@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import MainpageForm from "@/components/ui/mainpageForm"; 
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -6,8 +7,8 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
+    <div className="px-6 py-10 max-w-7xl mx-auto">
+      <MainpageForm />
     </div>
   );
 }
