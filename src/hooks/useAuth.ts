@@ -5,7 +5,7 @@ import { login, fetchUser } from "@/api/auth";
 export const useAuth = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
-
+  const user = useAuthStore((s) => s.user); // ⬅️ это ключевое
 const loginUser = async (email: string, password: string) => {
   console.log("Start login...");
   const { data } = await login(email, password);
@@ -17,7 +17,7 @@ const loginUser = async (email: string, password: string) => {
   setUser(userRes.data);
   setTimeout(() => {
     navigate({ to: "/" });
-  }, 10000); // через 1.5 сек перенаправление
+  }, 10000);
 };
   const checkAuth = async () => {
     try {
@@ -28,7 +28,6 @@ const loginUser = async (email: string, password: string) => {
       useAuthStore.getState().logout();
     }
   };
-  
-  const isAuthenticated = !!setUser; // true, если user не null
+  const isAuthenticated = !!user;
   return { loginUser, checkAuth, isAuthenticated};
 };
