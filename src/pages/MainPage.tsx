@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
 import { ArrowRight, Download } from "lucide-react";
 import house1 from '@/assets/images/mainhouse_1.jpg';
 import house2 from '@/assets/images/mainhouse_2.jpg';
 import house3 from '@/assets/images/mainhouse_3.jpg';
 
-export default function mainpageForm() {
+export default function MainPage() {
   return (
-    <div className="px-6 py-10 max-w-7xl mx-auto">
+    <main className="px-6 py-10 max-w-7xl mx-auto">
       <section className="text-center mb-16">
         <h1 className="text-6xl font-extrabold mb-10 tracking-tight text-gray-900 drop-shadow-sm">
-          About us
+          Find Your Flow with EstateFlow
         </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
@@ -51,9 +52,11 @@ export default function mainpageForm() {
         </div>
 
         <div className="flex justify-center gap-6 mt-12">
+            <Link to="/listing-page" className="[&.active]:underline">
           <Button className="text-white bg-black hover:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-300">
             To listings <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
+          </Link>
           <Button
             variant="outline"
             className="border-gray-300 hover:border-black text-gray-700 hover:text-black shadow-sm hover:shadow-md transition-all duration-300"
@@ -62,6 +65,6 @@ export default function mainpageForm() {
           </Button>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
