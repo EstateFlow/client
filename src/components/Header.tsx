@@ -4,6 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth"; // твій кастомний хук
+import { User } from "lucide-react"; // іконка профілю
 
 type HeaderProps = {
   children?: ReactNode;
@@ -11,6 +13,7 @@ type HeaderProps = {
 
 function Header({ children }: HeaderProps) {
   const [search, setSearch] = useState("");
+    const { isAuthenticated } = useAuth();
   return (
     <>
       <header className="flex items-center justify-between px-6 py-4 bg-gray-100">
@@ -68,16 +71,26 @@ function Header({ children }: HeaderProps) {
             🌞
           </Button>
 
-          <Link to="/login-form" className="[&.active]:underline text-gray-700">
-            <Button variant="default" size="sm" className="min-w-[70px] rounded-md">
-            Log In          
+        {isAuthenticated ? (
+          <Link to="/user-dashboard">
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <User className="w-5 h-5" />
             </Button>
           </Link>
-          <Link to="/register-form" className="[&.active]:underline">
+        ) : (
+          <>
+            <Link to="/login-form" className="[&.active]:underline text-gray-700">
+              <Button variant="default" size="sm" className="min-w-[70px] rounded-md">
+                Log In
+              </Button>
+            </Link>
+            <Link to="/register-form" className="[&.active]:underline">
               <Button variant="outline" size="sm" className="min-w-[70px] rounded-md">
                 Sign Up
               </Button>
-          </Link>
+            </Link>
+          </>
+        )}
 
         </div>
       </header>

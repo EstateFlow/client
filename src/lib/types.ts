@@ -1,13 +1,11 @@
 export interface UserInfo {
-  name: string;
-  status: string;
   email: string;
-  paypal: string;
-  offerLimit: string;
-  registrationDate: string;
-  lastUpdate: string;
-  about: string;
+  isEmailVerified: boolean;
+  role: string;
+  userId: string;
+  username: string;
 }
+
 
 export interface Offer {
   id: string;

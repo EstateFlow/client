@@ -9,7 +9,7 @@ export default function UserDashboard({ user, offers }: { user: UserInfo; offers
     <div className="max-w-6xl mx-auto p-4 space-y-6">
       <UserProfileCard user={user} />
       <OffersTabs />
-      <OfferGrid offers={offers}  role = {user.status}/>
+      <OfferGrid offers={offers}  role = {user.role}/>
     </div>
   );
 }

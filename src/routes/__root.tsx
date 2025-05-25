@@ -1,14 +1,40 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+// import { createRootRoute, Outlet } from "@tanstack/react-router";
+// import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+// import Header  from "@/components/Header";
+
+// export const Route = createRootRoute({
+
+//   component: () => (
+
+//     <>      
+//       <Header/>
+//       <Outlet />
+//       <TanStackRouterDevtools />
+//     </>
+//   ),
+// });
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import Header  from "@/components/Header";
+import Header from "@/components/Header";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-export const Route = createRootRoute({
+function RootComponent() {
+  const { checkAuth } = useAuth();
 
-  component: () => (
-    <>      
-      <Header/>
+  useEffect(() => {
+    checkAuth(); // перевірка при завантаженні
+  }, []);
+
+  return (
+    <>
+      <Header />
       <Outlet />
       <TanStackRouterDevtools />
     </>
-  ),
+  );
+}
+
+export const Route = createRootRoute({
+  component: RootComponent,
 });

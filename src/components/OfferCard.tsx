@@ -42,7 +42,7 @@ export default function OfferCard({ offer, role }: { offer: Offer; role: string}
       </CardContent>
     </Card>
   );  
-    case "buyer":
+    case "renter_buyer":
       return (
     <Card className="overflow-hidden">
       <div className="relative p-2">           
