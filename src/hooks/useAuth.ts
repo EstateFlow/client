@@ -6,21 +6,27 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
   const user = useAuthStore((s) => s.user); // ⬅️ это ключевое
-const loginUser = async (email: string, password: string) => {
-  console.log("Start login...");
-  const { data } = await login(email, password);
-  console.log("Login success", data);
-  localStorage.setItem("accessToken", data.accessToken);
-  localStorage.setItem("refreshToken", data.refreshToken);
-  const userRes = await fetchUser();
-  console.log("Fetched user", userRes.data);
-  setUser(userRes.data);
-  setTimeout(() => {
-    navigate({ to: "/" });
-  }, 10000);
-};
+  const loginUser = async (email: string, password: string) => {
+    console.log("Start login...");
+    const { data } = await login(email, password);
+    console.log("Login success", data);
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+    const userRes = await fetchUser();
+    console.log("Fetched user", userRes.data);
+    setUser(userRes.data);
+    setTimeout(() => {
+      navigate({ to: "/" });
+    }, 10000);
+  };
   const checkAuth = async () => {
     try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.log("No access token found");
+        return;
+      }
+
       const userRes = await fetchUser();
       setUser(userRes.data);
     } catch (err) {
@@ -29,5 +35,5 @@ const loginUser = async (email: string, password: string) => {
     }
   };
   const isAuthenticated = !!user;
-  return { loginUser, checkAuth, isAuthenticated};
+  return { loginUser, checkAuth, isAuthenticated };
 };
