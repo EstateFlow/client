@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
+import { GoogleLogin } from "./GoogleLogin";
 
 export function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -32,6 +32,7 @@ export function RegisterForm() {
     repeatPassword: "",
     role: "",
   });
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const { register, isLoading, error, user } = useAuthStore();
   const navigate = useNavigate();
@@ -91,6 +92,8 @@ export function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormSubmitted(true);
+
     if (!validateForm()) return;
 
     try {
@@ -117,7 +120,20 @@ export function RegisterForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
     setErrors({ ...errors, [e.target.id]: "" });
+
+    if (formSubmitted) {
+      setErrors({ ...errors, [e.target.id]: "" });
+    }
   };
+
+  const handleSelectChange = (value: string) => {
+    setFormData({ ...formData, role: value });
+    if (formSubmitted) {
+      setErrors({ ...errors, role: "" });
+    }
+  };
+
+  const shouldShowErrors = formSubmitted && !isLoading;
 
   return (
     <form
@@ -140,7 +156,7 @@ export function RegisterForm() {
           onChange={handleChange}
           disabled={isLoading}
         />
-        {errors.username && (
+        {shouldShowErrors && errors.username && (
           <p className="text-red-500 text-sm">{errors.username}</p>
         )}
       </div>
@@ -155,7 +171,9 @@ export function RegisterForm() {
           onChange={handleChange}
           disabled={isLoading}
         />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+        {shouldShowErrors && errors.email && (
+          <p className="text-red-500 text-sm">{errors.email}</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -168,7 +186,7 @@ export function RegisterForm() {
           onChange={handleChange}
           disabled={isLoading}
         />
-        {errors.password && (
+        {shouldShowErrors && errors.password && (
           <p className="text-red-500 text-sm">{errors.password}</p>
         )}
       </div>
@@ -183,16 +201,13 @@ export function RegisterForm() {
           onChange={handleChange}
           disabled={isLoading}
         />
-        {errors.repeatPassword && (
+        {shouldShowErrors && errors.repeatPassword && (
           <p className="text-red-500 text-sm">{errors.repeatPassword}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
-        <Select
-          onValueChange={(value) => setFormData({ ...formData, role: value })}
-          disabled={isLoading}
-        >
+        <Select onValueChange={handleSelectChange} disabled={isLoading}>
           <SelectTrigger className="w-full border-input focus:border-ring focus:ring-ring">
             <SelectValue placeholder="Choose your role" />
           </SelectTrigger>
@@ -201,7 +216,9 @@ export function RegisterForm() {
             <SelectItem value="private_seller">Private Seller</SelectItem>
           </SelectContent>
         </Select>
-        {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+        {shouldShowErrors && errors.role && (
+          <p className="text-red-500 text-sm">{errors.role}</p>
+        )}
       </div>
 
       {error && (
@@ -220,14 +237,7 @@ export function RegisterForm() {
         <div className="flex-grow h-px bg-border" />
       </div>
 
-      <Button
-        variant="outline"
-        className="w-full flex items-center gap-2 cursor-pointer"
-        disabled={isLoading}
-      >
-        <FcGoogle className="w-5 h-5" />
-        Continue with Google
-      </Button>
+      <GoogleLogin />
 
       <Button
         className="w-full flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground cursor-pointer"

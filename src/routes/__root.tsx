@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/authStore";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 function RootComponent() {
   const { checkAuth } = useAuthStore();
@@ -14,10 +15,12 @@ function RootComponent() {
 
   return (
     <>
-      <Header />
-      <Outlet />
-      <Toaster />
-      <TanStackRouterDevtools />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <Header />
+        <Outlet />
+        <Toaster />
+        <TanStackRouterDevtools />
+      </GoogleOAuthProvider>
     </>
   );
 }

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
 import type { AxiosError } from "axios";
-import { useNavigate } from "@tanstack/react-router";
 
 type User = { email: string } | null;
 
@@ -17,6 +16,7 @@ interface AuthStore {
     role: string;
   }) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  googleLogin: (code: string) => Promise<void>;
   setUser: (user: User) => void;
   checkAuth: () => Promise<void>;
   logout: () => void;
@@ -74,7 +74,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           headers: { Authorization: `Bearer ${data.accessToken}` },
         });
         set({ user: userRes.data, isLoading: false, isAuthenticated: true });
-        useNavigate()({ to: "/" });
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -106,6 +105,31 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       throw new Error(errorMessage);
     }
   },
+  googleLogin: async (code: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/google`, { code });
+      const { accessToken, refreshToken, isNewUser, user } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      set({ user, isLoading: false, isAuthenticated: true });
+      if (isNewUser) {
+        console.log("Welcome! New user created.");
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      let errorMessage = "Google login failed";
+      if (axiosError.response) {
+        errorMessage =
+          axiosError.response.data.message || "An unexpected error occurred";
+      } else if (axiosError.request) {
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      }
+      set({ isLoading: false, error: errorMessage });
+      throw new Error(errorMessage);
+    }
+  },
   setUser: (user) => set({ user, isAuthenticated: !!user }),
   checkAuth: async () => {
     set({ isLoading: true, error: null });
@@ -127,6 +151,5 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   logout: () => {
     localStorage.clear();
     set({ user: null, isAuthenticated: false });
-    useNavigate()({ to: "/" });
   },
 }));
