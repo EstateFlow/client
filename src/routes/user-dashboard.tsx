@@ -1,23 +1,26 @@
-import { createFileRoute } from '@tanstack/react-router'
-import UserDashboard from '@/pages/UserDashboardPage'
-import { useAuthStore } from "@/store/auth";
+import { createFileRoute } from "@tanstack/react-router";
+import UserDashboard from "@/pages/UserDashboardPage";
+import { useAuthStore } from "@/store/authStore";
 
 const offers = Array.from({ length: 4 }).map((_, i) => ({
   id: String(i),
   address: "Somewhere st. 12",
   type: "rent",
   price: 40000,
-  imageUrl: "https://surl.li/tsnybn"
+  imageUrl: "https://surl.li/tsnybn",
 }));
 
 function RouteComponent() {
   const user = useAuthStore((s) => s.user);
 
-  return user
-    ? <UserDashboard user={user as any} offers={offers} />
-    : <div>Loading...</div>;
+  return user ? (
+    <UserDashboard user={user as any} offers={offers} />
+  ) : (
+    <div>Loading...</div>
+  );
 }
 
-export const Route = createFileRoute('/user-dashboard')({
+export const Route = createFileRoute("/user-dashboard")({
   component: RouteComponent,
 });
+

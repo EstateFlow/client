@@ -1,19 +1,22 @@
-import type { ReactNode} from "react";
-import {  useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth"; // твій кастомний хук
-import { User } from "lucide-react"; // іконка профілю
+import { User, LogOut } from "lucide-react"; // іконка профілю
+import { useAuthStore } from "@/store/authStore";
+import { toast } from "sonner";
 
-type HeaderProps = {
-  children?: ReactNode;
-};
-
-function Header({ children }: HeaderProps) {
+function Header() {
   const [search, setSearch] = useState("");
-    const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    navigate({ to: "/" });
+  };
   return (
     <>
       <header className="flex items-center justify-between px-6 py-4 bg-gray-100">
@@ -30,7 +33,11 @@ function Header({ children }: HeaderProps) {
                 stroke="white"
                 className="w-6 h-6"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m9-9H3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3v18m9-9H3"
+                />
               </svg>
             </div>
             <h1 className="font-bold text-xl select-none">EstateFlow</h1>
@@ -45,7 +52,10 @@ function Header({ children }: HeaderProps) {
               Listings
             </Link>
 
-            <Link to="/user-dashboard" className="[&.active]:underline text-gray-700">
+            <Link
+              to="/user-dashboard"
+              className="[&.active]:underline text-gray-700"
+            >
               Profile(Now only buyer)
             </Link>
           </nav>
@@ -61,43 +71,74 @@ function Header({ children }: HeaderProps) {
               onChange={(e) => setSearch(e.target.value)}
               className="pr-10 rounded-md bg-gray-200"
             />
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600" size={16} />
+            <Search
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+              size={16}
+            />
           </div>
 
-          <Button variant="outline" size="sm" className="min-w-[40px] px-2 rounded-md">
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-w-[40px] px-2 rounded-md"
+          >
             ENG
           </Button>
-          <Button variant="outline" size="sm" className="min-w-[40px] px-2 rounded-md">
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-w-[40px] px-2 rounded-md"
+          >
             🌞
           </Button>
 
-        {isAuthenticated ? (
-          <Link to="/user-dashboard">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <User className="w-5 h-5" />
-            </Button>
-          </Link>
-        ) : (
-          <>
-            <Link to="/login-form" className="[&.active]:underline text-gray-700">
-              <Button variant="default" size="sm" className="min-w-[70px] rounded-md">
-                Log In
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <Link to="/user-dashboard">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full cursor-pointer"
+                >
+                  <User className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full cursor-pointer"
+                onClick={handleLogout}
+              >
+                <LogOut className="w-5 h-5" />
               </Button>
-            </Link>
-            <Link to="/register-form" className="[&.active]:underline">
-              <Button variant="outline" size="sm" className="min-w-[70px] rounded-md">
-                Sign Up
-              </Button>
-            </Link>
-          </>
-        )}
-
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/login-form"
+                className="[&.active]:underline text-gray-700"
+              >
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="min-w-[70px] rounded-md"
+                >
+                  Log In
+                </Button>
+              </Link>
+              <Link to="/register-form" className="[&.active]:underline">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="min-w-[70px] rounded-md"
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </header>
-
-      <main className="p-4">
-        {children}
-      </main>
     </>
   );
 }

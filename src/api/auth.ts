@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://server-rbdb.onrender.com",
-  headers: { "Content-Type": "application/json" }
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: { "Content-Type": "application/json" },
 });
 
 // Inject token
@@ -21,7 +21,9 @@ API.interceptors.response.use(
       original._retry = true;
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        const { data } = await API.post("/api/auth/refresh-token", { refreshToken });
+        const { data } = await API.post("/api/auth/refresh-token", {
+          refreshToken,
+        });
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
         original.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -33,7 +35,7 @@ API.interceptors.response.use(
       }
     }
     return Promise.reject(err);
-  }
+  },
 );
 
 export const login = (email: string, password: string) =>
