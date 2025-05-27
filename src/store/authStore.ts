@@ -16,10 +16,11 @@ interface AuthStore {
     role: string;
   }) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  googleLogin: (code: string) => Promise<void>;
+  googleLogin: (code: string, role?: string) => Promise<{ message: string }>;
   setUser: (user: User) => void;
   checkAuth: () => Promise<void>;
   logout: () => void;
+  clearError: () => void;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -105,27 +106,42 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       throw new Error(errorMessage);
     }
   },
-  googleLogin: async (code: string) => {
+  googleLogin: async (code: string, role?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/api/auth/google`, { code });
-      const { accessToken, refreshToken, isNewUser, user } = response.data;
+      const response = await axios.post(`${API_URL}/api/auth/google`, {
+        code,
+        role,
+      });
+      const { accessToken, refreshToken, isNewUser, user, message } =
+        response.data;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       set({ user, isLoading: false, isAuthenticated: true });
-      if (isNewUser) {
-        console.log("Welcome! New user created.");
-      }
+      return {
+        message: isNewUser ? "User created and logged in via Google" : message,
+      };
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       let errorMessage = "Google login failed";
+
       if (axiosError.response) {
-        errorMessage =
-          axiosError.response.data.message || "An unexpected error occurred";
+        const status = axiosError.response.status;
+        if (status === 400) {
+          errorMessage =
+            axiosError.response.data.message ||
+            "Invalid request. Please try again.";
+        } else if (status === 500) {
+          errorMessage = "Internal server error. Please try again later.";
+        } else {
+          errorMessage =
+            axiosError.response.data.message || "An unexpected error occurred";
+        }
       } else if (axiosError.request) {
         errorMessage =
           "Network error. Please check your connection and try again.";
       }
+
       set({ isLoading: false, error: errorMessage });
       throw new Error(errorMessage);
     }
@@ -151,5 +167,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   logout: () => {
     localStorage.clear();
     set({ user: null, isAuthenticated: false });
+  },
+  clearError: () => {
+    set({ error: null });
   },
 }));
