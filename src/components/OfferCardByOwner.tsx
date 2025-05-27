@@ -26,7 +26,7 @@ export default function OfferCardByOwner({ role, property, propertyWishlist ,onR
               className="absolute top-3 right-3 rounded-full bg-white shadow-md hover:scale-105 transition-transform z-10"
             >
             <Link to="/listing-page"
-                search = {{role, propertyId : property!.id }}
+                search = {{propertyId : property!.id }}
               // onClick={() => {
               //   if (property) setTempProperty(property);
               // }}
@@ -50,7 +50,7 @@ export default function OfferCardByOwner({ role, property, propertyWishlist ,onR
           <Card className="overflow-hidden">
             <div className="relative p-2">           
               <Link to="/listing-page"
-                search = {{role, propertyId : propertyWishlist!.id}}
+                search = {{propertyId : propertyWishlist!.id}}
                 //  onClick={() => setTempWishlist(propertyWishlist)}
               className="[&.active]:underline">   
               <img

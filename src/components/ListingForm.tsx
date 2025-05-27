@@ -15,10 +15,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/components/ui/sonner";
 
 export default function ListingForm({
-  role,
   propertyId,
 }: {
-  role: string;
   propertyId: string;
 }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
@@ -67,12 +65,6 @@ export default function ListingForm({
       ?.split(",")
       .map((f) => f.trim())
       .filter(Boolean) || [];
-  console.log(selectedProperty.address);
-  switch (role) {
-    case "admin":
-    case "private_seller":
-    case "renter_buyer":
-      
       return (
         <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
           <div className="grid md:grid-cols-2 gap-6">
@@ -181,9 +173,4 @@ export default function ListingForm({
           </div>
         </div>
       );
-
-    case "moderator":
-    default:
-      return <p>Invalid role</p>;
-  }
 }

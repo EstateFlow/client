@@ -41,7 +41,7 @@ export function PropertyList() {
           <div className="relative p-2">
             <Link
               to="/listing-page"
-              search={{ role: "renter_buyer", propertyId: property.id }}
+              search={{ propertyId: property.id }}
               className="[&.active]:underline"
             >
               <img

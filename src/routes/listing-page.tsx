@@ -5,14 +5,10 @@ import ListingPage from '@/pages/ListingPage';
 export const Route = createFileRoute('/listing-page')({
   validateSearch: (search: Record<string, unknown>) => {
     console.log("validateSearch called with:", search);
-    if (typeof search.role !== 'string') {
-      throw new Error("Missing or invalid 'role' in search params");
-    }
     if (typeof search.propertyId !== 'string') {
     throw new Error("Missing or invalid 'propertyId'");
     }
     return {
-      role: search.role,
       propertyId: search.propertyId,
     };
   },
@@ -21,5 +17,5 @@ export const Route = createFileRoute('/listing-page')({
 
 function ListingRouteComponent() {
   const search = useSearch({ from: '/listing-page' });
-  return <ListingPage role={search.role} propertyId = {search.propertyId}/>;
+  return <ListingPage propertyId = {search.propertyId}/>;
 }
