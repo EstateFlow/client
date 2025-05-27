@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import UserDashboard from '@/pages/UserDashboardPage'
-import { useAuthStore } from "@/store/auth";
+import { createFileRoute } from "@tanstack/react-router";
+import UserDashboard from "@/pages/UserDashboardPage";
+import { useAuthStore } from "@/store/authStore";
 
 // const offers = Array.from({ length: 4 }).map((_, i) => ({
 //   id: String(i),
@@ -18,6 +18,7 @@ function RouteComponent() {
     : <div>Loading...</div>;
 }
 
-export const Route = createFileRoute('/user-dashboard')({
+export const Route = createFileRoute("/user-dashboard")({
   component: RouteComponent,
 });
+

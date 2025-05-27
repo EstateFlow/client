@@ -21,6 +21,7 @@ import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
 import { Route as IndexImport } from './routes/index'
+import { Route as VerifyEmailEmailTokenImport } from './routes/verify-email/$email-token'
 
 // Create/Update Routes
 
@@ -81,6 +82,12 @@ const ListingPageRoute = ListingPageImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const VerifyEmailEmailTokenRoute = VerifyEmailEmailTokenImport.update({
+  id: '/verify-email/$email-token',
+  path: '/verify-email/$email-token',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -156,6 +163,11 @@ declare module '@tanstack/react-router' {
       path: '/user-profile-page'
       fullPath: '/user-profile-page'
       preLoaderRoute: typeof UserProfilePageImport
+    '/verify-email/$email-token': {
+      id: '/verify-email/$email-token'
+      path: '/verify-email/$email-token'
+      fullPath: '/verify-email/$email-token'
+      preLoaderRoute: typeof VerifyEmailEmailTokenImport
       parentRoute: typeof rootRoute
     }
   }
@@ -174,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
   '/user-profile-page': typeof UserProfilePageRoute
+  '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
 }
 
 export interface FileRoutesByTo {
@@ -187,6 +200,7 @@ export interface FileRoutesByTo {
   '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
   '/user-profile-page': typeof UserProfilePageRoute
+  '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
 }
 
 export interface FileRoutesById {
@@ -201,6 +215,7 @@ export interface FileRoutesById {
   '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
   '/user-profile-page': typeof UserProfilePageRoute
+  '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
 }
 
 export interface FileRouteTypes {
@@ -216,6 +231,7 @@ export interface FileRouteTypes {
     | '/restore-password-step2'
     | '/user-dashboard'
     | '/user-profile-page'
+    | '/verify-email/$email-token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +244,7 @@ export interface FileRouteTypes {
     | '/restore-password-step2'
     | '/user-dashboard'
     | '/user-profile-page'
+    | '/verify-email/$email-token'
   id:
     | '__root__'
     | '/'
@@ -240,6 +257,7 @@ export interface FileRouteTypes {
     | '/restore-password-step2'
     | '/user-dashboard'
     | '/user-profile-page'
+    | '/verify-email/$email-token'
   fileRoutesById: FileRoutesById
 }
 
@@ -254,6 +272,7 @@ export interface RootRouteChildren {
   RestorePasswordStep2Route: typeof RestorePasswordStep2Route
   UserDashboardRoute: typeof UserDashboardRoute
   UserProfilePageRoute: typeof UserProfilePageRoute
+  VerifyEmailEmailTokenRoute: typeof VerifyEmailEmailTokenRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -267,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   RestorePasswordStep2Route: RestorePasswordStep2Route,
   UserDashboardRoute: UserDashboardRoute,
   UserProfilePageRoute: UserProfilePageRoute,
+  VerifyEmailEmailTokenRoute: VerifyEmailEmailTokenRoute,
 }
 
 export const routeTree = rootRoute
@@ -289,6 +309,7 @@ export const routeTree = rootRoute
         "/restore-password-step2",
         "/user-dashboard",
         "/user-profile-page"
+        "/verify-email/$email-token"
       ]
     },
     "/": {
@@ -320,7 +341,9 @@ export const routeTree = rootRoute
     },
     "/user-profile-page": {
       "filePath": "user-profile-page.tsx"
+    "/verify-email/$email-token": {
+      "filePath": "verify-email/$email-token.tsx"
     }
   }
 }
-ROUTE_MANIFEST_END */
+ROUTE_MANIFEST_END */}

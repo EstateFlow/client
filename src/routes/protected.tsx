@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "@/store/authStore";
 
-export const Route = createFileRoute('/protected')({
+export const Route = createFileRoute("/protected")({
   component: ProtectedRoute,
 });
 

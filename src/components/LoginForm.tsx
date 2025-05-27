@@ -1,41 +1,51 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
-import { Link } from "@tanstack/react-router";
-import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import { GoogleLogin } from "./GoogleLogin";
 
 export function LoginForm() {
-  const { loginUser } = useAuth();
-
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { login, isLoading, error, user, clearError } = useAuthStore();
 
-  const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    return () => {
+      clearError();
+    };
+  }, [clearError]);
 
+  useEffect(() => {
+    if (user) {
+      navigate({ to: "/" });
+      clearError();
+    }
+  }, [user, navigate]);
 
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  setSuccess(false);
-console.log("Submitting form with:", email, password);
-  try {
-    await loginUser(email, password);
-    setSuccess(true);
-  } catch (err: any) {
-    setError(err?.response?.data?.message || "Login failed");
-  }
-};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoading) return;
+    try {
+      await login(email, password);
+    } catch (err: any) {}
+  };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-muted p-6 rounded-xl space-y-4 w-full max-w-sm"
+      className="bg-background border border-border p-6 rounded-xl space-y-4 w-full max-w-sm relative shadow-sm"
     >
+      <Link
+        to="/"
+        className="absolute top-2 right-2 p-1 hover:bg-muted rounded-full transition-colors"
+      >
+        <X className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+      </Link>
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -45,6 +55,8 @@ console.log("Submitting form with:", email, password);
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="border-input focus:border-ring focus:ring-ring"
+          disabled={isLoading}
         />
       </div>
 
@@ -57,6 +69,8 @@ console.log("Submitting form with:", email, password);
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="border-input focus:border-ring focus:ring-ring"
+          disabled={isLoading}
         />
       </div>
 
@@ -67,16 +81,17 @@ console.log("Submitting form with:", email, password);
       </Link>
 
       {error && (
-        <div className="text-sm text-red-500 text-center">{error}</div>
+        <p className="text-red-500 text-sm text-center bg-red-100 p-2 rounded mt-4">
+          {error}
+        </p>
       )}
 
-      {success && (
-        <div className="text-sm text-green-500 text-center">
-          Login successful!
-        </div>
-      )}
-      <Button type="submit" className="w-full mt-2">
-        Continue
+      <Button
+        type="submit"
+        className="w-full cursor-pointer"
+        disabled={isLoading}
+      >
+        {isLoading ? "Registering..." : "Continue"}
       </Button>
 
       <div className="flex items-center gap-4">
@@ -85,12 +100,9 @@ console.log("Submitting form with:", email, password);
         <div className="flex-grow h-px bg-border" />
       </div>
 
-      <Button variant="outline" className="w-full flex items-center gap-2">
-        <FcGoogle className="w-5 h-5" />
-        Continue with Google
-      </Button>
+      <GoogleLogin />
 
-      <Button className="w-full flex items-center gap-2 bg-[#1877F2] text-white hover:bg-[#166fe0]">
+      <Button className="w-full flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground cursor-pointer">
         <FaFacebook className="w-5 h-5" />
         Continue with Facebook
       </Button>
