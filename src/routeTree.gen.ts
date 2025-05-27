@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UserProfilePageImport } from './routes/user-profile-page'
 import { Route as UserDashboardImport } from './routes/user-dashboard'
 import { Route as RestorePasswordStep2Import } from './routes/restore-password-step2'
 import { Route as RestorePasswordStep1Import } from './routes/restore-password-step1'
@@ -22,6 +23,12 @@ import { Route as ListingPageImport } from './routes/listing-page'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const UserProfilePageRoute = UserProfilePageImport.update({
+  id: '/user-profile-page',
+  path: '/user-profile-page',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const UserDashboardRoute = UserDashboardImport.update({
   id: '/user-dashboard',
@@ -144,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserDashboardImport
       parentRoute: typeof rootRoute
     }
+    '/user-profile-page': {
+      id: '/user-profile-page'
+      path: '/user-profile-page'
+      fullPath: '/user-profile-page'
+      preLoaderRoute: typeof UserProfilePageImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -159,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
+  '/user-profile-page': typeof UserProfilePageRoute
 }
 
 export interface FileRoutesByTo {
@@ -171,6 +186,7 @@ export interface FileRoutesByTo {
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
+  '/user-profile-page': typeof UserProfilePageRoute
 }
 
 export interface FileRoutesById {
@@ -184,6 +200,7 @@ export interface FileRoutesById {
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/restore-password-step2': typeof RestorePasswordStep2Route
   '/user-dashboard': typeof UserDashboardRoute
+  '/user-profile-page': typeof UserProfilePageRoute
 }
 
 export interface FileRouteTypes {
@@ -198,6 +215,7 @@ export interface FileRouteTypes {
     | '/restore-password-step1'
     | '/restore-password-step2'
     | '/user-dashboard'
+    | '/user-profile-page'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -209,6 +227,7 @@ export interface FileRouteTypes {
     | '/restore-password-step1'
     | '/restore-password-step2'
     | '/user-dashboard'
+    | '/user-profile-page'
   id:
     | '__root__'
     | '/'
@@ -220,6 +239,7 @@ export interface FileRouteTypes {
     | '/restore-password-step1'
     | '/restore-password-step2'
     | '/user-dashboard'
+    | '/user-profile-page'
   fileRoutesById: FileRoutesById
 }
 
@@ -233,6 +253,7 @@ export interface RootRouteChildren {
   RestorePasswordStep1Route: typeof RestorePasswordStep1Route
   RestorePasswordStep2Route: typeof RestorePasswordStep2Route
   UserDashboardRoute: typeof UserDashboardRoute
+  UserProfilePageRoute: typeof UserProfilePageRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -245,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   RestorePasswordStep1Route: RestorePasswordStep1Route,
   RestorePasswordStep2Route: RestorePasswordStep2Route,
   UserDashboardRoute: UserDashboardRoute,
+  UserProfilePageRoute: UserProfilePageRoute,
 }
 
 export const routeTree = rootRoute
@@ -265,7 +287,8 @@ export const routeTree = rootRoute
         "/register-form",
         "/restore-password-step1",
         "/restore-password-step2",
-        "/user-dashboard"
+        "/user-dashboard",
+        "/user-profile-page"
       ]
     },
     "/": {
@@ -294,6 +317,9 @@ export const routeTree = rootRoute
     },
     "/user-dashboard": {
       "filePath": "user-dashboard.tsx"
+    },
+    "/user-profile-page": {
+      "filePath": "user-profile-page.tsx"
     }
   }
 }

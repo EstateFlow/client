@@ -3,12 +3,13 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Header from "@/components/Header";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { Toaster } from "@/components/ui/sonner"
 
 function RootComponent() {
   const { checkAuth } = useAuth();
 
   useEffect(() => {
-    checkAuth(); // перевірка при завантаженні
+    checkAuth();
   }, []);
 
   return (
@@ -16,6 +17,7 @@ function RootComponent() {
       <Header />
       <Outlet />
       <TanStackRouterDevtools />
+      <Toaster richColors position="top-right" />
     </>
   );
 }

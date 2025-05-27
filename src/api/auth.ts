@@ -1,10 +1,5 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "https://server-rbdb.onrender.com",
-  headers: { "Content-Type": "application/json" }
-});
-
+import API from "./BaseUrl";
+import type { UserInfo } from "@/lib/types";
 // Inject token
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
@@ -39,3 +34,6 @@ API.interceptors.response.use(
 export const login = (email: string, password: string) =>
   API.post("/api/auth/login", { email, password });
 export const fetchUser = () => API.get("/api/user");
+export const fetchUserById = (userId: string) =>
+  API.get<UserInfo>(`/api/user/${userId}`);
+

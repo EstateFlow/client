@@ -52,7 +52,7 @@ export default function MainPage() {
         </div>
 
         <div className="flex justify-center gap-6 mt-12">
-            <Link to="/listing-page" className="[&.active]:underline">
+            <Link to="/listings" className="[&.active]:underline">
           <Button className="text-white bg-black hover:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-300">
             To listings <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
