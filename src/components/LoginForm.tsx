@@ -12,11 +12,18 @@ export function LoginForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading, error, user } = useAuthStore();
+  const { login, isLoading, error, user, clearError } = useAuthStore();
+
+  useEffect(() => {
+    return () => {
+      clearError();
+    };
+  }, [clearError]);
 
   useEffect(() => {
     if (user) {
       navigate({ to: "/" });
+      clearError();
     }
   }, [user, navigate]);
 
@@ -49,6 +56,7 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           className="border-input focus:border-ring focus:ring-ring"
+          disabled={isLoading}
         />
       </div>
 
@@ -62,6 +70,7 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           className="border-input focus:border-ring focus:ring-ring"
+          disabled={isLoading}
         />
       </div>
 
@@ -77,8 +86,12 @@ export function LoginForm() {
         </p>
       )}
 
-      <Button type="submit" className="w-full mt-2 cursor-pointer">
-        Continue
+      <Button
+        type="submit"
+        className="w-full cursor-pointer"
+        disabled={isLoading}
+      >
+        {isLoading ? "Registering..." : "Continue"}
       </Button>
 
       <div className="flex items-center gap-4">

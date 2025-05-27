@@ -2,31 +2,59 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { Button } from "./ui/button";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
-export function GoogleLogin() {
+interface GoogleLoginProps {
+  role?: string;
+  onValidationError?: () => void;
+}
+
+export function GoogleLogin({ role, onValidationError }: GoogleLoginProps) {
   const navigate = useNavigate();
   const { googleLogin, isLoading } = useAuthStore();
 
   const login = useGoogleLogin({
     onSuccess: async ({ code }) => {
       try {
-        await googleLogin(code);
+        const response = await googleLogin(code, role);
+        toast("Success", {
+          description: response.message || "Logged in via Google",
+        });
         navigate({ to: "/" });
-      } catch (error) {
-        alert("Google login failed. Please try again.");
+      } catch (error: any) {
+        toast("Error", {
+          description: error.message || "Google login failed",
+        });
       }
     },
     onError: (error) => {
       console.error("Google OAuth error:", error);
-      alert("Failed to initiate Google login. Please try again.");
+      toast("Error", {
+        description: "Failed to initiate Google login. Please try again.",
+      });
     },
     flow: "auth-code",
     scope: "email profile",
   });
 
+  const handleClick = () => {
+    if (role === undefined) {
+      login();
+      return;
+    }
+    if (!role) {
+      toast("Error", {
+        description: "Please select a role before signing in with Google.",
+      });
+      onValidationError?.();
+      return;
+    }
+    login();
+  };
+
   return (
     <Button
-      onClick={() => login()}
+      onClick={handleClick}
       variant="outline"
       className="w-full border-gray-300 text-gray-900 dark:border-gray-600 dark:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       disabled={isLoading}
