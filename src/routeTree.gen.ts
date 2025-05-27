@@ -163,6 +163,8 @@ declare module '@tanstack/react-router' {
       path: '/user-profile-page'
       fullPath: '/user-profile-page'
       preLoaderRoute: typeof UserProfilePageImport
+      parentRoute: typeof rootRoute
+    }
     '/verify-email/$email-token': {
       id: '/verify-email/$email-token'
       path: '/verify-email/$email-token'
@@ -308,7 +310,7 @@ export const routeTree = rootRoute
         "/restore-password-step1",
         "/restore-password-step2",
         "/user-dashboard",
-        "/user-profile-page"
+        "/user-profile-page",
         "/verify-email/$email-token"
       ]
     },
@@ -341,9 +343,10 @@ export const routeTree = rootRoute
     },
     "/user-profile-page": {
       "filePath": "user-profile-page.tsx"
+    },
     "/verify-email/$email-token": {
       "filePath": "verify-email/$email-token.tsx"
     }
   }
 }
-ROUTE_MANIFEST_END */}
+ROUTE_MANIFEST_END */
