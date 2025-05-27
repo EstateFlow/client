@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import axios from "axios";
 import type { AxiosError } from "axios";
+import { $api } from "@/api/auth";
 
-type User = { email: string } | null;
+type User = { email: string; role: string } | null;
 
 interface AuthStore {
   user: User;
@@ -33,10 +33,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   register: async (data) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/api/auth/register`, data);
+      const response = await $api.post(`${API_URL}/api/auth/register`, data);
       set({ isLoading: false });
       if (response.status === 201) {
-        set({ user: { email: data.email } });
+        set({ user: { email: data.email, role: data.role } });
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -64,14 +64,14 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.post(`${API_URL}/api/auth/login`, {
+      const { data } = await $api.post(`${API_URL}/api/auth/login`, {
         email,
         password,
       });
       if (data.accessToken && data.refreshToken) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
-        const userRes = await axios.get(`${API_URL}/api/user`, {
+        const userRes = await $api.get(`${API_URL}/api/user`, {
           headers: { Authorization: `Bearer ${data.accessToken}` },
         });
         set({ user: userRes.data, isLoading: false, isAuthenticated: true });
@@ -109,7 +109,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   googleLogin: async (code: string, role?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/api/auth/google`, {
+      const response = await $api.post(`${API_URL}/api/auth/google`, {
         code,
         role,
       });
@@ -155,7 +155,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         set({ isLoading: false, isAuthenticated: false });
         return;
       }
-      const userRes = await axios.get(`${API_URL}/api/user`, {
+      const userRes = await $api.get(`${API_URL}/api/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       set({ user: userRes.data, isLoading: false, isAuthenticated: true });
