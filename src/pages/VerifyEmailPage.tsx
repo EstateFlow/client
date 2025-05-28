@@ -21,7 +21,7 @@ export function VerifyEmailPage({ emailToken }: { emailToken: string }) {
     const verify = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/auth/verify-email/${emailToken}`,
+          `${import.meta.env.VITE_API_URL}/api/auth/verify-email/${emailToken}`,
         );
         const data = await response.json();
 
