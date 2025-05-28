@@ -1,9 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-
+import ListingsMainPage from '@/pages/ListingsMainPage';
 export const Route = createFileRoute('/listings')({
-  component: RouteComponent,
+  component: () => <ListingsMainPage/>,
 });
 
-function RouteComponent() {
-  return <div className="p-2"> Listings</div>
-};
