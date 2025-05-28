@@ -1,32 +1,32 @@
 import { useEffect, useState } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, HeartOff, Pencil } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { addToWishlist, removeFromWishlist } from "@/api/wishlist";
+// import { Heart, HeartOff } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { addToWishlist, removeFromWishlist } from "@/api/wishlist";
 import { Link } from "@tanstack/react-router";
 
 export function PropertyList() {
   const { properties, loading, error, fetchAll } = usePropertiesStore();
-  const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
+  //const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchAll("active");
   }, []);
 
-  const handleToggleWishlist = async (propertyId: string) => {
-    try {
-      if (wishlist[propertyId]) {
-        await removeFromWishlist(propertyId);
-        setWishlist((prev) => ({ ...prev, [propertyId]: false }));
-      } else {
-        await addToWishlist(propertyId);
-        setWishlist((prev) => ({ ...prev, [propertyId]: true }));
-      }
-    } catch (err) {
-      console.error("Wishlist error:", err);
-    }
-  };
+  // const handleToggleWishlist = async (propertyId: string) => {
+  //   try {
+  //     if (wishlist[propertyId]) {
+  //       await removeFromWishlist(propertyId);
+  //       setWishlist((prev) => ({ ...prev, [propertyId]: false }));
+  //     } else {
+  //       await addToWishlist(propertyId);
+  //       setWishlist((prev) => ({ ...prev, [propertyId]: true }));
+  //     }
+  //   } catch (err) {
+  //     console.error("Wishlist error:", err);
+  //   }
+  // };
 
   if (loading) return <div className="p-4 text-sm text-muted">Loading...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
@@ -51,7 +51,7 @@ export function PropertyList() {
               />
             </Link>
 
-            <Button
+            {/* <Button
               variant="secondary"
               size="icon"
               className="absolute top-3 right-3 rounded-full bg-white shadow-md hover:scale-105 transition-transform z-10"
@@ -62,7 +62,7 @@ export function PropertyList() {
               ) : (
                 <Heart className="text-gray-600 w-4 h-4" />
               )}
-            </Button>
+            </Button> */}
           </div>
 
           <CardContent className="p-4 space-y-1">

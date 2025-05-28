@@ -1,9 +1,21 @@
-import API from "./BaseUrl";
+import { $api } from './BaseUrl';
 
-export const fetchWishlist = () => API.get('/api/wishlist');
+export const fetchWishlist = (token: string) => {
+  return $api.get("/api/wishlist", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
 
-export const addToWishlist = (propertyId: string) =>
-  API.post('/api/wishlist', { propertyId });
+export const addToWishlist = (propertyId: string, token: string) => {
+  return $api.post(
+    "/api/wishlist",
+    { propertyId },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
 
-export const removeFromWishlist = (propertyId: string) =>
-  API.delete(`/api/wishlist/${propertyId}`);
+export const removeFromWishlist = (propertyId: string, token: string) => {
+  return $api.delete(`/api/wishlist/${propertyId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};

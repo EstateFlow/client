@@ -11,8 +11,8 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { useWishlistStore } from "@/store/wishlist";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/components/ui/sonner";
+import { useAuthStore } from "@/store/authStore";
+import { toast } from "sonner";
 
 export default function ListingForm({
   propertyId,
@@ -21,7 +21,8 @@ export default function ListingForm({
 }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
   const { wishlist, loadWishlist, addProperty, removeProperty } = useWishlistStore();
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
 
   const [activeImage, setActiveImage] = useState("");
 

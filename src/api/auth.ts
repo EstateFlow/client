@@ -1,14 +1,15 @@
-import API from "./BaseUrl";
+import {$api} from "./BaseUrl";
 import type { UserInfo } from "@/lib/types";
+
 // Inject token
-API.interceptors.request.use((config) => {
+$api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 // Handle 401 & refresh
-API.interceptors.response.use(
+$api.interceptors.response.use(
   (res) => res,
   async (err) => {
     const original = err.config;
@@ -16,13 +17,15 @@ API.interceptors.response.use(
       original._retry = true;
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        const { data } = await API.post("/api/auth/refresh-token", {
-          refreshToken,
-        });
+        const { data } = await $api.post(
+          `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,
+          {
+            refreshToken,
+          },
+        );
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
-        original.headers.Authorization = `Bearer ${data.accessToken}`;
-        return API(original);
+        return $api(original);
       } catch (refreshError) {
         localStorage.clear();
         window.location.href = "/login";
@@ -34,8 +37,8 @@ API.interceptors.response.use(
 );
 
 export const login = (email: string, password: string) =>
-  API.post("/api/auth/login", { email, password });
-export const fetchUser = () => API.get("/api/user");
+  $api.post("/api/auth/login", { email, password });
+export const fetchUser = () => $api.get("/api/user");
 export const fetchUserById = (userId: string) =>
-  API.get<UserInfo>(`/api/user/${userId}`);
+  $api.get<UserInfo>(`/api/user/${userId}`);
 

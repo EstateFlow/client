@@ -5,7 +5,8 @@ import {
   addToWishlist,
   removeFromWishlist,
 } from '@/api/wishlist';
-import type { PropertyWishlist } from "@/lib/types";    
+import type { PropertyWishlist } from "@/lib/types";
+import { useAuthStore } from './authStore';
 
 interface WishlistStore {
   wishlist: PropertyWishlist[];
@@ -16,18 +17,24 @@ interface WishlistStore {
   removeProperty: (propertyId: string) => Promise<void>;
 }
 
-export const useWishlistStore = create<WishlistStore>((set) => ({
+export const useWishlistStore = create<WishlistStore>((set, get) => ({
   wishlist: [],
   loading: false,
   error: null,
 
   loadWishlist: async () => {
+    const token = localStorage.getItem('accessToken'); // можно и через useAuthStore.getState().isAuthenticated, но так проще
+
+    if (!token) {
+      set({ error: "Вы не авторизованы" });
+      return;
+    }
+
     set({ loading: true, error: null });
     try {
-      const { data } = await fetchWishlist();
+      const { data } = await fetchWishlist(token);
       set({ wishlist: data });
     } catch (err: any) {
-      // Если 401, не пытайся повторно
       if (err?.response?.status === 401) {
         set({ error: "Вы не авторизованы" });
         return;
@@ -38,19 +45,30 @@ export const useWishlistStore = create<WishlistStore>((set) => ({
     }
   },
 
-
   addProperty: async (propertyId: string) => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      set({ error: "Вы не авторизованы" });
+      return;
+    }
+
     try {
-      await addToWishlist(propertyId);
-      await useWishlistStore.getState().loadWishlist();
+      await addToWishlist(propertyId, token);
+      await get().loadWishlist(); // обновим список
     } catch (err: any) {
       set({ error: err?.response?.data?.message || 'Ошибка добавления в вишлист' });
     }
   },
 
   removeProperty: async (propertyId: string) => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      set({ error: "Вы не авторизованы" });
+      return;
+    }
+
     try {
-      await removeFromWishlist(propertyId);
+      await removeFromWishlist(propertyId, token);
       set((state) => ({
         wishlist: state.wishlist.filter((item) => item.id !== propertyId),
       }));
