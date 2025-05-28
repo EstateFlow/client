@@ -21,8 +21,7 @@ export default function ListingForm({
 }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
   const { wishlist, loadWishlist, addProperty, removeProperty } = useWishlistStore();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
+  const { isAuthenticated, user } = useAuthStore(); // <--- добавим user
 
   const [activeImage, setActiveImage] = useState("");
 
@@ -51,15 +50,23 @@ export default function ListingForm({
 
   const isWished = wishlist.some((p) => p.id === propertyId);
 
-  const handleToggleWishlist = () => {
-    if (!isAuthenticated) {
-      toast("You must be logged in to add to wishlist", {
-        description: "Please log in or sign up to continue.",
-      });
-      return;
-    }
-    isWished ? removeProperty(propertyId) : addProperty(propertyId);
-  };
+const handleToggleWishlist = () => {
+  if (!isAuthenticated) {
+    toast("You must be logged in to add to wishlist", {
+      description: "Please log in or sign up to continue.",
+    });
+    return;
+  }
+
+  if (user?.role !== "renter_buyer") {
+    toast("Access restricted", {
+      description: "Please sign in as a buyer to use this feature.",
+    });
+    return;
+  }
+
+  isWished ? removeProperty(propertyId) : addProperty(propertyId);
+};
 
   const facilities =
     selectedProperty.facilities
@@ -93,55 +100,56 @@ export default function ListingForm({
               </div>
             </div>
 
-            {/* Info panel */}
-            <div className="flex flex-col gap-4">
-              <Card>
-                <CardContent className="p-4 space-y-2">
-                  <CardTitle className="text-2xl">
-                    {selectedProperty.price}$
-                  </CardTitle>
-                  <CardDescription>{selectedProperty.address}</CardDescription>
-                  <div className="text-sm text-muted-foreground">
-                    Area: {selectedProperty.size} | {selectedProperty.rooms} rooms
-                  </div>
-                  <p className="text-sm leading-relaxed">
-                    {selectedProperty.description}
-                  </p>
+        {/* Info panel */}
+        <div className="flex flex-col gap-4">
+          <Card className="relative">
+            {/* Wishlist button в правом верхнем углу */}
+            <Button
+              variant={isWished ? "destructive" : "outline"}
+              onClick={handleToggleWishlist}
+              className="absolute top-4 right-4 z-10"
+              size="sm"
+            >
+              {isWished ? (
+                <>
+                  <HeartOff className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  <Heart className="w-4 h-4" />
+                </>
+              )}
+            </Button>
 
-                  <div className="flex gap-2 pt-2 flex-wrap">
-                    <Link
-                      to="/user-profile-page"
-                      search={{ userId: selectedProperty.ownerId }}
-                      className="[&.active]:underline"
-                    >
-                      <Button variant="secondary">View seller's profile</Button>
-                    </Link>
+            <CardContent className="p-4 space-y-2">
+              <CardTitle className="text-2xl">
+                {selectedProperty.price}$
+              </CardTitle>
+              <CardDescription>{selectedProperty.address}</CardDescription>
+              <div className="text-sm text-muted-foreground">
+                Area: {selectedProperty.size} | {selectedProperty.rooms} rooms
+              </div>
+              <p className="text-sm leading-relaxed">
+                {selectedProperty.description}
+              </p>
 
-                    <Button
-                      variant={isWished ? "destructive" : "outline"}
-                      onClick={handleToggleWishlist}
-                    >
-                      {isWished ? (
-                        <>
-                          <HeartOff className="w-4 h-4 mr-1" />
-                          Remove from wishlist
-                        </>
-                      ) : (
-                        <>
-                          <Heart className="w-4 h-4 mr-1" />
-                          Add to wishlist
-                        </>
-                      )}
-                    </Button>
+              <div className="flex gap-2 pt-2 flex-wrap">
+                <Link
+                  to="/user-profile-page"
+                  search={{ userId: selectedProperty.ownerId }}
+                  className="[&.active]:underline"
+                >
+                  <Button variant="secondary">View seller's profile</Button>
+                </Link>
 
-                    <Button variant="outline">
-                      <Share2 className="w-4 h-4 mr-1" />
-                      Share
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                <Button variant="outline">
+                  <Share2 className="w-4 h-4 mr-1" />
+                  Share
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
           </div>
 
           <Separator />
@@ -167,7 +175,30 @@ export default function ListingForm({
                   <li key={facility}>• {facility}</li>
                 ))}
               </ul>
-              <Button className="mt-4 w-full text-base h-12 text-white">
+              <Button
+                className="mt-4 w-full text-base h-12 text-white"
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    toast("You must be logged in to rent a property", {
+                      description: "Please log in or sign up to continue.",
+                    });
+                    return;
+                  }
+
+                  if (user?.role !== "buyer") {
+                    toast("Access restricted", {
+                      description: "Please sign in as a buyer to use this feature.",
+                    });
+                    return;
+                  }
+
+                  toast("Rent process started", {
+                    description: "This is a placeholder for rent functionality.",
+                  });
+
+                  // TODO: Implement actual rent logic
+                }}
+              >
                 Rent Now
               </Button>
             </div>

@@ -6,7 +6,6 @@ import {
   removeFromWishlist,
 } from '@/api/wishlist';
 import type { PropertyWishlist } from "@/lib/types";
-import { useAuthStore } from './authStore';
 
 interface WishlistStore {
   wishlist: PropertyWishlist[];

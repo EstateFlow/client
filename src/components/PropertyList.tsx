@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { Card, CardContent } from "@/components/ui/card";
 // import { Heart, HeartOff } from "lucide-react";
