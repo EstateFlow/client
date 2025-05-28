@@ -14,13 +14,10 @@ import { useWishlistStore } from "@/store/wishlist";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 
-export default function ListingForm({
-  propertyId,
-}: {
-  propertyId: string;
-}) {
+export default function ListingForm({ propertyId }: { propertyId: string }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
-  const { wishlist, loadWishlist, addProperty, removeProperty } = useWishlistStore();
+  const { wishlist, loadWishlist, addProperty, removeProperty } =
+    useWishlistStore();
   const { isAuthenticated, user } = useAuthStore(); // <--- добавим user
 
   const [activeImage, setActiveImage] = useState("");
@@ -50,55 +47,55 @@ export default function ListingForm({
 
   const isWished = wishlist.some((p) => p.id === propertyId);
 
-const handleToggleWishlist = () => {
-  if (!isAuthenticated) {
-    toast("You must be logged in to add to wishlist", {
-      description: "Please log in or sign up to continue.",
-    });
-    return;
-  }
+  const handleToggleWishlist = () => {
+    if (!isAuthenticated) {
+      toast("You must be logged in to add to wishlist", {
+        description: "Please log in or sign up to continue.",
+      });
+      return;
+    }
 
-  if (user?.role !== "renter_buyer") {
-    toast("Access restricted", {
-      description: "Please sign in as a buyer to use this feature.",
-    });
-    return;
-  }
+    if (user?.role !== "renter_buyer") {
+      toast("Access restricted", {
+        description: "Please sign in as a buyer to use this feature.",
+      });
+      return;
+    }
 
-  isWished ? removeProperty(propertyId) : addProperty(propertyId);
-};
+    isWished ? removeProperty(propertyId) : addProperty(propertyId);
+  };
 
   const facilities =
     selectedProperty.facilities
       ?.split(",")
       .map((f) => f.trim())
       .filter(Boolean) || [];
-      return (
-        <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Image viewer */}
-            <div className="flex flex-col gap-2">
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Image viewer */}
+        <div className="flex flex-col gap-2">
+          <img
+            src={activeImage}
+            alt={selectedProperty.title}
+            className="w-full h-[400px] rounded-2xl object-cover"
+          />
+          <div className="flex gap-2 overflow-x-auto">
+            {selectedProperty.images.map((img) => (
               <img
-                src={activeImage}
-                alt={selectedProperty.title}
-                className="w-full h-[400px] rounded-2xl object-cover"
+                key={img.id}
+                src={img.imageUrl}
+                alt="thumbnail"
+                className={`w-20 h-20 rounded-lg object-cover cursor-pointer border-2 ${
+                  activeImage === img.imageUrl
+                    ? "border-black"
+                    : "border-transparent"
+                }`}
+                onClick={() => setActiveImage(img.imageUrl)}
               />
-              <div className="flex gap-2 overflow-x-auto">
-                {selectedProperty.images.map((img) => (
-                  <img
-                    key={img.id}
-                    src={img.imageUrl}
-                    alt="thumbnail"
-                    className={`w-20 h-20 rounded-lg object-cover cursor-pointer border-2 ${
-                      activeImage === img.imageUrl
-                        ? "border-black"
-                        : "border-transparent"
-                    }`}
-                    onClick={() => setActiveImage(img.imageUrl)}
-                  />
-                ))}
-              </div>
-            </div>
+            ))}
+          </div>
+        </div>
 
         {/* Info panel */}
         <div className="flex flex-col gap-4">
@@ -150,59 +147,59 @@ const handleToggleWishlist = () => {
             </CardContent>
           </Card>
         </div>
-          </div>
+      </div>
 
-          <Separator />
+      <Separator />
 
-          <div className="grid md:grid-cols-2 gap-6 items-start">
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Where you will live:</h2>
-              <iframe
-                width="100%"
-                height="300"
-                className="rounded-2xl"
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(selectedProperty.address)}&z=15&output=embed`}
-              ></iframe>
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Facilities:</h2>
-              <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
-                {facilities.map((facility) => (
-                  <li key={facility}>• {facility}</li>
-                ))}
-              </ul>
-              <Button
-                className="mt-4 w-full text-base h-12 text-white"
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    toast("You must be logged in to rent a property", {
-                      description: "Please log in or sign up to continue.",
-                    });
-                    return;
-                  }
-
-                  if (user?.role !== "buyer") {
-                    toast("Access restricted", {
-                      description: "Please sign in as a buyer to use this feature.",
-                    });
-                    return;
-                  }
-
-                  toast("Rent process started", {
-                    description: "This is a placeholder for rent functionality.",
-                  });
-
-                  // TODO: Implement actual rent logic
-                }}
-              >
-                Rent Now
-              </Button>
-            </div>
-          </div>
+      <div className="grid md:grid-cols-2 gap-6 items-start">
+        <div>
+          <h2 className="text-lg font-semibold mb-2">Where you will live:</h2>
+          <iframe
+            width="100%"
+            height="300"
+            className="rounded-2xl"
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(selectedProperty.address)}&z=15&output=embed`}
+          ></iframe>
         </div>
-      );
+
+        <div>
+          <h2 className="text-lg font-semibold mb-2">Facilities:</h2>
+          <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
+            {facilities.map((facility) => (
+              <li key={facility}>• {facility}</li>
+            ))}
+          </ul>
+          <Button
+            className="mt-4 w-full text-base h-12 text-white dark:text-gray-200 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-800 dark:border-gray-700 transition-colors duration-200 cursor-pointer"
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast("You must be logged in to rent a property", {
+                  description: "Please log in or sign up to continue.",
+                });
+                return;
+              }
+
+              if (user?.role !== "buyer") {
+                toast("Access restricted", {
+                  description: "Please sign in as a buyer to use this feature.",
+                });
+                return;
+              }
+
+              toast("Rent process started", {
+                description: "This is a placeholder for rent functionality.",
+              });
+
+              // TODO: Implement actual rent logic
+            }}
+          >
+            Rent Now
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }

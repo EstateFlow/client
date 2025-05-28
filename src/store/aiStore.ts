@@ -4,6 +4,7 @@ import type { Message, MessageResponse } from "@/types/AiTypes";
 import uuid from "react-uuid";
 
 const API_URL = import.meta.env.VITE_API_URL;
+console.log(API_URL);
 
 interface AiStore {
   messages: Message[];
