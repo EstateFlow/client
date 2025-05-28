@@ -75,7 +75,7 @@ export function LoginForm() {
       </div>
 
       <Link to="/restore-password-step1" className="[&.active]:underline">
-        <div className="text-right text-sm text-blue-500 cursor-pointer underline">
+        <div className="text-right text-sm text-blue-500 cursor-pointer underline mb-2">
           Forgot password?
         </div>
       </Link>

@@ -1,129 +1,212 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { User, LogOut } from "lucide-react"; // іконка профілю
+import { User, LogOut, Globe, Menu, X } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
+import ThemeSwitcher from "./ThemeSwitcher";
+import logo from "@/assets/images/estateflow_logo.jpg";
 
 function Header() {
-  const [search, setSearch] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully");
     navigate({ to: "/" });
   };
+
+  const isActiveLink = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-100 via-white to-slate-100 shadow-sm border-b">
-        {/* Левый блок */}
-        <div className="flex items-center gap-6">
-          {/* Логотип */}
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="white"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="white"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 3v18m9-9H3"
-                />
-              </svg>
-            </div>
-            <h1 className="font-bold text-2xl tracking-tight text-gray-800 select-none">EstateFlow</h1>
-          </div>
-
-          <nav className="flex gap-6 text-sm font-medium text-gray-600 select-none">
-            <Link to="/" className="[&.active]:underline hover:text-black transition-colors">Home</Link>
-            <Link to="/listings" className="[&.active]:underline hover:text-black transition-colors">Listings</Link>
-          </nav>
-        </div>
-
-        {/* Правый блок */}
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Input
-              type="search"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pr-10 pl-3 py-2 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
-            />
-            <Search
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
-              size={16}
-            />
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="min-w-[40px] px-2 rounded-md"
-          >
-            ENG
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="min-w-[40px] px-2 rounded-md"
-          >
-            🌞
-          </Button>
-
-          {isAuthenticated ? (
-            <div className="flex items-center gap-2">
-              <Link to="/user-dashboard">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full cursor-pointer"
-                >
-                  <User className="w-5 h-5" />
-                </Button>
+      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm border-b">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            {/* Левый блок */}
+            <div className="flex items-center gap-6">
+              {/* Логотип */}
+              <Link to="/">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-md">
+                    <img
+                      src={logo}
+                      alt="estateflow_logo"
+                      className="rounded-md"
+                    />
+                  </div>
+                  <h1 className="font-bold text-xl lg:text-2xl tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent select-none">
+                    EstateFlow
+                  </h1>
+                </div>
               </Link>
+
+              <nav className="hidden md:flex gap-1 text-sm font-medium select-none">
+                <Link to="/">
+                  <Button
+                    variant="ghost"
+                    className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                      isActiveLink("/") ? "bg-accent/90" : ""
+                    }`}
+                  >
+                    Home
+                  </Button>
+                </Link>
+                <Link to="/listings">
+                  <Button
+                    variant="ghost"
+                    className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                      isActiveLink("/listings") ? "bg-accent/90" : ""
+                    }`}
+                  >
+                    Listings
+                  </Button>
+                </Link>
+              </nav>
+            </div>
+
+            {/* Правый блок */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1 rounded-full px-3 hover:bg-accent/50 transition-colors"
+              >
+                <Globe size={14} />
+                <span className="text-xs font-medium">EN</span>
+              </Button>
+              <ThemeSwitcher />
+
+              {isAuthenticated ? (
+                <div className="hidden md:flex items-center gap-2">
+                  <Link to="/user-dashboard">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full cursor-pointer"
+                    >
+                      <User className="w-5 h-5" />
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="hidden md:flex items-center gap-2">
+                  <Link
+                    to="/login-form"
+                    className="[&.active]:underline text-gray-700"
+                  >
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="min-w-[70px] rounded-md"
+                    >
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/register-form" className="[&.active]:underline">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="min-w-[70px] rounded-md"
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
+              )}
+
               <Button
                 variant="ghost"
-                size="icon"
-                className="rounded-full cursor-pointer"
-                onClick={handleLogout}
+                size="sm"
+                className="md:hidden rounded-full p-2"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                <LogOut className="w-5 h-5" />
+                {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
               </Button>
             </div>
-          ) : (
-            <>
-              <Link
-                to="/login-form"
-                className="[&.active]:underline text-gray-700"
-              >
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="min-w-[70px] rounded-md"
-                >
-                  Log In
-                </Button>
-              </Link>
-              <Link to="/register-form" className="[&.active]:underline">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="min-w-[70px] rounded-md"
-                >
-                  Sign Up
-                </Button>
-              </Link>
-            </>
+          </div>
+
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden border-t backdrop-blur flex-row gap-2 p-2">
+              <nav className="flex flex-col gap-1">
+                <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start cursor-pointer"
+                  >
+                    Home
+                  </Button>
+                </Link>
+                <Link to="/listings" onClick={() => setIsMenuOpen(false)}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start cursor-pointer"
+                  >
+                    Listings
+                  </Button>
+                </Link>
+              </nav>
+
+              <div className="pt-3 border-t mt-2">
+                {isAuthenticated ? (
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      to="/user-dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2"
+                      >
+                        <User size={16} />
+                        Profile Dashboard
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Link to="/login-form" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" className="w-full">
+                        Log In
+                      </Button>
+                    </Link>
+                    <Link
+                      to="/register-form"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Button className="w-full">Sign Up</Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </header>
