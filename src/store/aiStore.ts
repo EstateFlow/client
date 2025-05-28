@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { $api } from "@/api/auth";
+import { $api } from "@/api/BaseUrl";
 import type { Message, MessageResponse } from "@/types/AiTypes";
 import uuid from "react-uuid";
 

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { AxiosError } from "axios";
-import { $api } from "@/api/auth";
+import { $api } from "@/api/BaseUrl";
 
 type User = { email: string; role: string } | null;
 

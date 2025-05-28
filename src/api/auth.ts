@@ -1,9 +1,5 @@
-import axios from "axios";
-
-export const $api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  headers: { "Content-Type": "application/json" },
-});
+import {$api} from "./BaseUrl";
+import type { UserInfo } from "@/lib/types";
 
 // Inject token
 $api.interceptors.request.use((config) => {
@@ -43,3 +39,6 @@ $api.interceptors.response.use(
 export const login = (email: string, password: string) =>
   $api.post("/api/auth/login", { email, password });
 export const fetchUser = () => $api.get("/api/user");
+export const fetchUserById = (userId: string) =>
+  $api.get<UserInfo>(`/api/user/${userId}`);
+

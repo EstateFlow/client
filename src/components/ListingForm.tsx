@@ -6,90 +6,203 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Share2, Heart } from "lucide-react";
+import { Share2, Heart, HeartOff } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { usePropertiesStore } from "@/store/usePropertiesStore";
+import { useWishlistStore } from "@/store/wishlist";
+import { useAuthStore } from "@/store/authStore";
+import { toast } from "sonner";
 
-export default function ListingForm() {
-  const listing = {
-    price: 40000,
-    address: "Kharkiv, Nemyshlyanskyi District, Rybalko Street 30, ap. 11",
-    area: "40m2",
-    rooms: 2,
-    description:
-      "The space of the apartment is thought out to the smallest detail: a large panoramic window fills the room with natural light, and the warm, neutral tones of the interior create an atmosphere of peace and home comfort. Modern layout, comfortable seating area, functional furniture, built-in shelving and landscaping add not only aesthetics, but also practicality. An ideal option for a couple, a young family or for a rental business.",
-    imageUrl: "https://surl.li/tsnybn",
-    facilities: [
-      "Heating",
-      "Wi-Fi",
-      "Conditioner",
-      "Hot Water",
-      "Washing Machine",
-      "Pets allowed",
-      "Dishwasher",
-      "Fridge",
-    ],
-    location: {
-      lat: 49.9808,
-      lng: 36.2527,
-    },
-  };
+export default function ListingForm({
+  propertyId,
+}: {
+  propertyId: string;
+}) {
+  const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
+  const { wishlist, loadWishlist, addProperty, removeProperty } = useWishlistStore();
+  const { isAuthenticated, user } = useAuthStore(); // <--- добавим user
 
-  return (
-    <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        <img
-          src={listing.imageUrl}
-          alt="Apartment"
-          className="w-full rounded-2xl object-cover"
-        />
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <CardTitle className="text-2xl">{listing.price}$</CardTitle>
-              <CardDescription>{listing.address}</CardDescription>
-              <div className="text-sm text-muted-foreground">
-                Area: {listing.area} | {listing.rooms} rooms
+  const [activeImage, setActiveImage] = useState("");
+
+  useEffect(() => {
+    fetchById(propertyId);
+  }, [propertyId]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadWishlist();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (selectedProperty?.images?.length) {
+      const defaultImage =
+        selectedProperty.images.find((img) => img.isPrimary)?.imageUrl ||
+        selectedProperty.images[0].imageUrl;
+      setActiveImage(defaultImage);
+    }
+  }, [selectedProperty]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!selectedProperty) return <p>No property found</p>;
+
+  const isWished = wishlist.some((p) => p.id === propertyId);
+
+const handleToggleWishlist = () => {
+  if (!isAuthenticated) {
+    toast("You must be logged in to add to wishlist", {
+      description: "Please log in or sign up to continue.",
+    });
+    return;
+  }
+
+  if (user?.role !== "renter_buyer") {
+    toast("Access restricted", {
+      description: "Please sign in as a buyer to use this feature.",
+    });
+    return;
+  }
+
+  isWished ? removeProperty(propertyId) : addProperty(propertyId);
+};
+
+  const facilities =
+    selectedProperty.facilities
+      ?.split(",")
+      .map((f) => f.trim())
+      .filter(Boolean) || [];
+      return (
+        <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Image viewer */}
+            <div className="flex flex-col gap-2">
+              <img
+                src={activeImage}
+                alt={selectedProperty.title}
+                className="w-full h-[400px] rounded-2xl object-cover"
+              />
+              <div className="flex gap-2 overflow-x-auto">
+                {selectedProperty.images.map((img) => (
+                  <img
+                    key={img.id}
+                    src={img.imageUrl}
+                    alt="thumbnail"
+                    className={`w-20 h-20 rounded-lg object-cover cursor-pointer border-2 ${
+                      activeImage === img.imageUrl
+                        ? "border-black"
+                        : "border-transparent"
+                    }`}
+                    onClick={() => setActiveImage(img.imageUrl)}
+                  />
+                ))}
               </div>
-              <p className="text-sm leading-relaxed">{listing.description}</p>
-              <div className="flex gap-2 pt-2">
-                <Button variant="secondary">View seller's profile</Button>
+            </div>
+
+        {/* Info panel */}
+        <div className="flex flex-col gap-4">
+          <Card className="relative">
+            {/* Wishlist button в правом верхнем углу */}
+            <Button
+              variant={isWished ? "destructive" : "outline"}
+              onClick={handleToggleWishlist}
+              className="absolute top-4 right-4 z-10"
+              size="sm"
+            >
+              {isWished ? (
+                <>
+                  <HeartOff className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  <Heart className="w-4 h-4" />
+                </>
+              )}
+            </Button>
+
+            <CardContent className="p-4 space-y-2">
+              <CardTitle className="text-2xl">
+                {selectedProperty.price}$
+              </CardTitle>
+              <CardDescription>{selectedProperty.address}</CardDescription>
+              <div className="text-sm text-muted-foreground">
+                Area: {selectedProperty.size} | {selectedProperty.rooms} rooms
+              </div>
+              <p className="text-sm leading-relaxed">
+                {selectedProperty.description}
+              </p>
+
+              <div className="flex gap-2 pt-2 flex-wrap">
+                <Link
+                  to="/user-profile-page"
+                  search={{ userId: selectedProperty.ownerId }}
+                  className="[&.active]:underline"
+                >
+                  <Button variant="secondary">View seller's profile</Button>
+                </Link>
+
                 <Button variant="outline">
-                  <Heart className="w-4 h-4 mr-1" /> Add to wishlist
-                </Button>
-                <Button variant="outline">
-                  <Share2 className="w-4 h-4 mr-1" /> Share
+                  <Share2 className="w-4 h-4 mr-1" />
+                  Share
                 </Button>
               </div>
             </CardContent>
           </Card>
         </div>
-      </div>
+          </div>
 
-      <Separator />
+          <Separator />
 
-      <div className="grid md:grid-cols-2 gap-6 items-start">
-        <div>
-          <h2 className="text-lg font-semibold mb-2">Where you will live:</h2>
-            <iframe
-              width="100%"
-              height="300"
-              className="rounded-2xl"
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://maps.google.com/maps?q=${listing.location.lat},${listing.location.lng}&z=15&output=embed`}
-            ></iframe>
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Where you will live:</h2>
+              <iframe
+                width="100%"
+                height="300"
+                className="rounded-2xl"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(selectedProperty.address)}&z=15&output=embed`}
+              ></iframe>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Facilities:</h2>
+              <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
+                {facilities.map((facility) => (
+                  <li key={facility}>• {facility}</li>
+                ))}
+              </ul>
+              <Button
+                className="mt-4 w-full text-base h-12 text-white"
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    toast("You must be logged in to rent a property", {
+                      description: "Please log in or sign up to continue.",
+                    });
+                    return;
+                  }
+
+                  if (user?.role !== "buyer") {
+                    toast("Access restricted", {
+                      description: "Please sign in as a buyer to use this feature.",
+                    });
+                    return;
+                  }
+
+                  toast("Rent process started", {
+                    description: "This is a placeholder for rent functionality.",
+                  });
+
+                  // TODO: Implement actual rent logic
+                }}
+              >
+                Rent Now
+              </Button>
+            </div>
+          </div>
         </div>
-
-        <div>
-          <h2 className="text-lg font-semibold mb-2">Facilities:</h2>
-          <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
-            {listing.facilities.map((facility) => (
-              <li key={facility}>• {facility}</li>
-            ))}
-          </ul>
-          <Button className="mt-4 w-full text-base h-12 text-white">Rent Now</Button>
-        </div>
-      </div>
-    </div>
-  );
+      );
 }
