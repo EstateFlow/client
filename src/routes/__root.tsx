@@ -26,15 +26,16 @@ function RootComponent() {
         <Header />
         <Outlet />
         <Toaster />
-        {user && user.role && (
-          <>
-            <ChatInterface
-              isOpen={isChatOpen}
-              onClose={() => setIsChatOpen(false)}
-            />
-            <ChatIcon onClick={handleChatToggle} isOpen={isChatOpen} />
-          </>
-        )}
+        {user &&
+          ["renter_buyer", "private_seller", "agency"].includes(user.role) && (
+            <>
+              <ChatInterface
+                isOpen={isChatOpen}
+                onClose={() => setIsChatOpen(false)}
+              />
+              <ChatIcon onClick={handleChatToggle} isOpen={isChatOpen} />
+            </>
+          )}
         <TanStackRouterDevtools />
       </GoogleOAuthProvider>
     </>
