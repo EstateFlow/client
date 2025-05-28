@@ -91,7 +91,7 @@ export function LoginForm() {
         className="w-full cursor-pointer"
         disabled={isLoading}
       >
-        {isLoading ? "Registering..." : "Continue"}
+        {isLoading ? "Logging in..." : "Continue"}
       </Button>
 
       <div className="flex items-center gap-4">
