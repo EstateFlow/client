@@ -14,6 +14,7 @@ import { LoadingDots } from "./LoadingDots";
 import Markdown from "markdown-to-jsx";
 import { aiStore } from "@/store/aiStore";
 import type { Message } from "@/types/AiTypes";
+import { MarkdownComponents } from "./MarkdownCompoents";
 
 interface ChatInterfaceProps {
   isOpen: boolean;
@@ -114,7 +115,12 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                     : "bg-gray-800 text-gray-100"
                 }`}
               >
-                <Markdown className="text-sm whitespace-pre-wrap break-words">
+                <Markdown
+                  options={{
+                    overrides: MarkdownComponents,
+                  }}
+                  className="text-sm whitespace-pre-wrap break-words"
+                >
                   {message.content}
                 </Markdown>
               </div>
