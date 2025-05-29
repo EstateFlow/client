@@ -15,7 +15,7 @@ import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
 import { PayPalButtons } from "@paypal/react-paypal-js";
-import axios from "axios";
+import { $api } from "@/api/BaseUrl";
 
 export default function ListingForm({ propertyId }: { propertyId: string }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
@@ -96,7 +96,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
           ? (price * 0.1).toFixed(2)
           : price.toFixed(2);
 
-      const response = await axios.post(
+      const response = await $api.post(
         `${import.meta.env.VITE_API_URL}/api/paypal/create-order`,
         {
           amount,
@@ -116,15 +116,15 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
 
   const onApprove = async (data: any) => {
     try {
-      if (!data?.orderId) {
+      if (!data?.orderID) {
         toast.error("Invalid order ID. Please try again.");
         return;
       }
 
-      const response = await axios.post(
+      const response = await $api.post(
         `${import.meta.env.VITE_API_URL}/api/paypal/capture-order`,
         {
-          orderId: data?.orderId,
+          orderId: data?.orderID,
           email: user?.email,
         },
       );
