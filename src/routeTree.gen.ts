@@ -16,6 +16,7 @@ import { Route as UserDashboardImport } from './routes/user-dashboard'
 import { Route as RestorePasswordStep1Import } from './routes/restore-password-step1'
 import { Route as RegisterFormImport } from './routes/register-form'
 import { Route as ProtectedImport } from './routes/protected'
+import { Route as PropertyManagementImport } from './routes/property-management'
 import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
@@ -56,6 +57,12 @@ const RegisterFormRoute = RegisterFormImport.update({
 const ProtectedRoute = ProtectedImport.update({
   id: '/protected',
   path: '/protected',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PropertyManagementRoute = PropertyManagementImport.update({
+  id: '/property-management',
+  path: '/property-management',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -172,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginFormImport
       parentRoute: typeof rootRoute
     }
+    '/property-management': {
+      id: '/property-management'
+      path: '/property-management'
+      fullPath: '/property-management'
+      preLoaderRoute: typeof PropertyManagementImport
+      parentRoute: typeof rootRoute
+    }
     '/protected': {
       id: '/protected'
       path: '/protected'
@@ -241,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
@@ -259,6 +274,7 @@ export interface FileRoutesByTo {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
@@ -278,6 +294,7 @@ export interface FileRoutesById {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
@@ -298,6 +315,7 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/property-management'
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
@@ -315,6 +333,7 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/property-management'
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
@@ -332,6 +351,7 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/property-management'
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
@@ -351,6 +371,7 @@ export interface RootRouteChildren {
   ListingPageRoute: typeof ListingPageRoute
   ListingsRoute: typeof ListingsRoute
   LoginFormRoute: typeof LoginFormRoute
+  PropertyManagementRoute: typeof PropertyManagementRoute
   ProtectedRoute: typeof ProtectedRoute
   RegisterFormRoute: typeof RegisterFormRoute
   RestorePasswordStep1Route: typeof RestorePasswordStep1Route
@@ -369,6 +390,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListingPageRoute: ListingPageRoute,
   ListingsRoute: ListingsRoute,
   LoginFormRoute: LoginFormRoute,
+  PropertyManagementRoute: PropertyManagementRoute,
   ProtectedRoute: ProtectedRoute,
   RegisterFormRoute: RegisterFormRoute,
   RestorePasswordStep1Route: RestorePasswordStep1Route,
@@ -396,6 +418,7 @@ export const routeTree = rootRoute
         "/listing-page",
         "/listings",
         "/login-form",
+        "/property-management",
         "/protected",
         "/register-form",
         "/restore-password-step1",
@@ -426,6 +449,9 @@ export const routeTree = rootRoute
     },
     "/login-form": {
       "filePath": "login-form.tsx"
+    },
+    "/property-management": {
+      "filePath": "property-management.tsx"
     },
     "/protected": {
       "filePath": "protected.tsx"
