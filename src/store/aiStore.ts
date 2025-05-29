@@ -4,6 +4,7 @@ import type { Message, MessageResponse } from "@/types/AiTypes";
 import uuid from "react-uuid";
 
 const API_URL = import.meta.env.VITE_API_URL;
+console.log(API_URL);
 
 interface AiStore {
   messages: Message[];
@@ -42,6 +43,8 @@ export const aiStore = create<AiStore>((set, get) => ({
         `${API_URL}/api/ai/conversations/messages`,
         { message: newMessage },
       );
+
+      console.log(`${API_URL}/api/ai/conversations/messages`);
 
       if (response.data.aiResponse.content) {
         const aiMessage: Message = {

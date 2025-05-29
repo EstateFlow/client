@@ -7,12 +7,14 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { GoogleLogin } from "./GoogleLogin";
+import { useUserStore } from "@/store/userStore";
 
 export function LoginForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading, error, user, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError } = useAuthStore();
+  const { user } = useUserStore();
 
   useEffect(() => {
     return () => {
@@ -75,7 +77,7 @@ export function LoginForm() {
       </div>
 
       <Link to="/restore-password-step1" className="[&.active]:underline">
-        <div className="text-right text-sm text-blue-500 cursor-pointer underline">
+        <div className="text-right text-sm text-blue-500 cursor-pointer underline mb-2">
           Forgot password?
         </div>
       </Link>
@@ -91,7 +93,7 @@ export function LoginForm() {
         className="w-full cursor-pointer"
         disabled={isLoading}
       >
-        {isLoading ? "Registering..." : "Continue"}
+        {isLoading ? "Logging in..." : "Continue"}
       </Button>
 
       <div className="flex items-center gap-4">

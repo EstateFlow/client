@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import UserDashboard from "@/pages/UserDashboardPage";
-import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 
 // const offers = Array.from({ length: 4 }).map((_, i) => ({
 //   id: String(i),
@@ -11,14 +11,16 @@ import { useAuthStore } from "@/store/authStore";
 // }));
 
 function RouteComponent() {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useUserStore();
+  const navigate = useNavigate();
 
-  return user
-    ? <UserDashboard user={user as any} />
-    : <div>Loading...</div>;
+  if (user) {
+    return <UserDashboard user={user as any} />;
+  } else {
+    navigate({ to: "/login-form" });
+  }
 }
 
 export const Route = createFileRoute("/user-dashboard")({
   component: RouteComponent,
 });
-

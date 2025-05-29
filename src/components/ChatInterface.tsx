@@ -14,6 +14,7 @@ import { LoadingDots } from "./LoadingDots";
 import Markdown from "markdown-to-jsx";
 import { aiStore } from "@/store/aiStore";
 import type { Message } from "@/types/AiTypes";
+import { MarkdownComponents } from "./MarkdownCompoents";
 
 interface ChatInterfaceProps {
   isOpen: boolean;
@@ -60,7 +61,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
   if (!isOpen) return null;
 
   return (
-    <Card className="fixed bottom-24 right-2 sm:right-6 max-w-sm h-[500px] sm:w-96 sm:h-[600px] sm:max-w-md lg:max-w-lg shadow-2xl z-50 mx-2 sm:mx-0 flex flex-col border border-gray-200 dark:border-gray-700 rounded-3xl overflow-hidden p-2 bg-white dark:bg-gray-900">
+    <Card className="fixed bottom-24 right-2 sm:right-6 max-w-sm h-[500px] sm:w-96 sm:h-[600px] sm:max-w-md lg:max-w-lg shadow-2xl z-50 mx-2 sm:mx-0 flex flex-col border border-gray-200 dark:border-gray-700 rounded-3xl overflow-hidden p-2 bg-white dark:bg-gray-950">
       <CardHeader className="p-2 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -114,7 +115,12 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
                     : "bg-gray-800 text-gray-100"
                 }`}
               >
-                <Markdown className="text-sm whitespace-pre-wrap break-words">
+                <Markdown
+                  options={{
+                    overrides: MarkdownComponents,
+                  }}
+                  className="text-sm whitespace-pre-wrap break-words"
+                >
                   {message.content}
                 </Markdown>
               </div>

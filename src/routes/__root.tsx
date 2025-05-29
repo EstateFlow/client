@@ -7,9 +7,11 @@ import { useAuthStore } from "@/store/authStore";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ChatInterface } from "@/components/ChatInterface";
 import { ChatIcon } from "@/components/ChatIcon";
+import { useUserStore } from "@/store/userStore";
 
 function RootComponent() {
-  const { checkAuth, user } = useAuthStore();
+  const { checkAuth } = useAuthStore();
+  const { user } = useUserStore();
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleChatToggle = () => {
@@ -26,15 +28,16 @@ function RootComponent() {
         <Header />
         <Outlet />
         <Toaster />
-        {user && user.role && (
-          <>
-            <ChatInterface
-              isOpen={isChatOpen}
-              onClose={() => setIsChatOpen(false)}
-            />
-            <ChatIcon onClick={handleChatToggle} isOpen={isChatOpen} />
-          </>
-        )}
+        {user &&
+          ["renter_buyer", "private_seller", "agency"].includes(user.role) && (
+            <>
+              <ChatInterface
+                isOpen={isChatOpen}
+                onClose={() => setIsChatOpen(false)}
+              />
+              <ChatIcon onClick={handleChatToggle} isOpen={isChatOpen} />
+            </>
+          )}
         <TanStackRouterDevtools />
       </GoogleOAuthProvider>
     </>
