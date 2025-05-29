@@ -15,6 +15,7 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { GoogleLogin } from "./GoogleLogin";
+import { useUserStore, type UserRole } from "@/store/userStore";
 
 export function RegisterForm() {
   const [socialRole, setSocialRole] = useState("");
@@ -36,7 +37,8 @@ export function RegisterForm() {
   });
   const [manualFormSubmitted, setManualFormSubmitted] = useState(false);
 
-  const { register, isLoading, error, user, clearError } = useAuthStore();
+  const { register, isLoading, error, clearError } = useAuthStore();
+  const { user } = useUserStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -113,7 +115,7 @@ export function RegisterForm() {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        role: formData.role,
+        role: formData.role as UserRole,
       });
       setFormData({
         username: "",

@@ -11,12 +11,12 @@ export default function UserProfile({ userId }: { userId: string }) {
   useEffect(() => {
     fetchUserById(userId)
       .then((res) => setUser(res.data))
-      .catch((err) => console.error("Ошибка при загрузке пользователя:", err))
+      .catch((err) => console.error("Error during user loading...", err))
       .finally(() => setLoading(false));
   }, [userId]);
 
-  if (loading) return <div>Загрузка...</div>;
-  if (!user) return <div>Пользователь не найден</div>;
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <div>User not found</div>;
 
   return (
     <Card className="rounded-xl overflow-hidden shadow-md">

@@ -26,10 +26,7 @@ export default function RestorePasswordStep1Page() {
       },
     );
 
-    if (
-      response.data?.message !==
-      "If this email exists, reset instructions were sent"
-    ) {
+    if (response.status === 200) {
       setIsLoading(false);
       setError(null);
       toast("Success", {

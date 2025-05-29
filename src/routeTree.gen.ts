@@ -22,6 +22,7 @@ import { Route as ListingPageImport } from './routes/listing-page'
 import { Route as IndexImport } from './routes/index'
 import { Route as VerifyEmailEmailTokenImport } from './routes/verify-email/$email-token'
 import { Route as PasswordResetEmailTokenImport } from './routes/password-reset/$email-token'
+import { Route as ConfirmChangeTokenTypeImport } from './routes/confirm-change/$token.$type'
 
 // Create/Update Routes
 
@@ -88,6 +89,12 @@ const VerifyEmailEmailTokenRoute = VerifyEmailEmailTokenImport.update({
 const PasswordResetEmailTokenRoute = PasswordResetEmailTokenImport.update({
   id: '/password-reset/$email-token',
   path: '/password-reset/$email-token',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ConfirmChangeTokenTypeRoute = ConfirmChangeTokenTypeImport.update({
+  id: '/confirm-change/$token/$type',
+  path: '/confirm-change/$token/$type',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -172,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailEmailTokenImport
       parentRoute: typeof rootRoute
     }
+    '/confirm-change/$token/$type': {
+      id: '/confirm-change/$token/$type'
+      path: '/confirm-change/$token/$type'
+      fullPath: '/confirm-change/$token/$type'
+      preLoaderRoute: typeof ConfirmChangeTokenTypeImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -189,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/user-profile-page': typeof UserProfilePageRoute
   '/password-reset/$email-token': typeof PasswordResetEmailTokenRoute
   '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
+  '/confirm-change/$token/$type': typeof ConfirmChangeTokenTypeRoute
 }
 
 export interface FileRoutesByTo {
@@ -203,6 +218,7 @@ export interface FileRoutesByTo {
   '/user-profile-page': typeof UserProfilePageRoute
   '/password-reset/$email-token': typeof PasswordResetEmailTokenRoute
   '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
+  '/confirm-change/$token/$type': typeof ConfirmChangeTokenTypeRoute
 }
 
 export interface FileRoutesById {
@@ -218,6 +234,7 @@ export interface FileRoutesById {
   '/user-profile-page': typeof UserProfilePageRoute
   '/password-reset/$email-token': typeof PasswordResetEmailTokenRoute
   '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
+  '/confirm-change/$token/$type': typeof ConfirmChangeTokenTypeRoute
 }
 
 export interface FileRouteTypes {
@@ -234,6 +251,7 @@ export interface FileRouteTypes {
     | '/user-profile-page'
     | '/password-reset/$email-token'
     | '/verify-email/$email-token'
+    | '/confirm-change/$token/$type'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -247,6 +265,7 @@ export interface FileRouteTypes {
     | '/user-profile-page'
     | '/password-reset/$email-token'
     | '/verify-email/$email-token'
+    | '/confirm-change/$token/$type'
   id:
     | '__root__'
     | '/'
@@ -260,6 +279,7 @@ export interface FileRouteTypes {
     | '/user-profile-page'
     | '/password-reset/$email-token'
     | '/verify-email/$email-token'
+    | '/confirm-change/$token/$type'
   fileRoutesById: FileRoutesById
 }
 
@@ -275,6 +295,7 @@ export interface RootRouteChildren {
   UserProfilePageRoute: typeof UserProfilePageRoute
   PasswordResetEmailTokenRoute: typeof PasswordResetEmailTokenRoute
   VerifyEmailEmailTokenRoute: typeof VerifyEmailEmailTokenRoute
+  ConfirmChangeTokenTypeRoute: typeof ConfirmChangeTokenTypeRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -289,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   UserProfilePageRoute: UserProfilePageRoute,
   PasswordResetEmailTokenRoute: PasswordResetEmailTokenRoute,
   VerifyEmailEmailTokenRoute: VerifyEmailEmailTokenRoute,
+  ConfirmChangeTokenTypeRoute: ConfirmChangeTokenTypeRoute,
 }
 
 export const routeTree = rootRoute
@@ -311,7 +333,8 @@ export const routeTree = rootRoute
         "/user-dashboard",
         "/user-profile-page",
         "/password-reset/$email-token",
-        "/verify-email/$email-token"
+        "/verify-email/$email-token",
+        "/confirm-change/$token/$type"
       ]
     },
     "/": {
@@ -346,6 +369,9 @@ export const routeTree = rootRoute
     },
     "/verify-email/$email-token": {
       "filePath": "verify-email/$email-token.tsx"
+    },
+    "/confirm-change/$token/$type": {
+      "filePath": "confirm-change/$token.$type.tsx"
     }
   }
 }
