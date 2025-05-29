@@ -1,11 +1,12 @@
 import { create } from "zustand";
-import type { Property } from "@/lib/types";
 import {
   fetchProperties,
   createProperty,
   deleteProperty,
-  fetchPropertyById
+  fetchPropertyById,
+  updateProperty
 } from "@/api/properties";
+import type { Property, CreateProperty } from "@/lib/types";
 
 interface PropertiesState {
   properties: Property[];
@@ -14,8 +15,9 @@ interface PropertiesState {
   selectedProperty: Property | null;
   filter: "active" | "sold_rented" | "inactive" | null;
 
+  update: (propertyId: string, updatedData: CreateProperty) => Promise<void>;
   fetchAll: (filter?: "active" | "sold_rented" | "inactive") => Promise<void>;
-  create: (propertyData: Omit<Property, "id" | "createdAt" | "updatedAt" | "isVerified" | "views" | "pricingHistory" | "owner" | "isWished">) => Promise<void>;
+  create: (propertyData: CreateProperty) => Promise<void>;
   remove: (propertyId: string) => Promise<void>;
   fetchById: (propertyId: string) => Promise<void>;
 }
@@ -26,7 +28,19 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
   error: null,
   filter: null,
   selectedProperty: null,
+  update: async (propertyId, updatedData) => {
+  set({ loading: true, error: null });
+  try {
+    await updateProperty(propertyId, updatedData);
+    await get().fetchAll(get().filter || undefined);
+  } catch (error: any) {
+    set({ error: error?.response?.data?.message || "Failed to update property" });
+  } finally {
+    set({ loading: false });
+  }
+},
 
+    
   fetchAll: async (filter) => {
     set({ loading: true, error: null, filter });
     try {
@@ -43,7 +57,7 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       await createProperty(propertyData);
-      await get().fetchAll(get().filter || undefined); // Обновляем список
+      await get().fetchAll(get().filter || undefined);
     } catch (error: any) {
       set({ error: error?.response?.data?.message || "Failed to create property" });
     } finally {

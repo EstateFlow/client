@@ -1,6 +1,5 @@
 import { $api } from "./BaseUrl";
-import type { Property } from "@/lib/types";
-
+import type { Property, CreateProperty } from "@/lib/types";
 export const fetchProperties = async (
   filter?: "active" | "sold_rented" | "inactive",
 ): Promise<Property[]> => {
@@ -9,20 +8,16 @@ export const fetchProperties = async (
   return response.data;
 };
 
-export const createProperty = async (
-  propertyData: Omit<
-    Property,
-    | "id"
-    | "createdAt"
-    | "updatedAt"
-    | "isVerified"
-    | "views"
-    | "pricingHistory"
-    | "owner"
-    | "isWished"
-  >,
+export async function createProperty(property: CreateProperty) {
+  const response = await $api.post("/api/properties", property);
+  return response.data;
+}
+
+export const updateProperty = async (
+  propertyId: string,
+  propertyData: CreateProperty
 ) => {
-  const response = await $api.post("/api/properties", propertyData);
+  const response = await $api.patch(`/api/properties/${propertyId}`, propertyData);
   return response.data;
 };
 

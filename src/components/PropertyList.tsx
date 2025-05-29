@@ -36,7 +36,7 @@ export function PropertyList() {
       {properties.map((property) => (
         <Card
           key={property.id}
-          className={`overflow-hidden rounded-xl transition-shadow hover:shadow-md border ${property.status === "inactive" ? "bg-muted opacity-60 grayscale" : "border-gray-200 hover:border-gray-300"}`}
+          className={`overflow-hidden rounded-xl transition-shadow hover:shadow-md border border-border ${ property?.status === "inactive" ? "bg-muted opacity-60 grayscale" : ""}`}
         >
           <div className="relative p-2">
             <Link

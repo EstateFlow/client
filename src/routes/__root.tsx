@@ -8,7 +8,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ChatInterface } from "@/components/ChatInterface";
 import { ChatIcon } from "@/components/ChatIcon";
 import { useUserStore } from "@/store/userStore";
-
+import { BrowserRouter } from "react-router-dom";
 function RootComponent() {
   const { checkAuth } = useAuthStore();
   const { user } = useUserStore();
@@ -24,6 +24,7 @@ function RootComponent() {
 
   return (
     <>
+    <BrowserRouter>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Header />
         <Outlet />
@@ -40,6 +41,7 @@ function RootComponent() {
           )}
         <TanStackRouterDevtools />
       </GoogleOAuthProvider>
+      </BrowserRouter>
     </>
   );
 }
