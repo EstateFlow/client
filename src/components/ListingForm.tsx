@@ -7,13 +7,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Share2, Heart, HeartOff } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { useWishlistStore } from "@/store/wishlist";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+import { $api } from "@/api/BaseUrl";
 
 export default function ListingForm({ propertyId }: { propertyId: string }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
@@ -21,6 +23,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     useWishlistStore();
   const { isAuthenticated } = useAuthStore(); // <--- добавим user
   const { user } = useUserStore();
+  const navigate = useNavigate();
 
   const [activeImage, setActiveImage] = useState("");
 
@@ -72,6 +75,72 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
       ?.split(",")
       .map((f) => f.trim())
       .filter(Boolean) || [];
+
+  const styles = {
+    color: "black" as const,
+    layout: "vertical" as const,
+    size: "medium" as const,
+    label: "pay" as const,
+  };
+
+  const onCreateOrder = async () => {
+    try {
+      const price = parseFloat(selectedProperty.price);
+      if (isNaN(price)) {
+        toast.error("Invalid price format. Please contact support.");
+        throw new Error("Invalid price format");
+      }
+
+      const amount =
+        selectedProperty.transactionType === "sale"
+          ? (price * 0.1).toFixed(2)
+          : price.toFixed(2);
+
+      const response = await $api.post(
+        `${import.meta.env.VITE_API_URL}/api/paypal/create-order`,
+        {
+          amount,
+          item: {
+            name: selectedProperty.title,
+            description: selectedProperty.description,
+            sku: selectedProperty.id,
+          },
+        },
+      );
+      return response.data.id;
+    } catch (error) {
+      toast.error("Failed to create PayPal order. Please try again.");
+      throw new Error("Failed to create PayPal order");
+    }
+  };
+
+  const onApprove = async (data: any) => {
+    try {
+      if (!data?.orderID) {
+        toast.error("Invalid order ID. Please try again.");
+        return;
+      }
+
+      const response = await $api.post(
+        `${import.meta.env.VITE_API_URL}/api/paypal/capture-order`,
+        {
+          orderId: data?.orderID,
+          email: user?.email,
+        },
+      );
+      console.log(response);
+      navigate({ to: "/complete-payment" });
+    } catch (error) {
+      toast.error("Failed to capture payment. Please try again.");
+      console.error(error);
+    }
+  };
+
+  const onError = async (data: any) => {
+    console.log(data);
+    navigate({ to: "/cancel-payment" });
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
       <div className="grid md:grid-cols-2 gap-6">
@@ -174,32 +243,14 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               <li key={facility}>• {facility}</li>
             ))}
           </ul>
-          <Button
-            className="mt-4 w-full text-base h-12 text-white dark:text-gray-200 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-800 dark:border-gray-700 transition-colors duration-200 cursor-pointer"
-            onClick={() => {
-              if (!isAuthenticated) {
-                toast("You must be logged in to rent a property", {
-                  description: "Please log in or sign up to continue.",
-                });
-                return;
-              }
-
-              if (user?.role !== "renter_buyer") {
-                toast("Access restricted", {
-                  description: "Please sign in as a buyer to use this feature.",
-                });
-                return;
-              }
-
-              toast("Rent process started", {
-                description: "This is a placeholder for rent functionality.",
-              });
-
-              // TODO: Implement actual rent logic
-            }}
-          >
-            Rent Now
-          </Button>
+          <PayPalButtons
+            createOrder={onCreateOrder}
+            onApprove={onApprove}
+            onError={onError}
+            style={styles}
+            className="mt-4"
+            fundingSource="paypal"
+          />
         </div>
       </div>
     </div>

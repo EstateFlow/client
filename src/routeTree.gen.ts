@@ -19,7 +19,6 @@ import { Route as ProtectedImport } from './routes/protected'
 import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
-import { Route as ListingFormToAddPageImport } from './routes/listing-form-to-add-page'
 import { Route as IndexImport } from './routes/index'
 import { Route as VerifyEmailEmailTokenImport } from './routes/verify-email/$email-token'
 import { Route as PasswordResetEmailTokenImport } from './routes/password-reset/$email-token'
@@ -75,12 +74,6 @@ const ListingPageRoute = ListingPageImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ListingFormToAddPageRoute = ListingFormToAddPageImport.update({
-  id: '/listing-form-to-add-page',
-  path: '/listing-form-to-add-page',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -114,13 +107,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/listing-form-to-add-page': {
-      id: '/listing-form-to-add-page'
-      path: '/listing-form-to-add-page'
-      fullPath: '/listing-form-to-add-page'
-      preLoaderRoute: typeof ListingFormToAddPageImport
       parentRoute: typeof rootRoute
     }
     '/listing-page': {
@@ -207,7 +193,6 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/listing-form-to-add-page': typeof ListingFormToAddPageRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
@@ -223,7 +208,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/listing-form-to-add-page': typeof ListingFormToAddPageRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
@@ -240,7 +224,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/listing-form-to-add-page': typeof ListingFormToAddPageRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
@@ -258,7 +241,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/listing-form-to-add-page'
     | '/listing-page'
     | '/listings'
     | '/login-form'
@@ -273,7 +255,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/listing-form-to-add-page'
     | '/listing-page'
     | '/listings'
     | '/login-form'
@@ -288,7 +269,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/listing-form-to-add-page'
     | '/listing-page'
     | '/listings'
     | '/login-form'
@@ -305,7 +285,6 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ListingFormToAddPageRoute: typeof ListingFormToAddPageRoute
   ListingPageRoute: typeof ListingPageRoute
   ListingsRoute: typeof ListingsRoute
   LoginFormRoute: typeof LoginFormRoute
@@ -321,7 +300,6 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ListingFormToAddPageRoute: ListingFormToAddPageRoute,
   ListingPageRoute: ListingPageRoute,
   ListingsRoute: ListingsRoute,
   LoginFormRoute: LoginFormRoute,
@@ -346,7 +324,6 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/listing-form-to-add-page",
         "/listing-page",
         "/listings",
         "/login-form",
@@ -362,9 +339,6 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/listing-form-to-add-page": {
-      "filePath": "listing-form-to-add-page.tsx"
     },
     "/listing-page": {
       "filePath": "listing-page.tsx"
