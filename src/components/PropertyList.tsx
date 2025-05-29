@@ -1,4 +1,4 @@
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { Card, CardContent } from "@/components/ui/card";
 // import { Heart, HeartOff } from "lucide-react";
@@ -45,7 +45,9 @@ export function PropertyList() {
               className="[&.active]:underline"
             >
               <img
-                src={property.images.find((img) => img.isPrimary)?.imageUrl || ""}
+                src={
+                  property.images.find((img) => img.isPrimary)?.imageUrl || ""
+                }
                 alt={property.title}
                 className="rounded-t-xl w-full h-48 object-cover bg-gray-100"
               />
@@ -66,13 +68,20 @@ export function PropertyList() {
           </div>
 
           <CardContent className="p-4 space-y-1">
-            <h3 className="text-base font-semibold truncate">{property.title}</h3>
-            <h4 className="text-sm text-muted-foreground truncate">{property.address}</h4>
+            <h3 className="text-base font-semibold truncate">
+              {property.title}
+            </h3>
+            <h4 className="text-sm text-muted-foreground truncate">
+              {property.address}
+            </h4>
             <p className="text-muted-foreground">{property.transactionType}</p>
-            <p className="font-semibold">{property.price} {property.currency}</p>
+            <p className="font-semibold">
+              {property.price} {property.currency}
+            </p>
           </CardContent>
         </Card>
       ))}
     </div>
   );
 }
+
