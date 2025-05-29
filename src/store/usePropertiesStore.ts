@@ -4,18 +4,30 @@ import {
   fetchProperties,
   createProperty,
   deleteProperty,
-  fetchPropertyById
+  fetchPropertyById,
 } from "@/api/properties";
 
 interface PropertiesState {
   properties: Property[];
   loading: boolean;
-  error: string | null;  
+  error: string | null;
   selectedProperty: Property | null;
   filter: "active" | "sold_rented" | "inactive" | null;
 
   fetchAll: (filter?: "active" | "sold_rented" | "inactive") => Promise<void>;
-  create: (propertyData: Omit<Property, "id" | "createdAt" | "updatedAt" | "isVerified" | "views" | "pricingHistory" | "owner" | "isWished">) => Promise<void>;
+  create: (
+    propertyData: Omit<
+      Property,
+      | "id"
+      | "createdAt"
+      | "updatedAt"
+      | "isVerified"
+      | "views"
+      | "pricingHistory"
+      | "owner"
+      | "isWished"
+    >,
+  ) => Promise<void>;
   remove: (propertyId: string) => Promise<void>;
   fetchById: (propertyId: string) => Promise<void>;
 }
@@ -33,7 +45,9 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
       const data = await fetchProperties(filter);
       set({ properties: data });
     } catch (error: any) {
-      set({ error: error?.response?.data?.message || "Failed to load properties" });
+      set({
+        error: error?.response?.data?.message || "Failed to load properties",
+      });
     } finally {
       set({ loading: false });
     }
@@ -45,7 +59,9 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
       await createProperty(propertyData);
       await get().fetchAll(get().filter || undefined); // Обновляем список
     } catch (error: any) {
-      set({ error: error?.response?.data?.message || "Failed to create property" });
+      set({
+        error: error?.response?.data?.message || "Failed to create property",
+      });
     } finally {
       set({ loading: false });
     }
@@ -60,7 +76,9 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
         properties: state.properties.filter((p) => p.id !== propertyId),
       }));
     } catch (error: any) {
-      set({ error: error?.response?.data?.message || "Failed to delete property" });
+      set({
+        error: error?.response?.data?.message || "Failed to delete property",
+      });
     } finally {
       set({ loading: false });
     }
@@ -71,7 +89,9 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
       const data = await fetchPropertyById(propertyId);
       set({ selectedProperty: data });
     } catch (error: any) {
-      set({ error: error?.response?.data?.message || "Failed to load property" });
+      set({
+        error: error?.response?.data?.message || "Failed to load property",
+      });
     } finally {
       set({ loading: false });
     }

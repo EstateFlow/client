@@ -19,6 +19,8 @@ import { Route as ProtectedImport } from './routes/protected'
 import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
+import { Route as CompletePaymentImport } from './routes/complete-payment'
+import { Route as CancelPaymentImport } from './routes/cancel-payment'
 import { Route as IndexImport } from './routes/index'
 import { Route as VerifyEmailEmailTokenImport } from './routes/verify-email/$email-token'
 import { Route as PasswordResetEmailTokenImport } from './routes/password-reset/$email-token'
@@ -74,6 +76,18 @@ const ListingPageRoute = ListingPageImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CompletePaymentRoute = CompletePaymentImport.update({
+  id: '/complete-payment',
+  path: '/complete-payment',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CancelPaymentRoute = CancelPaymentImport.update({
+  id: '/cancel-payment',
+  path: '/cancel-payment',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -107,6 +121,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cancel-payment': {
+      id: '/cancel-payment'
+      path: '/cancel-payment'
+      fullPath: '/cancel-payment'
+      preLoaderRoute: typeof CancelPaymentImport
+      parentRoute: typeof rootRoute
+    }
+    '/complete-payment': {
+      id: '/complete-payment'
+      path: '/complete-payment'
+      fullPath: '/complete-payment'
+      preLoaderRoute: typeof CompletePaymentImport
       parentRoute: typeof rootRoute
     }
     '/listing-page': {
@@ -193,6 +221,8 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cancel-payment': typeof CancelPaymentRoute
+  '/complete-payment': typeof CompletePaymentRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
@@ -208,6 +238,8 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cancel-payment': typeof CancelPaymentRoute
+  '/complete-payment': typeof CompletePaymentRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
@@ -224,6 +256,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/cancel-payment': typeof CancelPaymentRoute
+  '/complete-payment': typeof CompletePaymentRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
@@ -241,6 +275,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cancel-payment'
+    | '/complete-payment'
     | '/listing-page'
     | '/listings'
     | '/login-form'
@@ -255,6 +291,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cancel-payment'
+    | '/complete-payment'
     | '/listing-page'
     | '/listings'
     | '/login-form'
@@ -269,6 +307,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/cancel-payment'
+    | '/complete-payment'
     | '/listing-page'
     | '/listings'
     | '/login-form'
@@ -285,6 +325,8 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CancelPaymentRoute: typeof CancelPaymentRoute
+  CompletePaymentRoute: typeof CompletePaymentRoute
   ListingPageRoute: typeof ListingPageRoute
   ListingsRoute: typeof ListingsRoute
   LoginFormRoute: typeof LoginFormRoute
@@ -300,6 +342,8 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CancelPaymentRoute: CancelPaymentRoute,
+  CompletePaymentRoute: CompletePaymentRoute,
   ListingPageRoute: ListingPageRoute,
   ListingsRoute: ListingsRoute,
   LoginFormRoute: LoginFormRoute,
@@ -324,6 +368,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/cancel-payment",
+        "/complete-payment",
         "/listing-page",
         "/listings",
         "/login-form",
@@ -339,6 +385,12 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/cancel-payment": {
+      "filePath": "cancel-payment.tsx"
+    },
+    "/complete-payment": {
+      "filePath": "complete-payment.tsx"
     },
     "/listing-page": {
       "filePath": "listing-page.tsx"
