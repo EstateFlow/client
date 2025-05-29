@@ -13,12 +13,14 @@ import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { useWishlistStore } from "@/store/wishlist";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
+import { useUserStore } from "@/store/userStore";
 
 export default function ListingForm({ propertyId }: { propertyId: string }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
   const { wishlist, loadWishlist, addProperty, removeProperty } =
     useWishlistStore();
-  const { isAuthenticated, user } = useAuthStore(); // <--- добавим user
+  const { isAuthenticated } = useAuthStore(); // <--- добавим user
+  const { user } = useUserStore();
 
   const [activeImage, setActiveImage] = useState("");
 
@@ -182,7 +184,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                 return;
               }
 
-              if (user?.role !== "buyer") {
+              if (user?.role !== "renter_buyer") {
                 toast("Access restricted", {
                   description: "Please sign in as a buyer to use this feature.",
                 });

@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
-import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 
 export const Route = createFileRoute("/protected")({
   component: ProtectedRoute,
 });
 
 function ProtectedRoute() {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useUserStore();
 
   if (!user) {
     return <Navigate to="/login-form" />;

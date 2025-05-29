@@ -7,12 +7,14 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { GoogleLogin } from "./GoogleLogin";
+import { useUserStore } from "@/store/userStore";
 
 export function LoginForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading, error, user, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError } = useAuthStore();
+  const { user } = useUserStore();
 
   useEffect(() => {
     return () => {
