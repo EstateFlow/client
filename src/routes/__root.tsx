@@ -8,16 +8,16 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ChatInterface } from "@/components/ChatInterface";
 import { ChatIcon } from "@/components/ChatIcon";
 import { useUserStore } from "@/store/userStore";
-import { BrowserRouter } from "react-router-dom";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import type { ReactPayPalScriptOptions } from "@paypal/react-paypal-js";
+import { RealEstateLoader } from "@/components/RealEstateLoader";
 
 function RootComponent() {
   const initialOptions: ReactPayPalScriptOptions = {
     clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
   };
 
-  const { checkAuth } = useAuthStore();
+  const { checkAuth, isInitialized } = useAuthStore();
   const { user } = useUserStore();
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -26,16 +26,17 @@ function RootComponent() {
   };
 
   useEffect(() => {
-    checkAuth(); // перевірка при завантаженні
-  }, [checkAuth]);
+    if (!isInitialized) {
+      checkAuth(); // перевірка при завантаженні
+    }
+  }, [checkAuth, isInitialized]);
 
   return (
     <>
-    <BrowserRouter>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <PayPalScriptProvider options={initialOptions}>
           <Header />
-          <Outlet />
+          {!isInitialized ? <RealEstateLoader /> : <Outlet />}
           <Toaster />
           {user &&
             ["renter_buyer", "private_seller", "agency"].includes(
@@ -52,7 +53,6 @@ function RootComponent() {
           <TanStackRouterDevtools />
         </PayPalScriptProvider>
       </GoogleOAuthProvider>
-      </BrowserRouter>
     </>
   );
 }

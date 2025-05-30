@@ -1,4 +1,5 @@
 import type { UserInfo } from "@/lib/types";
+import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
 
 export const $api = axios.create({
@@ -21,6 +22,7 @@ $api.interceptors.response.use(
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true;
       try {
+        console.log("bbbb");
         const refreshToken = localStorage.getItem("refreshToken");
         const { data } = await $api.post(
           `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,
@@ -33,10 +35,11 @@ $api.interceptors.response.use(
         return $api(original);
       } catch (refreshError) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "/login-form";
         return Promise.reject(refreshError);
       }
     }
+    useAuthStore.setState({ isInitialized: true });
     return Promise.reject(err);
   },
 );

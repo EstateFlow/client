@@ -7,6 +7,7 @@ interface AuthStore {
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   register: (data: {
     username: string;
     email: string;
@@ -26,6 +27,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isLoading: false,
   error: null,
   isAuthenticated: false,
+  isInitialized: false,
 
   register: async (data) => {
     set({ isLoading: true, error: null });
@@ -42,7 +44,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
-        set({ isAuthenticated: true });
+        set({ isAuthenticated: true, isInitialized: true });
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -63,7 +65,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           "Network error. Please check your connection and try again.";
       }
 
-      set({ isLoading: false, error: errorMessage });
+      set({ isLoading: false, error: errorMessage, isInitialized: true });
       throw new Error(errorMessage);
     }
   },
@@ -82,7 +84,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           headers: { Authorization: `Bearer ${data.accessToken}` },
         });
         useUserStore.getState().setUser(userRes.data);
-        set({ isLoading: false, isAuthenticated: true });
+        set({ isLoading: false, isAuthenticated: true, isInitialized: true });
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -110,7 +112,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           "Network error. Please check your connection and try again.";
       }
 
-      set({ isLoading: false, error: errorMessage });
+      set({ isLoading: false, error: errorMessage, isInitialized: true });
       throw new Error(errorMessage);
     }
   },
@@ -129,7 +131,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       useUserStore.getState().setUser(userRes.data);
-      set({ isLoading: false, isAuthenticated: true });
+      set({ isLoading: false, isAuthenticated: true, isInitialized: true });
       return {
         message: isNewUser ? "User created and logged in via Google" : message,
       };
@@ -154,7 +156,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           "Network error. Please check your connection and try again.";
       }
 
-      set({ isLoading: false, error: errorMessage });
+      set({ isLoading: false, error: errorMessage, isInitialized: true });
       throw new Error(errorMessage);
     }
   },
@@ -164,13 +166,17 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        set({ isLoading: false, isAuthenticated: false });
+        set({ isLoading: false, isAuthenticated: false, isInitialized: true });
         return;
       }
       await useUserStore.getState().fetchUser();
-      set({ isLoading: false, isAuthenticated: true });
+      set({ isLoading: false, isAuthenticated: true, isInitialized: true });
     } catch (error) {
-      set({ isLoading: false, error: "Token invalid or expired" });
+      set({
+        isLoading: false,
+        error: "Token invalid or expired",
+        isInitialized: true,
+      });
       get().logout();
     }
   },
@@ -179,7 +185,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     localStorage.clear();
     useUserStore.getState().setUser(null);
     useUserStore.getState().clearError();
-    set({ isAuthenticated: false });
+    set({ isAuthenticated: false, isInitialized: true });
   },
 
   clearError: () => {
