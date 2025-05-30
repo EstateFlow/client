@@ -36,6 +36,7 @@ export default function OfferCardByOwner({
     case "admin":
 
     case "private_seller":
+    case "agency":
       return (
         <div
           className={`overflow-hidden rounded-xl transition-shadow hover:shadow-md border border-border ${property?.status === "inactive" ? "bg-muted opacity-60 grayscale" : ""}`}
