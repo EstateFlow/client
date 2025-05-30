@@ -46,7 +46,31 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     }
   }, [selectedProperty]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="max-w-5xl w-full mx-auto">
+        <div className="animate-pulse space-y-6">
+          <div className="grid gap-2 w-full justify-items-center md:grid-cols-2 mb-4">
+            <div className="bg-card rounded-lg border p-4 space-y-4 h-100 w-full"></div>
+            <div className="bg-card rounded-lg border p-4 space-y-4 h-100 w-full">
+              <div className="bg-muted rounded w-2/4 h-8 mb-2"></div>
+              <div className="space-y-2 mb-2">
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-3 bg-muted rounded w-1/2"></div>
+              </div>
+              <div className="h-40 bg-muted rounded"></div>
+              <div className="flex gap-2">
+                <div className="h-10 bg-muted rounded w-1/3"></div>
+                <div className="h-10 bg-muted rounded w-1/4"></div>
+              </div>
+            </div>
+          </div>
+          <div className="h-60 bg-card rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <p>Error: {error}</p>;
   if (!selectedProperty) return <p>No property found</p>;
 

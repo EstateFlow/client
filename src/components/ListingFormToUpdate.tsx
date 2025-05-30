@@ -57,7 +57,7 @@ export default function ListingFormToUpdate({
   }, [propertyToEdit]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -72,22 +72,24 @@ export default function ListingFormToUpdate({
     });
   };
   const handleDelete = async () => {
-  if (!propertyToEdit) return;
-  const confirm = window.confirm("Are you sure you want to delete this listing?");
-  if (!confirm) return;
+    if (!propertyToEdit) return;
+    const confirm = window.confirm(
+      "Are you sure you want to delete this listing?",
+    );
+    if (!confirm) return;
 
-  setLoading(true);
-  try {
-    await remove(propertyToEdit.id);
-    toast.success("Property successfully deleted!");
-    onFinish?.();
-  } catch (error) {
-    console.error("Delete error:", error);
-    toast.error("An error occurred while deleting the property.");
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    try {
+      await remove(propertyToEdit.id);
+      toast.success("Property successfully deleted!");
+      onFinish?.();
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("An error occurred while deleting the property.");
+    } finally {
+      setLoading(false);
+    }
+  };
   const validateForm = () => {
     const requiredFields = [
       { name: "title", label: "Title" },
@@ -99,26 +101,27 @@ export default function ListingFormToUpdate({
     ];
 
     for (const field of requiredFields) {
-        const value = field.name === "ownerId" ? ownerId : (form as any)[field.name];
-        if (!value || (typeof value === "string" && value.trim() === "")) {
+      const value =
+        field.name === "ownerId" ? ownerId : (form as any)[field.name];
+      if (!value || (typeof value === "string" && value.trim() === "")) {
         toast.error(`The "${field.label}" field is required`);
         return false;
-        }
+      }
     }
 
     if (form.rooms && (isNaN(Number(form.rooms)) || Number(form.rooms) < 0)) {
-    toast.error("Number of rooms must be a positive number");
-    return false;
+      toast.error("Number of rooms must be a positive number");
+      return false;
     }
 
     if (form.price && (isNaN(Number(form.price)) || Number(form.price) < 0)) {
-    toast.error("Price must be a positive number");
-    return false;
+      toast.error("Price must be a positive number");
+      return false;
     }
 
     if (form.size && (isNaN(Number(form.size)) || Number(form.size) < 0)) {
-    toast.error("Size must be a positive number");
-    return false;
+      toast.error("Size must be a positive number");
+      return false;
     }
 
     return true;
@@ -166,14 +169,21 @@ export default function ListingFormToUpdate({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-6">
+    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-6 mt-4">
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
-          <CardDescription>Provide core details about the listing</CardDescription>
+          <CardDescription>
+            Provide core details about the listing
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <Input name="title" placeholder="Title" value={form.title} onChange={handleChange} />
+          <Input
+            name="title"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+          />
           <Textarea
             name="description"
             placeholder="Description"
@@ -181,16 +191,61 @@ export default function ListingFormToUpdate({
             onChange={handleChange}
           />
           <div className="grid grid-cols-2 gap-4">
-            <Input name="propertyType" placeholder="Property Type" value={form.propertyType} onChange={handleChange} />
-            <Input name="transactionType" placeholder="Transaction Type" value={form.transactionType} onChange={handleChange} />
-            <Input name="price" placeholder="Price" value={form.price} onChange={handleChange} />
-            <Input name="currency" placeholder="Currency" value={form.currency} onChange={handleChange} />
-            <Input name="size" placeholder="Size" value={form.size} onChange={handleChange} />
-            <Input name="rooms" placeholder="Rooms" value={form.rooms} onChange={handleChange} />
+            <Input
+              name="propertyType"
+              placeholder="Property Type"
+              value={form.propertyType}
+              onChange={handleChange}
+            />
+            <Input
+              name="transactionType"
+              placeholder="Transaction Type"
+              value={form.transactionType}
+              onChange={handleChange}
+            />
+            <Input
+              name="price"
+              placeholder="Price"
+              value={form.price}
+              onChange={handleChange}
+            />
+            <Input
+              name="currency"
+              placeholder="Currency"
+              value={form.currency}
+              onChange={handleChange}
+            />
+            <Input
+              name="size"
+              placeholder="Size"
+              value={form.size}
+              onChange={handleChange}
+            />
+            <Input
+              name="rooms"
+              placeholder="Rooms"
+              value={form.rooms}
+              onChange={handleChange}
+            />
           </div>
-          <Input name="address" placeholder="Address" value={form.address} onChange={handleChange} />
-          <Input name="status" placeholder="Status" value={form.status} onChange={handleChange} />
-          <Input name="documentUrl" placeholder="Document URL" value={form.documentUrl} onChange={handleChange} />
+          <Input
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+          />
+          <Input
+            name="status"
+            placeholder="Status"
+            value={form.status}
+            onChange={handleChange}
+          />
+          <Input
+            name="documentUrl"
+            placeholder="Document URL"
+            value={form.documentUrl}
+            onChange={handleChange}
+          />
           <Textarea
             name="verificationComments"
             placeholder="Verification Comments"
@@ -207,7 +262,10 @@ export default function ListingFormToUpdate({
         <CardContent>
           <div className="flex flex-wrap gap-4">
             {FACILITY_OPTIONS.map((facility) => (
-              <label key={facility} className="flex items-center space-x-2 text-sm">
+              <label
+                key={facility}
+                className="flex items-center space-x-2 text-sm"
+              >
                 <input
                   type="checkbox"
                   checked={form.facilities.includes(facility)}
@@ -276,21 +334,21 @@ export default function ListingFormToUpdate({
         </CardContent>
       </Card>
 
-        <div className="flex justify-between items-center px-6 pb-6">
+      <div className="flex justify-between items-center px-6 pb-6">
         {propertyToEdit && (
-            <Button
+          <Button
             variant="destructive"
             type="button"
             onClick={handleDelete}
             disabled={loading}
-            >
+          >
             Delete Listing
-            </Button>
+          </Button>
         )}
         <Button type="submit" disabled={loading}>
-            {propertyToEdit ? "Update Listing" : "Create Listing"}
+          {propertyToEdit ? "Update Listing" : "Create Listing"}
         </Button>
-</div>
+      </div>
     </form>
   );
 }

@@ -6,10 +6,11 @@ import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import ThemeSwitcher from "./ThemeSwitcher";
 import logo from "@/assets/images/estateflow_logo.jpg";
+import { Skeleton } from "./ui/skeleton";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, isInitialized, isLoading } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,6 +26,7 @@ function Header() {
     }
     return location.pathname.startsWith(path);
   };
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm border-b">
@@ -84,51 +86,58 @@ function Header() {
               </Button>
               <ThemeSwitcher />
 
-              {isAuthenticated ? (
-                <div className="hidden md:flex items-center gap-2">
-                  <Link to="/user-dashboard">
+              <div className="hidden md:flex items-center gap-2">
+                {isLoading || !isInitialized ? (
+                  <>
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                  </>
+                ) : isAuthenticated ? (
+                  <>
+                    <Link to="/user-dashboard">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full cursor-pointer"
+                      >
+                        <User className="w-5 h-5" />
+                      </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       size="icon"
                       className="rounded-full cursor-pointer"
+                      onClick={handleLogout}
                     >
-                      <User className="w-5 h-5" />
+                      <LogOut className="w-5 h-5" />
                     </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full cursor-pointer"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="w-5 h-5" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="hidden md:flex items-center gap-2">
-                  <Link
-                    to="/login-form"
-                    className="[&.active]:underline text-gray-700"
-                  >
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="min-w-[70px] rounded-md"
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login-form"
+                      className="[&.active]:underline text-gray-700"
                     >
-                      Log In
-                    </Button>
-                  </Link>
-                  <Link to="/register-form" className="[&.active]:underline">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="min-w-[70px] rounded-md"
-                    >
-                      Sign Up
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="min-w-[70px] rounded-md"
+                      >
+                        Log In
+                      </Button>
+                    </Link>
+                    <Link to="/register-form" className="[&.active]:underline">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="min-w-[70px] rounded-md"
+                      >
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
 
               <Button
                 variant="ghost"

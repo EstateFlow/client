@@ -12,13 +12,12 @@ import {
 import type { CreateProperty } from "@/lib/types";
 import { FACILITY_OPTIONS } from "@/lib/types";
 import { createProperty } from "@/api/properties";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
-   const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -37,7 +36,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -54,35 +53,36 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
   const validateForm = () => {
     const requiredFields = [
-    { name: "title", label: "Title" },
-    { name: "propertyType", label: "Property Type" },
-    { name: "transactionType", label: "Transaction Type" },
-    { name: "price", label: "Price" },
-    { name: "address", label: "Address" },
-    { name: "ownerId", label: "Owner ID" },
+      { name: "title", label: "Title" },
+      { name: "propertyType", label: "Property Type" },
+      { name: "transactionType", label: "Transaction Type" },
+      { name: "price", label: "Price" },
+      { name: "address", label: "Address" },
+      { name: "ownerId", label: "Owner ID" },
     ];
 
     for (const field of requiredFields) {
-    const value = field.name === "ownerId" ? ownerId : (form as any)[field.name];
-    if (!value || (typeof value === "string" && value.trim() === "")) {
+      const value =
+        field.name === "ownerId" ? ownerId : (form as any)[field.name];
+      if (!value || (typeof value === "string" && value.trim() === "")) {
         toast.error(`The "${field.label}" field is required`);
         return false;
-    }
+      }
     }
 
     if (form.rooms && (isNaN(Number(form.rooms)) || Number(form.rooms) < 0)) {
-    toast.error("Number of rooms must be a positive number");
-    return false;
+      toast.error("Number of rooms must be a positive number");
+      return false;
     }
 
     if (form.price && (isNaN(Number(form.price)) || Number(form.price) < 0)) {
-    toast.error("Price must be a positive number");
-    return false;
+      toast.error("Price must be a positive number");
+      return false;
     }
 
     if (form.size && (isNaN(Number(form.size)) || Number(form.size) < 0)) {
-    toast.error("Size must be a positive number");
-    return false;
+      toast.error("Size must be a positive number");
+      return false;
     }
 
     return true;
@@ -113,12 +113,12 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
     };
 
     try {
-    await createProperty(payload);
-    toast.success("Property successfully created!");
-    navigate(-1);
+      await createProperty(payload);
+      toast.success("Property successfully created!");
+      navigate({ to: "/user-dashboard" });
     } catch (error) {
-    console.error("Error creating property:", error);
-    toast.error("An error occurred while creating the listing.");
+      console.error("Error creating property:", error);
+      toast.error("An error occurred while creating the listing.");
     }
   };
 
@@ -127,10 +127,17 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
-          <CardDescription>Provide core details about the listing</CardDescription>
+          <CardDescription>
+            Provide core details about the listing
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <Input name="title" placeholder="Title" value={form.title} onChange={handleChange} />
+          <Input
+            name="title"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+          />
           <Textarea
             name="description"
             placeholder="Description"
@@ -138,16 +145,61 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             onChange={handleChange}
           />
           <div className="grid grid-cols-2 gap-4">
-            <Input name="propertyType" placeholder="Property Type" value={form.propertyType} onChange={handleChange} />
-            <Input name="transactionType" placeholder="Transaction Type" value={form.transactionType} onChange={handleChange} />
-            <Input name="price" placeholder="Price" value={form.price} onChange={handleChange} />
-            <Input name="currency" placeholder="Currency" value={form.currency} onChange={handleChange} />
-            <Input name="size" placeholder="Size" value={form.size} onChange={handleChange} />
-            <Input name="rooms" placeholder="Rooms" value={form.rooms} onChange={handleChange} />
+            <Input
+              name="propertyType"
+              placeholder="Property Type"
+              value={form.propertyType}
+              onChange={handleChange}
+            />
+            <Input
+              name="transactionType"
+              placeholder="Transaction Type"
+              value={form.transactionType}
+              onChange={handleChange}
+            />
+            <Input
+              name="price"
+              placeholder="Price"
+              value={form.price}
+              onChange={handleChange}
+            />
+            <Input
+              name="currency"
+              placeholder="Currency"
+              value={form.currency}
+              onChange={handleChange}
+            />
+            <Input
+              name="size"
+              placeholder="Size"
+              value={form.size}
+              onChange={handleChange}
+            />
+            <Input
+              name="rooms"
+              placeholder="Rooms"
+              value={form.rooms}
+              onChange={handleChange}
+            />
           </div>
-          <Input name="address" placeholder="Address" value={form.address} onChange={handleChange} />
-          <Input name="status" placeholder="Status" value={form.status} onChange={handleChange} />
-          <Input name="documentUrl" placeholder="Document URL" value={form.documentUrl} onChange={handleChange} />
+          <Input
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+          />
+          <Input
+            name="status"
+            placeholder="Status"
+            value={form.status}
+            onChange={handleChange}
+          />
+          <Input
+            name="documentUrl"
+            placeholder="Document URL"
+            value={form.documentUrl}
+            onChange={handleChange}
+          />
           <Textarea
             name="verificationComments"
             placeholder="Verification Comments"
@@ -164,7 +216,10 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             {FACILITY_OPTIONS.map((facility) => (
-              <label key={facility} className="flex items-center space-x-2 text-sm">
+              <label
+                key={facility}
+                className="flex items-center space-x-2 text-sm"
+              >
                 <input
                   type="checkbox"
                   checked={form.facilities.includes(facility)}
