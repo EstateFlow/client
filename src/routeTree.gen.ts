@@ -21,7 +21,9 @@ import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
 import { Route as ListingFormToAddPageImport } from './routes/listing-form-to-add-page'
+import { Route as CompleteSubscriptionImport } from './routes/complete-subscription'
 import { Route as CompletePaymentImport } from './routes/complete-payment'
+import { Route as CancelSubscriptionImport } from './routes/cancel-subscription'
 import { Route as CancelPaymentImport } from './routes/cancel-payment'
 import { Route as IndexImport } from './routes/index'
 import { Route as VerifyEmailEmailTokenImport } from './routes/verify-email/$email-token'
@@ -90,9 +92,21 @@ const ListingFormToAddPageRoute = ListingFormToAddPageImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CompleteSubscriptionRoute = CompleteSubscriptionImport.update({
+  id: '/complete-subscription',
+  path: '/complete-subscription',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CompletePaymentRoute = CompletePaymentImport.update({
   id: '/complete-payment',
   path: '/complete-payment',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CancelSubscriptionRoute = CancelSubscriptionImport.update({
+  id: '/cancel-subscription',
+  path: '/cancel-subscription',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -144,11 +158,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CancelPaymentImport
       parentRoute: typeof rootRoute
     }
+    '/cancel-subscription': {
+      id: '/cancel-subscription'
+      path: '/cancel-subscription'
+      fullPath: '/cancel-subscription'
+      preLoaderRoute: typeof CancelSubscriptionImport
+      parentRoute: typeof rootRoute
+    }
     '/complete-payment': {
       id: '/complete-payment'
       path: '/complete-payment'
       fullPath: '/complete-payment'
       preLoaderRoute: typeof CompletePaymentImport
+      parentRoute: typeof rootRoute
+    }
+    '/complete-subscription': {
+      id: '/complete-subscription'
+      path: '/complete-subscription'
+      fullPath: '/complete-subscription'
+      preLoaderRoute: typeof CompleteSubscriptionImport
       parentRoute: typeof rootRoute
     }
     '/listing-form-to-add-page': {
@@ -250,7 +278,9 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cancel-payment': typeof CancelPaymentRoute
+  '/cancel-subscription': typeof CancelSubscriptionRoute
   '/complete-payment': typeof CompletePaymentRoute
+  '/complete-subscription': typeof CompleteSubscriptionRoute
   '/listing-form-to-add-page': typeof ListingFormToAddPageRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
@@ -269,7 +299,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cancel-payment': typeof CancelPaymentRoute
+  '/cancel-subscription': typeof CancelSubscriptionRoute
   '/complete-payment': typeof CompletePaymentRoute
+  '/complete-subscription': typeof CompleteSubscriptionRoute
   '/listing-form-to-add-page': typeof ListingFormToAddPageRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
@@ -289,7 +321,9 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/cancel-payment': typeof CancelPaymentRoute
+  '/cancel-subscription': typeof CancelSubscriptionRoute
   '/complete-payment': typeof CompletePaymentRoute
+  '/complete-subscription': typeof CompleteSubscriptionRoute
   '/listing-form-to-add-page': typeof ListingFormToAddPageRoute
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
@@ -310,7 +344,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cancel-payment'
+    | '/cancel-subscription'
     | '/complete-payment'
+    | '/complete-subscription'
     | '/listing-form-to-add-page'
     | '/listing-page'
     | '/listings'
@@ -328,7 +364,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cancel-payment'
+    | '/cancel-subscription'
     | '/complete-payment'
+    | '/complete-subscription'
     | '/listing-form-to-add-page'
     | '/listing-page'
     | '/listings'
@@ -346,7 +384,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/cancel-payment'
+    | '/cancel-subscription'
     | '/complete-payment'
+    | '/complete-subscription'
     | '/listing-form-to-add-page'
     | '/listing-page'
     | '/listings'
@@ -366,7 +406,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CancelPaymentRoute: typeof CancelPaymentRoute
+  CancelSubscriptionRoute: typeof CancelSubscriptionRoute
   CompletePaymentRoute: typeof CompletePaymentRoute
+  CompleteSubscriptionRoute: typeof CompleteSubscriptionRoute
   ListingFormToAddPageRoute: typeof ListingFormToAddPageRoute
   ListingPageRoute: typeof ListingPageRoute
   ListingsRoute: typeof ListingsRoute
@@ -385,7 +427,9 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CancelPaymentRoute: CancelPaymentRoute,
+  CancelSubscriptionRoute: CancelSubscriptionRoute,
   CompletePaymentRoute: CompletePaymentRoute,
+  CompleteSubscriptionRoute: CompleteSubscriptionRoute,
   ListingFormToAddPageRoute: ListingFormToAddPageRoute,
   ListingPageRoute: ListingPageRoute,
   ListingsRoute: ListingsRoute,
@@ -413,7 +457,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/cancel-payment",
+        "/cancel-subscription",
         "/complete-payment",
+        "/complete-subscription",
         "/listing-form-to-add-page",
         "/listing-page",
         "/listings",
@@ -435,8 +481,14 @@ export const routeTree = rootRoute
     "/cancel-payment": {
       "filePath": "cancel-payment.tsx"
     },
+    "/cancel-subscription": {
+      "filePath": "cancel-subscription.tsx"
+    },
     "/complete-payment": {
       "filePath": "complete-payment.tsx"
+    },
+    "/complete-subscription": {
+      "filePath": "complete-subscription.tsx"
     },
     "/listing-form-to-add-page": {
       "filePath": "listing-form-to-add-page.tsx"

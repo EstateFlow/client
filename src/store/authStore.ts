@@ -172,7 +172,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       await useUserStore.getState().fetchUser();
       set({ isLoading: false, isAuthenticated: true, isInitialized: true });
     } catch (error) {
-      set({ isLoading: false, error: "Token invalid or expired" });
+      set({
+        isLoading: false,
+        error: "Token invalid or expired",
+        isInitialized: true,
+      });
       get().logout();
     }
   },

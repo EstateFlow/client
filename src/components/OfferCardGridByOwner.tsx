@@ -25,6 +25,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
     switch (user.role) {
       case "admin":
       case "private_seller":
+      case "agency":
         fetchAll("active");
         break;
       case "renter_buyer":
@@ -71,6 +72,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
     switch (user.role) {
       case "admin":
       case "private_seller":
+      case "agency":
         if (propertiesLoading) {
           return <div className="p-4 text-sm text-muted">Loading...</div>;
         }
@@ -96,7 +98,8 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
               />
             ))}
 
-            {user.role === "private_seller" && canAddMore ? (
+            {(user.role === "private_seller" && canAddMore) ||
+            user.role === "agency" ? (
               <Link
                 to="/listing-form-to-add-page"
                 search={{ userId: user.userId }}
@@ -148,7 +151,6 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
           </div>
         );
 
-      case "agency":
       case "moderator":
       default:
         return null;
