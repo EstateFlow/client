@@ -53,16 +53,29 @@ function Header() {
               </Link>
 
               <nav className="hidden md:flex gap-1 text-sm font-medium select-none">
-                <Link to="/">
-                  <Button
-                    variant="ghost"
-                    className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
-                      isActiveLink("/") ? "bg-accent/90" : ""
-                    }`}
-                  >
-                    Home
-                  </Button>
-                </Link>
+                {user && user.role === "admin" ? (
+                  <Link to="/">
+                    <Button
+                      variant="ghost"
+                      className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      Property Editing
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/">
+                    <Button
+                      variant="ghost"
+                      className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      Home
+                    </Button>
+                  </Link>
+                )}
                 {user && user.role === "moderator" ? (
                   <Link to="/property-management">
                     <Button
