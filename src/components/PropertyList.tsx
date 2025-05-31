@@ -7,11 +7,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
 
 export function PropertyList() {
-  const { properties, loading, error, fetchAll } = usePropertiesStore();
+  const { properties, loading, error, fetchChouse } = usePropertiesStore();
   //const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    fetchAll("active");
+    fetchChouse("active");
   }, []);
 
   // const handleToggleWishlist = async (propertyId: string) => {

@@ -14,9 +14,11 @@ interface PropertiesState {
   error: string | null;
   selectedProperty: Property | null;
   filter: "active" | "sold_rented" | "inactive" | null;
+  isVerified: boolean | null; // <--- добавлено
 
   update: (propertyId: string, updatedData: CreateProperty) => Promise<void>;
-  fetchAll: (filter?: "active" | "sold_rented" | "inactive") => Promise<void>;
+  fetchChouse: (filter?: "active" | "sold_rented" | "inactive", isVerified?: boolean) => Promise<void>;
+  fetchMultiple: (filters: ("active" | "sold_rented" | "inactive")[], isVerified?: boolean) => Promise<void>;
   create: (propertyData: CreateProperty) => Promise<void>;
   remove: (propertyId: string) => Promise<void>;
   fetchById: (propertyId: string) => Promise<void>;
@@ -28,20 +30,21 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
   error: null,
   filter: null,
   selectedProperty: null,
+  isVerified: null,
   update: async (propertyId, updatedData) => {
   set({ loading: true, error: null });
   try {
     await updateProperty(propertyId, updatedData);
-    await get().fetchAll(get().filter || undefined);
+    await get().fetchChouse(get().filter || undefined);
   } catch (error: any) {
     set({ error: error?.response?.data?.message || "Failed to update property" });
   } finally {
     set({ loading: false });
   }
 },
-
+  
     
-  fetchAll: async (filter) => {
+  fetchChouse: async (filter) => {
     set({ loading: true, error: null, filter });
     try {
       const data = await fetchProperties(filter);
@@ -54,12 +57,25 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
       set({ loading: false });
     }
   },
-
+fetchMultiple: async (filters, isVerified) => {
+  set({ loading: true, error: null });
+  try {
+    const results = await Promise.all(filters.map((f) => fetchProperties(f, isVerified)));
+    const merged = results.flat();
+    set({ properties: merged });
+  } catch (error: any) {
+    set({
+      error: error?.response?.data?.message || "Failed to load properties",
+    });
+  } finally {
+    set({ loading: false });
+  }
+},
   create: async (propertyData) => {
     set({ loading: true, error: null });
     try {
       await createProperty(propertyData);
-      await get().fetchAll(get().filter || undefined);
+      await get().fetchChouse(get().filter || undefined);
     } catch (error: any) {
       set({
         error: error?.response?.data?.message || "Failed to create property",
@@ -68,7 +84,7 @@ export const usePropertiesStore = create<PropertiesState>((set, get) => ({
       set({ loading: false });
     }
   },
-
+  
   remove: async (propertyId) => {
     set({ loading: true, error: null });
     try {

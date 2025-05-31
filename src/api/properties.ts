@@ -2,8 +2,12 @@ import { $api } from "./BaseUrl";
 import type { Property, CreateProperty } from "@/lib/types";
 export const fetchProperties = async (
   filter?: "active" | "sold_rented" | "inactive",
+  isVerified?: boolean,
 ): Promise<Property[]> => {
-  const params = filter ? { filter } : {};
+  const params: any = {};
+  if (filter) params.filter = filter;
+  if (isVerified !== undefined) params.isVerified = isVerified;
+
   const response = await $api.get<Property[]>("/api/properties", { params });
   return response.data;
 };

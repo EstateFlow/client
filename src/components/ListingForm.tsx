@@ -164,6 +164,30 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     console.log(data);
     navigate({ to: "/cancel-payment" });
   };
+  const handleShare = async () => {
+  const shareUrl = `${window.location.origin}/listing-page?propertyId=${propertyId}`;
+  const shareData = {
+    title: selectedProperty.title,
+    text: selectedProperty.description,
+    url: shareUrl,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {
+      console.error("Sharing failed:", err);
+      toast.error("Sharing failed");
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy link");
+    }
+  }
+};
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
@@ -234,7 +258,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                   <Button variant="secondary">View seller's profile</Button>
                 </Link>
 
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleShare}>
                   <Share2 className="w-4 h-4 mr-1" />
                   Share
                 </Button>
