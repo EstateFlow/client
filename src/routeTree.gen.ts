@@ -18,6 +18,7 @@ import { Route as RestorePasswordStep1Import } from './routes/restore-password-s
 import { Route as RegisterFormImport } from './routes/register-form'
 import { Route as ProtectedImport } from './routes/protected'
 import { Route as PropertyManagementImport } from './routes/property-management'
+import { Route as PromptEditingImport } from './routes/prompt-editing'
 import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
@@ -72,6 +73,12 @@ const ProtectedRoute = ProtectedImport.update({
 const PropertyManagementRoute = PropertyManagementImport.update({
   id: '/property-management',
   path: '/property-management',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PromptEditingRoute = PromptEditingImport.update({
+  id: '/prompt-editing',
+  path: '/prompt-editing',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -214,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginFormImport
       parentRoute: typeof rootRoute
     }
+    '/prompt-editing': {
+      id: '/prompt-editing'
+      path: '/prompt-editing'
+      fullPath: '/prompt-editing'
+      preLoaderRoute: typeof PromptEditingImport
+      parentRoute: typeof rootRoute
+    }
     '/property-management': {
       id: '/property-management'
       path: '/property-management'
@@ -299,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/prompt-editing': typeof PromptEditingRoute
   '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
@@ -321,6 +336,7 @@ export interface FileRoutesByTo {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/prompt-editing': typeof PromptEditingRoute
   '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
@@ -344,6 +360,7 @@ export interface FileRoutesById {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/prompt-editing': typeof PromptEditingRoute
   '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
@@ -368,6 +385,7 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/prompt-editing'
     | '/property-management'
     | '/protected'
     | '/register-form'
@@ -389,6 +407,7 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/prompt-editing'
     | '/property-management'
     | '/protected'
     | '/register-form'
@@ -410,6 +429,7 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/prompt-editing'
     | '/property-management'
     | '/protected'
     | '/register-form'
@@ -433,6 +453,7 @@ export interface RootRouteChildren {
   ListingPageRoute: typeof ListingPageRoute
   ListingsRoute: typeof ListingsRoute
   LoginFormRoute: typeof LoginFormRoute
+  PromptEditingRoute: typeof PromptEditingRoute
   PropertyManagementRoute: typeof PropertyManagementRoute
   ProtectedRoute: typeof ProtectedRoute
   RegisterFormRoute: typeof RegisterFormRoute
@@ -455,6 +476,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListingPageRoute: ListingPageRoute,
   ListingsRoute: ListingsRoute,
   LoginFormRoute: LoginFormRoute,
+  PromptEditingRoute: PromptEditingRoute,
   PropertyManagementRoute: PropertyManagementRoute,
   ProtectedRoute: ProtectedRoute,
   RegisterFormRoute: RegisterFormRoute,
@@ -486,6 +508,7 @@ export const routeTree = rootRoute
         "/listing-page",
         "/listings",
         "/login-form",
+        "/prompt-editing",
         "/property-management",
         "/protected",
         "/register-form",
@@ -524,6 +547,9 @@ export const routeTree = rootRoute
     },
     "/login-form": {
       "filePath": "login-form.tsx"
+    },
+    "/prompt-editing": {
+      "filePath": "prompt-editing.tsx"
     },
     "/property-management": {
       "filePath": "property-management.tsx"

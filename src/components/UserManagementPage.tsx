@@ -230,7 +230,7 @@ const UserManagementPage = () => {
           </div>
           <div className="flex items-center gap-3">
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger>
+              <DialogTrigger asChild>
                 <Button className="gap-2 cursor-pointer">
                   <Plus size={16} />
                   Add User
@@ -494,7 +494,7 @@ const UserManagementPage = () => {
                             if (!open) setEditingUser(null);
                           }}
                         >
-                          <DialogTrigger>
+                          <DialogTrigger asChild>
                             <Button
                               variant="outline"
                               size="sm"
@@ -645,7 +645,7 @@ const UserManagementPage = () => {
                           </DialogContent>
                         </Dialog>
                         <Dialog>
-                          <DialogTrigger>
+                          <DialogTrigger asChild>
                             <Button
                               variant="destructive"
                               size="sm"
