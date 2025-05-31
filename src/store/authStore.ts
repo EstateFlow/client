@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { AxiosError } from "axios";
 import { $api } from "@/api/BaseUrl";
 import { useUserStore, type UserRole } from "./userStore";
+import uuid from "react-uuid";
 
 interface AuthStore {
   isLoading: boolean;
@@ -36,7 +37,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       set({ isLoading: false });
       if (response.status === 201) {
         useUserStore.getState().setUser({
-          userId: "temp-id",
+          userId: uuid(),
           email: data.email,
           username: data.username,
           role: data.role,

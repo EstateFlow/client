@@ -7,10 +7,12 @@ import { toast } from "sonner";
 import ThemeSwitcher from "./ThemeSwitcher";
 import logo from "@/assets/images/estateflow_logo.jpg";
 import { Skeleton } from "./ui/skeleton";
+import { useUserStore } from "@/store/userStore";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout, isInitialized, isLoading } = useAuthStore();
+  const { user } = useUserStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -61,16 +63,42 @@ function Header() {
                     Home
                   </Button>
                 </Link>
-                <Link to="/listings">
-                  <Button
-                    variant="ghost"
-                    className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
-                      isActiveLink("/listings") ? "bg-accent/90" : ""
-                    }`}
-                  >
-                    Listings
-                  </Button>
-                </Link>
+                {user && user.role === "moderator" ? (
+                  <Link to="/property-management">
+                    <Button
+                      variant="ghost"
+                      className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/property-management")
+                          ? "bg-accent/90"
+                          : ""
+                      }`}
+                    >
+                      Property Management
+                    </Button>
+                  </Link>
+                ) : user?.role === "admin" ? (
+                  <Link to="/user-management">
+                    <Button
+                      variant="ghost"
+                      className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/user-management") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      User Management
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/listings">
+                    <Button
+                      variant="ghost"
+                      className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/listings") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      Listings
+                    </Button>
+                  </Link>
+                )}
               </nav>
             </div>
 
@@ -157,19 +185,55 @@ function Header() {
                 <Link to="/" onClick={() => setIsMenuOpen(false)}>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start cursor-pointer"
+                    className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                      isActiveLink("/") ? "bg-accent/90" : ""
+                    }`}
                   >
                     Home
                   </Button>
                 </Link>
-                <Link to="/listings" onClick={() => setIsMenuOpen(false)}>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start cursor-pointer"
+                {user && user.role === "moderator" ? (
+                  <Link
+                    to="/property-management"
+                    onClick={() => setIsMenuOpen(false)}
                   >
-                    Listings
-                  </Button>
-                </Link>
+                    <Button
+                      variant="ghost"
+                      className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/property-management")
+                          ? "bg-accent/90"
+                          : ""
+                      }`}
+                    >
+                      Property Management
+                    </Button>
+                  </Link>
+                ) : user?.role === "admin" ? (
+                  <Link
+                    to="/user-management"
+                    className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                      isActiveLink("/user-management") ? "bg-accent/90" : ""
+                    }`}
+                  >
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start cursor-pointer"
+                    >
+                      User Management
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/listings" onClick={() => setIsMenuOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/listings") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      Listings
+                    </Button>
+                  </Link>
+                )}
               </nav>
 
               <div className="pt-3 border-t mt-2">
