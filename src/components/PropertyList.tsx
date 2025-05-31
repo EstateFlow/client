@@ -19,7 +19,6 @@ export function PropertyList() {
     fetchAll("active");
   }, []);
 
-  // Фильтрация + поиск + сортировка
   const filteredProperties = useMemo(() => {
     let result = properties;
 

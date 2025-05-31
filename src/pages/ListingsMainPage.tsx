@@ -16,7 +16,7 @@ export default function ListingsMainPage() {
   return (
     <div className="p-4">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
-        {/* Левая часть: фильтры и поиск */}
+
         <div className="flex items-center gap-2">
           <PropertyFilters />
           <Input
@@ -27,7 +27,6 @@ export default function ListingsMainPage() {
           />
         </div>
 
-        {/* Правая часть: сортировка */}
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sort by" />

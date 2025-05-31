@@ -21,7 +21,6 @@ export interface FilterState {
 }
 
 export const useFilterStore = create<FilterState>((set, get) => ({
-  /* ---------- состояние по умолчанию ---------- */
   price: [0, 0],
   area: [0, 0],
   types: [...ALL_TYPES],
@@ -29,7 +28,6 @@ export const useFilterStore = create<FilterState>((set, get) => ({
   searchQuery: "",
   sortBy: "newest",
 
-  /* ---------- методы ---------- */
   setPrice: (range) => set({ price: range }),
   setArea: (range) => set({ area: range }),
 
@@ -37,7 +35,6 @@ export const useFilterStore = create<FilterState>((set, get) => ({
     set((state) => {
       const isSelected = state.types.includes(type);
 
-      // не даём снять последнюю галочку
       if (isSelected && state.types.length === 1) return state;
 
       return {
