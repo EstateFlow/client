@@ -154,6 +154,6 @@ export const FACILITY_OPTIONS = [
 ];
  export const transactionTypeOptions = ["sale", "rent"];
  export const propertyTypeOptions = ["house", "apartment"];
- export const currencyOptions = ["USD", "EUR", "GBP"];
+ export const currencyOptions = ["USD", "EUR", "GBP", "UAH"];
  export const statusOptions = ["active", "inactive"];
  export const ourListingsLimit = 5;
