@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { User, LogOut, Globe, Menu, X } from "lucide-react";
+import { User, LogOut, Menu, X } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -64,6 +64,17 @@ function Header() {
                       Property Editing
                     </Button>
                   </Link>
+                ) : user?.role === "moderator" ? (
+                  <Link to="/">
+                    <Button
+                      variant="ghost"
+                      className={`font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      Statistics
+                    </Button>
+                  </Link>
                 ) : (
                   <Link to="/">
                     <Button
@@ -117,14 +128,14 @@ function Header() {
 
             {/* Правый блок */}
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-1 rounded-full px-3 hover:bg-accent/50 transition-colors"
-              >
-                <Globe size={14} />
-                <span className="text-xs font-medium">EN</span>
-              </Button>
+              {/* <Button */}
+              {/*   variant="outline" */}
+              {/*   size="sm" */}
+              {/*   className="flex items-center gap-1 rounded-full px-3 hover:bg-accent/50 transition-colors" */}
+              {/* > */}
+              {/*   <Globe size={14} /> */}
+              {/*   <span className="text-xs font-medium">EN</span> */}
+              {/* </Button> */}
               <ThemeSwitcher />
 
               <div className="hidden md:flex items-center gap-2">

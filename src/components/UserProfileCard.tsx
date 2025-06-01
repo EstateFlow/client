@@ -31,6 +31,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
     bio: user.bio || "",
     email: user.email,
     password: "",
+    paypalCredentials: user.paypalCredentials || "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -47,6 +48,12 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
     }
     if (formData.password && formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
+    }
+    if (
+      formData.paypalCredentials &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.paypalCredentials)
+    ) {
+      newErrors.paypalCredentials = "Invalid PayPal email format";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -77,6 +84,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
         username: formData.username,
         avatarUrl: formData.avatarUrl || undefined,
         bio: formData.bio || undefined,
+        paypalCredentials: formData.paypalCredentials || undefined,
       });
 
       if (formData.email !== user.email) {
@@ -107,6 +115,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
       bio: user.bio || "",
       email: user.email,
       password: "",
+      paypalCredentials: user.paypalCredentials || "",
     });
     setErrors({});
     setIsEditing(false);
@@ -153,11 +162,22 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Paypal</p>
-                  <p>ПЕЙПАЛ ПОКА НЕМА</p>
+                  <p>
+                    {user?.role === "private_seller" ||
+                    (user?.role === "agency" && user?.paypalCredentials)
+                      ? user?.paypalCredentials
+                      : "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Offer limit</p>
-                  <p>{user.listingLimit ? user.listingLimit : "N/A"}</p>
+                  <p>
+                    {user.listingLimit && user.role === "private_seller"
+                      ? user.listingLimit
+                      : user.role === "agency"
+                        ? "∞"
+                        : "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Date of registration</p>
@@ -233,6 +253,30 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
                     <p className="text-red-500 text-sm">{errors.password}</p>
                   )}
                 </div>
+                {user.role === "private_seller" ||
+                  (user.role === "agency" && (
+                    <div className="grid gap-2">
+                      <Label htmlFor="paypalCredentials">
+                        PayPal Credentials
+                      </Label>
+                      <Input
+                        id="paypalCredentials"
+                        name="paypalCredentials"
+                        type="email"
+                        value={formData.paypalCredentials}
+                        onChange={handleInputChange}
+                        placeholder="PayPal credentials"
+                        className={
+                          errors.paypalCredentials ? "border-red-500" : ""
+                        }
+                      />
+                      {errors.paypalCredentials && (
+                        <p className="text-red-500 text-sm">
+                          {errors.paypalCredentials}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 <div className="grid gap-2">
                   <Label htmlFor="avatarUrl">Avatar URL</Label>
                   <Input

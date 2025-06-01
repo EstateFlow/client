@@ -76,7 +76,7 @@ export default function UserProfile({ userId }: { userId: string }) {
           </div>
           <div>
             <p className="text-muted-foreground">Paypal</p>
-            <p>ПЕЙПАЛ ПОКА НЕМА</p>
+            <p>N/A</p>
           </div>
           <div>
             <p className="text-muted-foreground">Offer limit</p>

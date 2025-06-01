@@ -2,13 +2,14 @@ export interface UserInfo {
   email: string;
   isEmailVerified: boolean;
   role: string;
-  avatarUrl: string
+  avatarUrl: string;
   userId: string;
-  bio: string
+  bio: string;
   username: string;
   listingLimit: number; // если используешь
   createdAt: string;
   updatedAt: string;
+  paypalCredentials?: string;
 }
 
 export interface PropertyImage {
@@ -150,6 +151,5 @@ export const FACILITY_OPTIONS = [
   "Garage",
   "Storage room",
   "Wheelchair accessible",
-  "Smoking allowed"
+  "Smoking allowed",
 ];
-
