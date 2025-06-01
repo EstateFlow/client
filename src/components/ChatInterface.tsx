@@ -32,6 +32,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
     setNewMessage,
     sendMessage,
     initializeConversation,
+    isInitializing,
   } = aiStore();
 
   const scrollToBottom = (behavior: "smooth" | "auto" = "smooth") => {
@@ -95,45 +96,56 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
           ref={messagesContainerRef}
           style={{ scrollBehavior: "smooth" }}
         >
-          {messages.map((message: Message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"} items-start space-x-2 animate-in slide-in-from-bottom-2 duration-300`}
-            >
-              {message.sender === "ai" && (
-                <Avatar className="w-8 h-8 mt-2 flex-shrink-0">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-gray-700 text-white text-xs font-semibold">
-                    <Bot />
-                  </AvatarFallback>
-                </Avatar>
-              )}
-              <div
-                className={`max-w-[80%] px-4 py-3 rounded-2xl ${
-                  message.sender === "user"
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-800 text-gray-100"
-                }`}
-              >
-                <Markdown
-                  options={{
-                    overrides: MarkdownComponents,
-                  }}
-                  className="text-sm whitespace-pre-wrap break-words"
-                >
-                  {message.content}
-                </Markdown>
+          {isInitializing ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="flex flex-col items-center space-y-3">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 dark:border-gray-300"></div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Loading conversation...
+                </p>
               </div>
-              {message.sender === "user" && (
-                <Avatar className="w-8 h-8 mt-2 flex-shrink-0">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 text-xs font-semibold">
-                    <User />
-                  </AvatarFallback>
-                </Avatar>
-              )}
             </div>
-          ))}
+          ) : (
+            messages.map((message: Message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"} items-start space-x-2 animate-in slide-in-from-bottom-2 duration-300`}
+              >
+                {message.sender === "ai" && (
+                  <Avatar className="w-8 h-8 mt-2 flex-shrink-0">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="bg-gray-700 text-white text-xs font-semibold">
+                      <Bot />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+                <div
+                  className={`max-w-[80%] px-4 py-3 rounded-2xl ${
+                    message.sender === "user"
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-800 text-gray-100"
+                  }`}
+                >
+                  <Markdown
+                    options={{
+                      overrides: MarkdownComponents,
+                    }}
+                    className="text-sm whitespace-pre-wrap break-words"
+                  >
+                    {message.content}
+                  </Markdown>
+                </div>
+                {message.sender === "user" && (
+                  <Avatar className="w-8 h-8 mt-2 flex-shrink-0">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 text-xs font-semibold">
+                      <User />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
+            ))
+          )}
 
           {isLoading && (
             <div className="flex justify-start items-start space-x-2 animate-in slide-in-from-bottom-2 duration-300">

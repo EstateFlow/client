@@ -1,10 +1,18 @@
 import PropertyManagementPage from "@/components/PropertyManagementPage";
-import { createFileRoute } from "@tanstack/react-router";
+import { useUserStore } from "@/store/userStore";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/property-management")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <PropertyManagementPage />;
+  const { user } = useUserStore();
+  const navigate = useNavigate();
+
+  if (user && user.role === "moderator") {
+    return <PropertyManagementPage />;
+  } else {
+    navigate({ to: "/" });
+  }
 }
