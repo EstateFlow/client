@@ -1,42 +1,75 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
+import { useFilterStore } from "@/store/filterStore";
 import { Card, CardContent } from "@/components/ui/card";
-// import { Heart, HeartOff } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-// import { addToWishlist, removeFromWishlist } from "@/api/wishlist";
 import { Link } from "@tanstack/react-router";
 
 export function PropertyList() {
   const { properties, loading, error, fetchChouse } = usePropertiesStore();
-  //const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
+  const {
+    price,
+    area,
+    rooms,
+    types,
+    searchQuery,
+    sortBy,
+  } = useFilterStore();
 
   useEffect(() => {
     fetchChouse("active");
   }, []);
 
-  // const handleToggleWishlist = async (propertyId: string) => {
-  //   try {
-  //     if (wishlist[propertyId]) {
-  //       await removeFromWishlist(propertyId);
-  //       setWishlist((prev) => ({ ...prev, [propertyId]: false }));
-  //     } else {
-  //       await addToWishlist(propertyId);
-  //       setWishlist((prev) => ({ ...prev, [propertyId]: true }));
-  //     }
-  //   } catch (err) {
-  //     console.error("Wishlist error:", err);
-  //   }
-  // };
+  // Фильтрация + поиск + сортировка
+  const filteredProperties = useMemo(() => {
+    let result = properties;
+
+    result = result.filter((property) => {
+      if (Number(property.price) > price[1]) return false;
+      if (Number(property.size) > area[1]) return false;
+      if (rooms.length > 0 && !rooms.includes(Number(property.rooms))) return false;
+      if (
+        types.length > 0 &&
+        !types.includes(property.transactionType.toLowerCase())
+      )
+        return false;
+      if (
+        searchQuery.trim() &&
+        !property.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+        return false;
+
+      return true;
+    });
+
+    if (sortBy === "newest") {
+  result = [...result].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+} else if (sortBy === "expensive") {
+  result = [...result].sort(
+    (a, b) => Number(b.price) - Number(a.price)
+  );
+} else if (sortBy === "cheap") {
+  result = [...result].sort(
+    (a, b) => Number(a.price) - Number(b.price)
+  );
+}
+
+
+    return result;
+  }, [properties, price, area, rooms, types, searchQuery, sortBy]);
 
   if (loading) return <div className="p-4 text-sm text-muted">Loading...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-      {properties.map((property) => (
+      {filteredProperties.map((property) => (
         <Card
           key={property.id}
-          className={`overflow-hidden rounded-xl transition-shadow hover:shadow-md border border-border ${ property?.status === "inactive" ? "bg-muted opacity-60 grayscale" : ""}`}
+          className={`rounded-xl flex flex-col p-0 overflow-hidden ${
+            property?.status === "inactive" ? "bg-muted opacity-60 grayscale" : ""
+          }`}
         >
           <div className="relative p-2">
             <Link
@@ -52,19 +85,6 @@ export function PropertyList() {
                 className="rounded-t-xl w-full h-48 object-cover bg-gray-100"
               />
             </Link>
-
-            {/* <Button
-              variant="secondary"
-              size="icon"
-              className="absolute top-3 right-3 rounded-full bg-white shadow-md hover:scale-105 transition-transform z-10"
-              onClick={() => handleToggleWishlist(property.id)}
-            >
-              {wishlist[property.id] ? (
-                <HeartOff className="text-red-500 w-4 h-4" />
-              ) : (
-                <Heart className="text-gray-600 w-4 h-4" />
-              )}
-            </Button> */}
           </div>
 
           <CardContent className="p-4 space-y-1">
@@ -81,7 +101,12 @@ export function PropertyList() {
           </CardContent>
         </Card>
       ))}
+
+      {filteredProperties.length === 0 && properties.length > 0 && (
+        <div className="col-span-full text-center p-8 text-muted-foreground">
+          There are no such listings.
+        </div>
+      )}
     </div>
   );
 }
-

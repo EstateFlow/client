@@ -12,11 +12,13 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UserProfilePageImport } from './routes/user-profile-page'
+import { Route as UserManagementImport } from './routes/user-management'
 import { Route as UserDashboardImport } from './routes/user-dashboard'
 import { Route as RestorePasswordStep1Import } from './routes/restore-password-step1'
 import { Route as RegisterFormImport } from './routes/register-form'
 import { Route as ProtectedImport } from './routes/protected'
 import { Route as PropertyManagementImport } from './routes/property-management'
+import { Route as PromptEditingImport } from './routes/prompt-editing'
 import { Route as LoginFormImport } from './routes/login-form'
 import { Route as ListingsImport } from './routes/listings'
 import { Route as ListingPageImport } from './routes/listing-page'
@@ -35,6 +37,12 @@ import { Route as ConfirmChangeTokenTypeImport } from './routes/confirm-change/$
 const UserProfilePageRoute = UserProfilePageImport.update({
   id: '/user-profile-page',
   path: '/user-profile-page',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const UserManagementRoute = UserManagementImport.update({
+  id: '/user-management',
+  path: '/user-management',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -65,6 +73,12 @@ const ProtectedRoute = ProtectedImport.update({
 const PropertyManagementRoute = PropertyManagementImport.update({
   id: '/property-management',
   path: '/property-management',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PromptEditingRoute = PromptEditingImport.update({
+  id: '/prompt-editing',
+  path: '/prompt-editing',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -207,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginFormImport
       parentRoute: typeof rootRoute
     }
+    '/prompt-editing': {
+      id: '/prompt-editing'
+      path: '/prompt-editing'
+      fullPath: '/prompt-editing'
+      preLoaderRoute: typeof PromptEditingImport
+      parentRoute: typeof rootRoute
+    }
     '/property-management': {
       id: '/property-management'
       path: '/property-management'
@@ -240,6 +261,13 @@ declare module '@tanstack/react-router' {
       path: '/user-dashboard'
       fullPath: '/user-dashboard'
       preLoaderRoute: typeof UserDashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/user-management': {
+      id: '/user-management'
+      path: '/user-management'
+      fullPath: '/user-management'
+      preLoaderRoute: typeof UserManagementImport
       parentRoute: typeof rootRoute
     }
     '/user-profile-page': {
@@ -285,11 +313,13 @@ export interface FileRoutesByFullPath {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/prompt-editing': typeof PromptEditingRoute
   '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/user-dashboard': typeof UserDashboardRoute
+  '/user-management': typeof UserManagementRoute
   '/user-profile-page': typeof UserProfilePageRoute
   '/password-reset/$email-token': typeof PasswordResetEmailTokenRoute
   '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
@@ -306,11 +336,13 @@ export interface FileRoutesByTo {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/prompt-editing': typeof PromptEditingRoute
   '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/user-dashboard': typeof UserDashboardRoute
+  '/user-management': typeof UserManagementRoute
   '/user-profile-page': typeof UserProfilePageRoute
   '/password-reset/$email-token': typeof PasswordResetEmailTokenRoute
   '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
@@ -328,11 +360,13 @@ export interface FileRoutesById {
   '/listing-page': typeof ListingPageRoute
   '/listings': typeof ListingsRoute
   '/login-form': typeof LoginFormRoute
+  '/prompt-editing': typeof PromptEditingRoute
   '/property-management': typeof PropertyManagementRoute
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
   '/user-dashboard': typeof UserDashboardRoute
+  '/user-management': typeof UserManagementRoute
   '/user-profile-page': typeof UserProfilePageRoute
   '/password-reset/$email-token': typeof PasswordResetEmailTokenRoute
   '/verify-email/$email-token': typeof VerifyEmailEmailTokenRoute
@@ -351,11 +385,13 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/prompt-editing'
     | '/property-management'
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
     | '/user-dashboard'
+    | '/user-management'
     | '/user-profile-page'
     | '/password-reset/$email-token'
     | '/verify-email/$email-token'
@@ -371,11 +407,13 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/prompt-editing'
     | '/property-management'
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
     | '/user-dashboard'
+    | '/user-management'
     | '/user-profile-page'
     | '/password-reset/$email-token'
     | '/verify-email/$email-token'
@@ -391,11 +429,13 @@ export interface FileRouteTypes {
     | '/listing-page'
     | '/listings'
     | '/login-form'
+    | '/prompt-editing'
     | '/property-management'
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
     | '/user-dashboard'
+    | '/user-management'
     | '/user-profile-page'
     | '/password-reset/$email-token'
     | '/verify-email/$email-token'
@@ -413,11 +453,13 @@ export interface RootRouteChildren {
   ListingPageRoute: typeof ListingPageRoute
   ListingsRoute: typeof ListingsRoute
   LoginFormRoute: typeof LoginFormRoute
+  PromptEditingRoute: typeof PromptEditingRoute
   PropertyManagementRoute: typeof PropertyManagementRoute
   ProtectedRoute: typeof ProtectedRoute
   RegisterFormRoute: typeof RegisterFormRoute
   RestorePasswordStep1Route: typeof RestorePasswordStep1Route
   UserDashboardRoute: typeof UserDashboardRoute
+  UserManagementRoute: typeof UserManagementRoute
   UserProfilePageRoute: typeof UserProfilePageRoute
   PasswordResetEmailTokenRoute: typeof PasswordResetEmailTokenRoute
   VerifyEmailEmailTokenRoute: typeof VerifyEmailEmailTokenRoute
@@ -434,11 +476,13 @@ const rootRouteChildren: RootRouteChildren = {
   ListingPageRoute: ListingPageRoute,
   ListingsRoute: ListingsRoute,
   LoginFormRoute: LoginFormRoute,
+  PromptEditingRoute: PromptEditingRoute,
   PropertyManagementRoute: PropertyManagementRoute,
   ProtectedRoute: ProtectedRoute,
   RegisterFormRoute: RegisterFormRoute,
   RestorePasswordStep1Route: RestorePasswordStep1Route,
   UserDashboardRoute: UserDashboardRoute,
+  UserManagementRoute: UserManagementRoute,
   UserProfilePageRoute: UserProfilePageRoute,
   PasswordResetEmailTokenRoute: PasswordResetEmailTokenRoute,
   VerifyEmailEmailTokenRoute: VerifyEmailEmailTokenRoute,
@@ -464,11 +508,13 @@ export const routeTree = rootRoute
         "/listing-page",
         "/listings",
         "/login-form",
+        "/prompt-editing",
         "/property-management",
         "/protected",
         "/register-form",
         "/restore-password-step1",
         "/user-dashboard",
+        "/user-management",
         "/user-profile-page",
         "/password-reset/$email-token",
         "/verify-email/$email-token",
@@ -502,6 +548,9 @@ export const routeTree = rootRoute
     "/login-form": {
       "filePath": "login-form.tsx"
     },
+    "/prompt-editing": {
+      "filePath": "prompt-editing.tsx"
+    },
     "/property-management": {
       "filePath": "property-management.tsx"
     },
@@ -516,6 +565,9 @@ export const routeTree = rootRoute
     },
     "/user-dashboard": {
       "filePath": "user-dashboard.tsx"
+    },
+    "/user-management": {
+      "filePath": "user-management.tsx"
     },
     "/user-profile-page": {
       "filePath": "user-profile-page.tsx"
