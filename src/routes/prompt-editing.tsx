@@ -1,10 +1,18 @@
 import PromptEditingPage from "@/pages/PromptEditingPage";
-import { createFileRoute } from "@tanstack/react-router";
+import { useUserStore } from "@/store/userStore";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/prompt-editing")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <PromptEditingPage />;
+  const { user } = useUserStore();
+  const navigate = useNavigate();
+
+  if (user && user.role === "admin") {
+    return <PromptEditingPage />;
+  } else {
+    navigate({ to: "/" });
+  }
 }

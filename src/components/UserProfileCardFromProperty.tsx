@@ -15,7 +15,30 @@ export default function UserProfile({ userId }: { userId: string }) {
       .finally(() => setLoading(false));
   }, [userId]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <Card className="rounded-xl overflow-hidden shadow-md">
+        <CardContent className="flex flex-col sm:flex-row gap-6 p-6 animate-pulse">
+          <div className="flex flex-col items-center sm:items-start gap-4">
+            <div className="rounded-full bg-muted w-24 h-24"></div>
+            <div className="text-center sm:text-left w-full">
+              <div className="h-4 bg-muted rounded w-20 mb-2"></div>
+              <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-muted rounded w-1/2"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 flex-1">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index}>
+                <div className="h-4 bg-muted rounded w-16 mb-2"></div>
+                <div className="h-4 bg-muted rounded w-24"></div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   if (!user) return <div>User not found</div>;
 
   return (
@@ -27,7 +50,7 @@ export default function UserProfile({ userId }: { userId: string }) {
               <img
                 src={user.avatarUrl}
                 alt="User avatar"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full"
               />
             ) : (
               <>👤</>
@@ -36,7 +59,9 @@ export default function UserProfile({ userId }: { userId: string }) {
           <div className="text-center sm:text-left">
             <p className="font-semibold">About me:</p>
             <p> {user.bio} </p>
-            <p className="text-sm mt-2 bg-gray-200 rounded p-1">{user.email}</p>
+            <p className="text-sm mt-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded p-1 transition-colors duration-300">
+              {user.email}
+            </p>
           </div>
         </div>
 

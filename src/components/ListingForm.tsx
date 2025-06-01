@@ -176,19 +176,24 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
             className="w-full h-[400px] rounded-2xl object-cover"
           />
           <div className="flex gap-2 overflow-x-auto">
-            {selectedProperty.images.map((img) => (
-              <img
-                key={img.id}
-                src={img.imageUrl}
-                alt="thumbnail"
-                className={`w-20 h-20 rounded-lg object-cover cursor-pointer border-2 ${
-                  activeImage === img.imageUrl
-                    ? "border-black"
-                    : "border-transparent"
-                }`}
-                onClick={() => setActiveImage(img.imageUrl)}
-              />
-            ))}
+            {selectedProperty.images
+              .filter(
+                (img, index, self) =>
+                  index === self.findIndex((i) => i.imageUrl === img.imageUrl),
+              )
+              .map((img) => (
+                <img
+                  key={img.id}
+                  src={img.imageUrl}
+                  alt="thumbnail"
+                  className={`w-20 h-20 rounded-lg object-cover cursor-pointer border-2 ${
+                    activeImage === img.imageUrl
+                      ? "border-black"
+                      : "border-transparent"
+                  }`}
+                  onClick={() => setActiveImage(img.imageUrl)}
+                />
+              ))}
           </div>
         </div>
 
@@ -267,14 +272,16 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               <li key={facility}>• {facility}</li>
             ))}
           </ul>
-          <PayPalButtons
-            createOrder={onCreateOrder}
-            onApprove={onApprove}
-            onError={onError}
-            style={styles}
-            className="mt-4"
-            fundingSource="paypal"
-          />
+          {user && (
+            <PayPalButtons
+              createOrder={onCreateOrder}
+              onApprove={onApprove}
+              onError={onError}
+              style={styles}
+              className="mt-4"
+              fundingSource="paypal"
+            />
+          )}
         </div>
       </div>
     </div>
