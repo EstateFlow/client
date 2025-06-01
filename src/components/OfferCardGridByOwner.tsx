@@ -23,32 +23,44 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
     removeProperty,
   } = useWishlistStore();
 
-  const [statusFilter, setStatusFilter] = useState<("active" | "inactive" | "sold" | "rented")[] | "all" | "unverified">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    ("active" | "inactive" | "sold" | "rented")[] | "all" | "unverified"
+  >("all");
 
-useEffect(() => {
-  if (user.role === "admin" || user.role === "private_seller" || user.role === "agency") {
+  useEffect(() => {
+    if (
+      user.role === "admin" ||
+      user.role === "private_seller" ||
+      user.role === "agency"
+    ) {
+      fetchMultiple(["active", "inactive", "sold_rented"]);
+    } else if (user.role === "renter_buyer") {
+      loadWishlist();
+    }
+  }, [user.role]);
+
+  const handleRefresh = () => {
     fetchMultiple(["active", "inactive", "sold_rented"]);
-  } else if (user.role === "renter_buyer") {
-    loadWishlist();
-  }
-}, [user.role]);
+  };
 
-const handleRefresh = () => {
-  fetchMultiple(["active", "inactive", "sold_rented"]);
-};
+  const filteredProperties = useMemo(() => {
+    if (
+      user.role !== "admin" &&
+      user.role !== "private_seller" &&
+      user.role !== "agency"
+    ) {
+      return [];
+    }
 
-const filteredProperties = useMemo(() => {
-  if (user.role !== "admin" && user.role !== "private_seller" && user.role !== "agency") {
-    return [];
-  }
+    const userProperties = properties.filter((p) => p.ownerId === user.userId);
 
-  const userProperties = properties.filter((p) => p.ownerId === user.userId);
-
-  if (statusFilter === "all") return userProperties;
-  if (statusFilter === "unverified") return userProperties.filter((p) => !p.isVerified);
-  return userProperties.filter((p) => Array.isArray(statusFilter) && statusFilter.includes(p.status));
-}, [properties, user.userId, user.role, statusFilter]);
-
+    if (statusFilter === "all") return userProperties;
+    if (statusFilter === "unverified")
+      return userProperties.filter((p) => !p.isVerified);
+    return userProperties.filter(
+      (p) => Array.isArray(statusFilter) && statusFilter.includes(p.status),
+    );
+  }, [properties, user.userId, user.role, statusFilter]);
 
   if (propertiesLoading || wishlistLoading) {
     return (
@@ -92,7 +104,11 @@ const filteredProperties = useMemo(() => {
     );
   }
 
-  if (user.role === "admin" || user.role === "private_seller" || user.role === "agency") {
+  if (
+    user.role === "admin" ||
+    user.role === "private_seller" ||
+    user.role === "agency"
+  ) {
     const canAddMore = user.listingLimit < ourListingsLimit;
 
     return (
@@ -106,21 +122,39 @@ const filteredProperties = useMemo(() => {
             All
           </Button>
           <Button
-            variant={Array.isArray(statusFilter) && statusFilter.length === 1 && statusFilter[0] === "active" ? "default" : "ghost"}
+            variant={
+              Array.isArray(statusFilter) &&
+              statusFilter.length === 1 &&
+              statusFilter[0] === "active"
+                ? "default"
+                : "ghost"
+            }
             size="sm"
             onClick={() => setStatusFilter(["active"])}
           >
             Active
           </Button>
           <Button
-            variant={Array.isArray(statusFilter) && statusFilter.length === 1 && statusFilter[0] === "inactive" ? "default" : "ghost"}
+            variant={
+              Array.isArray(statusFilter) &&
+              statusFilter.length === 1 &&
+              statusFilter[0] === "inactive"
+                ? "default"
+                : "ghost"
+            }
             size="sm"
             onClick={() => setStatusFilter(["inactive"])}
           >
             Inactive
           </Button>
           <Button
-            variant={Array.isArray(statusFilter) && statusFilter.includes("sold") && statusFilter.includes("rented") ? "default" : "ghost"}
+            variant={
+              Array.isArray(statusFilter) &&
+              statusFilter.includes("sold") &&
+              statusFilter.includes("rented")
+                ? "default"
+                : "ghost"
+            }
             size="sm"
             onClick={() => setStatusFilter(["sold", "rented"])}
           >
@@ -132,11 +166,15 @@ const filteredProperties = useMemo(() => {
             onClick={() => setStatusFilter("unverified")}
           >
             <AlertTriangle size={14} className="mr-1" />
-            Unverified ({properties.filter((p) => !p.isVerified && p.ownerId === user.userId).length})
+            Unverified (
+            {
+              properties.filter(
+                (p) => !p.isVerified && p.ownerId === user.userId,
+              ).length
+            }
+            )
           </Button>
         </div>
-
-
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {filteredProperties.map((property) => (
@@ -149,7 +187,8 @@ const filteredProperties = useMemo(() => {
             />
           ))}
 
-          {(user.role === "private_seller" && canAddMore) || user.role === "agency" ? (
+          {(user.role === "private_seller" && canAddMore) ||
+          user.role === "agency" ? (
             <Link
               to="/listing-form-to-add-page"
               search={{ userId: user.userId }}
