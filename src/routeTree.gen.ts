@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as UserProfilePageImport } from './routes/user-profile-page'
 import { Route as UserManagementImport } from './routes/user-management'
 import { Route as UserDashboardImport } from './routes/user-dashboard'
+import { Route as StatisticsImport } from './routes/statistics'
 import { Route as RestorePasswordStep1Import } from './routes/restore-password-step1'
 import { Route as RegisterFormImport } from './routes/register-form'
 import { Route as ProtectedImport } from './routes/protected'
@@ -49,6 +50,12 @@ const UserManagementRoute = UserManagementImport.update({
 const UserDashboardRoute = UserDashboardImport.update({
   id: '/user-dashboard',
   path: '/user-dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const StatisticsRoute = StatisticsImport.update({
+  id: '/statistics',
+  path: '/statistics',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -256,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RestorePasswordStep1Import
       parentRoute: typeof rootRoute
     }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsImport
+      parentRoute: typeof rootRoute
+    }
     '/user-dashboard': {
       id: '/user-dashboard'
       path: '/user-dashboard'
@@ -318,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
+  '/statistics': typeof StatisticsRoute
   '/user-dashboard': typeof UserDashboardRoute
   '/user-management': typeof UserManagementRoute
   '/user-profile-page': typeof UserProfilePageRoute
@@ -341,6 +356,7 @@ export interface FileRoutesByTo {
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
+  '/statistics': typeof StatisticsRoute
   '/user-dashboard': typeof UserDashboardRoute
   '/user-management': typeof UserManagementRoute
   '/user-profile-page': typeof UserProfilePageRoute
@@ -365,6 +381,7 @@ export interface FileRoutesById {
   '/protected': typeof ProtectedRoute
   '/register-form': typeof RegisterFormRoute
   '/restore-password-step1': typeof RestorePasswordStep1Route
+  '/statistics': typeof StatisticsRoute
   '/user-dashboard': typeof UserDashboardRoute
   '/user-management': typeof UserManagementRoute
   '/user-profile-page': typeof UserProfilePageRoute
@@ -390,6 +407,7 @@ export interface FileRouteTypes {
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
+    | '/statistics'
     | '/user-dashboard'
     | '/user-management'
     | '/user-profile-page'
@@ -412,6 +430,7 @@ export interface FileRouteTypes {
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
+    | '/statistics'
     | '/user-dashboard'
     | '/user-management'
     | '/user-profile-page'
@@ -434,6 +453,7 @@ export interface FileRouteTypes {
     | '/protected'
     | '/register-form'
     | '/restore-password-step1'
+    | '/statistics'
     | '/user-dashboard'
     | '/user-management'
     | '/user-profile-page'
@@ -458,6 +478,7 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRoute
   RegisterFormRoute: typeof RegisterFormRoute
   RestorePasswordStep1Route: typeof RestorePasswordStep1Route
+  StatisticsRoute: typeof StatisticsRoute
   UserDashboardRoute: typeof UserDashboardRoute
   UserManagementRoute: typeof UserManagementRoute
   UserProfilePageRoute: typeof UserProfilePageRoute
@@ -481,6 +502,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRoute,
   RegisterFormRoute: RegisterFormRoute,
   RestorePasswordStep1Route: RestorePasswordStep1Route,
+  StatisticsRoute: StatisticsRoute,
   UserDashboardRoute: UserDashboardRoute,
   UserManagementRoute: UserManagementRoute,
   UserProfilePageRoute: UserProfilePageRoute,
@@ -513,6 +535,7 @@ export const routeTree = rootRoute
         "/protected",
         "/register-form",
         "/restore-password-step1",
+        "/statistics",
         "/user-dashboard",
         "/user-management",
         "/user-profile-page",
@@ -562,6 +585,9 @@ export const routeTree = rootRoute
     },
     "/restore-password-step1": {
       "filePath": "restore-password-step1.tsx"
+    },
+    "/statistics": {
+      "filePath": "statistics.tsx"
     },
     "/user-dashboard": {
       "filePath": "user-dashboard.tsx"

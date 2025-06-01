@@ -1,4 +1,3 @@
-// components/UserProfileCard.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { UserInfo } from "@/lib/types";
@@ -31,6 +30,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
     bio: user.bio || "",
     email: user.email,
     password: "",
+    paypalCredentials: user.paypalCredentials || "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -47,6 +47,12 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
     }
     if (formData.password && formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
+    }
+    if (
+      formData.paypalCredentials &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.paypalCredentials)
+    ) {
+      newErrors.paypalCredentials = "Invalid PayPal email format";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -77,6 +83,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
         username: formData.username,
         avatarUrl: formData.avatarUrl || undefined,
         bio: formData.bio || undefined,
+        paypalCredentials: formData.paypalCredentials || undefined,
       });
 
       if (formData.email !== user.email) {
@@ -99,6 +106,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
       console.error("Profile update error:", error);
     }
   };
+
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(user.email);
@@ -107,6 +115,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
       toast("Error", { description: "Failed to copy email." });
     }
   };
+
   const handleCancel = () => {
     setFormData({
       username: user.username,
@@ -114,21 +123,16 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
       bio: user.bio || "",
       email: user.email,
       password: "",
+      paypalCredentials: user.paypalCredentials || "",
     });
     setErrors({});
     setIsEditing(false);
   };
-  switch (user.role) {
-    case "admin":
-    case "private_seller":
-    case "renter_buyer":
-    case "moderator":
-    default:
-return (
+
+  return (
     <>
       <Card className="rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto">
         <CardContent className="relative flex flex-col sm:flex-row gap-8 p-8">
-          {/* Кнопка редактирования в верхнем правом углу */}
           <div className="absolute top-4 right-4">
             <Button
               variant="secondary"
@@ -139,7 +143,6 @@ return (
             </Button>
           </div>
 
-          {/* Левая часть с аватаром и базовой информацией */}
           <div className="flex flex-col items-center sm:items-start gap-6 min-w-[180px]">
             <div className="rounded-full w-28 h-28 overflow-hidden shadow-lg border-4 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-5xl text-gray-600 dark:text-gray-400 transition-all duration-300">
               {user.avatarUrl ? (
@@ -159,7 +162,7 @@ return (
                 {user.bio || "No bio provided."}
               </p>
               <p
-                className="text-sm mt-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded px-3 py-1 select-all cursor-pointer transition-colors duration-300"
+                className="text-sm mt-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded px-3 py-1 select-all cursor-pointer transition-colors duration-200"
                 onClick={handleCopyEmail}
                 title="Click to copy email"
               >
@@ -168,13 +171,26 @@ return (
             </div>
           </div>
 
-          {/* Правая часть с деталями профиля */}
           <div className="grid grid-cols-2 gap-6 flex-1 text-sm text-gray-700 dark:text-gray-300">
             {[
               { label: "Username", value: user.username },
               { label: "Status", value: user.role },
-              { label: "Paypal", value: "ПЕЙПАЛ ПОКА НЕМА" },
-              { label: "Offer limit", value: user.listingLimit ?? "N/A" },
+              {
+                label: "Paypal",
+                value:
+                  user.role === "private_seller" || user.role === "agency"
+                    ? user.paypalCredentials || "N/A"
+                    : "N/A",
+              },
+              {
+                label: "Offer limit",
+                value:
+                  user.listingLimit && user.role === "private_seller"
+                    ? user.listingLimit
+                    : user.role === "agency"
+                    ? "∞"
+                    : "N/A",
+              },
               {
                 label: "Date of registration",
                 value: user.createdAt
@@ -187,17 +203,16 @@ return (
                   ? format(new Date(user.updatedAt), "dd MMM yyyy, HH:mm")
                   : "N/A",
               },
-              ].map(({ label, value }) => (
-                <div key={label} className="space-y-1">
-                  <p className="text-muted-foreground font-medium">{label}</p>
-                  <p>{value}</p>
-                </div>
-              ))}
+            ].map(({ label, value }) => (
+              <div key={label} className="space-y-1">
+                <p className="text-muted-foreground font-medium">{label}</p>
+                <p>{value}</p>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Диалог редактирования */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -227,7 +242,6 @@ return (
                 <p className="text-red-500 text-xs mt-1">{errors.username}</p>
               )}
             </div>
-
             <div className="grid gap-1">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -244,7 +258,6 @@ return (
                 <p className="text-red-500 text-xs mt-1">{errors.email}</p>
               )}
             </div>
-
             <div className="grid gap-1">
               <Label htmlFor="password">New Password</Label>
               <Input
@@ -261,7 +274,25 @@ return (
                 <p className="text-red-500 text-xs mt-1">{errors.password}</p>
               )}
             </div>
-
+            {(user.role === "private_seller" || user.role === "agency") && (
+              <div className="grid gap-1">
+                <Label htmlFor="paypalCredentials">PayPal Credentials</Label>
+                <Input
+                  id="paypalCredentials"
+                  name="paypalCredentials"
+                  type="email"
+                  value={formData.paypalCredentials}
+                  onChange={handleInputChange}
+                  placeholder="PayPal email"
+                  className={errors.paypalCredentials ? "border-red-500" : ""}
+                />
+                {errors.paypalCredentials && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.paypalCredentials}
+                  </p>
+                )}
+              </div>
+            )}
             <div className="grid gap-1">
               <Label htmlFor="avatarUrl">Avatar URL</Label>
               <Input
@@ -277,7 +308,6 @@ return (
                 <p className="text-red-500 text-xs mt-1">{errors.avatarUrl}</p>
               )}
             </div>
-
             <div className="grid gap-1">
               <Label htmlFor="bio">Bio</Label>
               <Textarea
@@ -289,7 +319,6 @@ return (
                 placeholder="Tell us about yourself..."
               />
             </div>
-
             <DialogFooter className="flex justify-end gap-3 pt-6">
               <Button
                 variant="outline"
@@ -308,5 +337,4 @@ return (
       </Dialog>
     </>
   );
-}
 }

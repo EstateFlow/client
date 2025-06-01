@@ -55,7 +55,6 @@ export default function UserProfile({ userId }: { userId: string }) {
   return (
     <Card className="rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto">
       <CardContent className="relative flex flex-col sm:flex-row gap-8 p-8">
-        {/* Левая часть с аватаром и базовой информацией */}
         <div className="flex flex-col items-center sm:items-start gap-6 min-w-[180px]">
           <div className="rounded-full w-28 h-28 overflow-hidden shadow-lg border-4 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-5xl text-gray-600 dark:text-gray-400 transition-all duration-300">
             {user.avatarUrl ? (
@@ -80,21 +79,18 @@ export default function UserProfile({ userId }: { userId: string }) {
             >
               {user.email}
             </p>
-          <div className="text-center sm:text-left">
-            <p className="font-semibold">About me:</p>
-            <p> {user.bio} </p>
-            <p className="text-sm mt-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded p-1 transition-colors duration-300">
-              {user.email}
-            </p>
           </div>
         </div>
-        </div>
-        {/* Правая часть с деталями профиля */}
         <div className="grid grid-cols-2 gap-6 flex-1 text-sm text-gray-700 dark:text-gray-300">
           {[
             { label: "Username", value: user.username },
             { label: "Status", value: user.role },
-            { label: "Paypal", value: "ПЕЙПАЛ ПОКА НЕМА" },
+            { 
+              label: "Paypal", 
+              value: user.paypalCredentials && (user.role === "private_seller" || user.role === "agency")
+                ? user.paypalCredentials
+                : "N/A"
+            },
             { label: "Offer limit", value: user.listingLimit ?? "N/A" },
             {
               label: "Date of registration",

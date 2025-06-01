@@ -10,7 +10,13 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import type { CreateProperty } from "@/lib/types";
-import { FACILITY_OPTIONS, transactionTypeOptions, propertyTypeOptions, currencyOptions, statusOptions  } from "@/lib/types";
+import {
+  FACILITY_OPTIONS,
+  transactionTypeOptions,
+  propertyTypeOptions,
+  currencyOptions,
+  statusOptions,
+} from "@/lib/types";
 import { createProperty } from "@/api/properties";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -113,45 +119,46 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
     return true;
   };
 
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
-const handleSubmit = async () => {
-  if (!validateForm()) return;
+    setLoading(true);
 
-  setLoading(true);
+    const payload: CreateProperty = {
+      ownerId,
+      title: form.title,
+      description: form.description,
+      propertyType: form.propertyType,
+      transactionType: form.transactionType,
+      price: form.price,
+      currency: form.currency,
+      size: form.size,
+      rooms: Number(form.rooms),
+      address: form.address,
+      status: form.status as "active" | "inactive" | "sold" | "rented",
+      documentUrl: form.documentUrl,
+      verificationComments: form.verificationComments,
+      facilities: form.facilities.join(", "),
+      images: form.images,
+    };
 
-  const payload: CreateProperty = {
-    ownerId,
-    title: form.title,
-    description: form.description,
-    propertyType: form.propertyType,
-    transactionType: form.transactionType,
-    price: form.price,
-    currency: form.currency,
-    size: form.size,
-    rooms: Number(form.rooms),
-    address: form.address,
-    status: form.status as "active" | "inactive" | "sold" | "rented",
-    documentUrl: form.documentUrl,
-    verificationComments: form.verificationComments,
-    facilities: form.facilities.join(", "),
-    images: form.images,
+    try {
+      await createProperty(payload);
+      toast.success("Объявление успешно создано!");
+      navigate({ to: "/user-dashboard" });
+    } catch (error) {
+      console.error("Ошибка при создании объявления:", error);
+      toast.error("Произошла ошибка при создании объявления.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    await createProperty(payload);
-    toast.success("Объявление успешно создано!");
-    navigate({ to: "/user-dashboard" });
-  } catch (error) {
-    console.error("Ошибка при создании объявления:", error);
-    toast.error("Произошла ошибка при создании объявления.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 mt-6 px-4 sm:px-0">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-3xl mx-auto space-y-8 mt-6 px-4 sm:px-0"
+    >
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
@@ -245,7 +252,9 @@ const handleSubmit = async () => {
                 className={formErrors["title"] ? "border-red-500" : ""}
               />
               {formErrors["price"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["price"]}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors["price"]}
+                </p>
               )}
             </div>
 
@@ -284,13 +293,15 @@ const handleSubmit = async () => {
                 className={formErrors["size"] ? "border-red-500" : ""}
               />
               {formErrors["size"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["size"]}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors["size"]}
+                </p>
               )}
             </div>
 
             <div className="grid gap-1">
               <Label htmlFor="rooms">Rooms</Label>
-                <Input
+              <Input
                 id="rooms"
                 name="rooms"
                 type="number"
@@ -301,25 +312,29 @@ const handleSubmit = async () => {
                 className={formErrors["rooms"] ? "border-red-500" : ""}
               />
               {formErrors["rooms"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["rooms"]}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors["rooms"]}
+                </p>
               )}
             </div>
           </div>
 
           <div className="grid gap-1">
             <Label htmlFor="address">Address</Label>
-              <Input
+            <Input
               id="address"
               name="address"
               placeholder="Enter full address"
               value={form.address}
               onChange={handleChange}
               required
-                className={formErrors["address"] ? "border-red-500" : ""}
-              />
-              {formErrors["address"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["address"]}</p>
-              )}
+              className={formErrors["address"] ? "border-red-500" : ""}
+            />
+            {formErrors["address"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors["address"]}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-1">
@@ -375,7 +390,9 @@ const handleSubmit = async () => {
                   onChange={() => handleFacilityChange(facility)}
                   className="cursor-pointer"
                 />
-                <span>{facility.charAt(0).toUpperCase() + facility.slice(1)}</span>
+                <span>
+                  {facility.charAt(0).toUpperCase() + facility.slice(1)}
+                </span>
               </label>
             ))}
           </div>
@@ -389,7 +406,10 @@ const handleSubmit = async () => {
         </CardHeader>
         <CardContent className="space-y-4">
           {form.images.map((img, index) => (
-            <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row sm:items-center gap-3"
+            >
               <Input
                 placeholder={`Image URL ${index + 1}`}
                 value={img.imageUrl}
@@ -420,7 +440,10 @@ const handleSubmit = async () => {
                 onClick={() => {
                   const newImages = form.images.filter((_, i) => i !== index);
                   // Ensure at least one primary image remains
-                  if (newImages.length && !newImages.some(img => img.isPrimary)) {
+                  if (
+                    newImages.length &&
+                    !newImages.some((img) => img.isPrimary)
+                  ) {
                     newImages[0].isPrimary = true;
                   }
                   setForm((prev) => ({ ...prev, images: newImages }));
@@ -456,7 +479,8 @@ const handleSubmit = async () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
               <AlertDialogDescription>
-                Это действие создаст новое объявление. Вы действительно хотите продолжить?
+                Это действие создаст новое объявление. Вы действительно хотите
+                продолжить?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -19,6 +19,7 @@ export interface CurrentUser {
   bio?: string;
   createdAt: string;
   updatedAt: string;
+  paypalCredentials?: string;
 }
 
 interface UserState {
@@ -30,6 +31,7 @@ interface UserState {
     username: string;
     avatarUrl?: string;
     bio?: string;
+    paypalCredentials?: string;
   }) => Promise<void>;
   requestEmailChange: (newEmail: string) => Promise<void>;
   confirmEmailChange: (token: string) => Promise<void>;

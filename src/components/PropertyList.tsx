@@ -1,18 +1,34 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { useFilterStore } from "@/store/filterStore";
 import { PropertyCard } from "./PropertyCard";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export function PropertyList() {
   const { properties, loading, error, fetchChouse } = usePropertiesStore();
   const { price, area, rooms, types, propertyTypes, searchQuery, sortBy } =
     useFilterStore();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
   useEffect(() => {
     if (properties.length === 0) {
       fetchChouse("active");
     }
   }, [properties.length, fetchChouse]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [price, area, rooms, types, propertyTypes, searchQuery, sortBy]);
 
   // Фильтрация + поиск + сортировка
   const filteredProperties = useMemo(() => {
@@ -67,6 +83,56 @@ export function PropertyList() {
     sortBy,
   ]);
 
+  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProperties = filteredProperties.slice(startIndex, endIndex);
+
+  const goToPage = (page: any) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const goToPrevious = () => {
+    setCurrentPage((prev) => Math.max(1, prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+  };
+
+  const getVisiblePages = () => {
+    const delta = 1;
+    const pages = [];
+
+    if (totalPages > 0) {
+      pages.push(1);
+    }
+
+    if (currentPage > delta + 2) {
+      pages.push("ellipsis-start");
+    }
+
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      if (!pages.includes(i)) {
+        pages.push(i);
+      }
+    }
+
+    if (currentPage < totalPages - delta - 1) {
+      pages.push("ellipsis-end");
+    }
+
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -93,14 +159,69 @@ export function PropertyList() {
   }
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
-      {filteredProperties.map((property) => (
-        <PropertyCard key={property.id} property={property} />
-      ))}
+    <div className="space-y-6">
+      {filteredProperties.length > 0 && (
+        <div className="px-4 text-sm text-muted-foreground">
+          Showing {startIndex + 1}-
+          {Math.min(endIndex, filteredProperties.length)} of{" "}
+          {filteredProperties.length} properties
+        </div>
+      )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
+        {currentProperties.map((property) => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
 
-      {filteredProperties.length === 0 && properties.length > 0 && (
-        <div className="col-span-full text-center p-8 text-muted-foreground">
-          There are no such listings.
+        {filteredProperties.length === 0 && properties.length > 0 && (
+          <div className="col-span-full text-center p-8 text-muted-foreground">
+            There are no such listings.
+          </div>
+        )}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center py-8">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={goToPrevious}
+                  className={
+                    currentPage === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+
+              {getVisiblePages().map((page, index) => (
+                <PaginationItem key={`${page}-${index}`}>
+                  {page === "ellipsis-start" || page === "ellipsis-end" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      onClick={() => goToPage(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={goToNext}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>
