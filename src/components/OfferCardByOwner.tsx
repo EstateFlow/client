@@ -41,21 +41,29 @@ export default function OfferCardByOwner({
           className={`overflow-hidden rounded-xl transition-shadow hover:shadow-md border border-border ${property?.status === "inactive" ? "bg-muted opacity-60 grayscale" : ""}`}
         >
           <div className="relative">
-            <img
-              src={
-                property?.images.find((img) => img.isPrimary)?.imageUrl || ""
-              }
-              alt={property?.title}
-              className="rounded-t-xl w-full h-48 object-cover bg-gray-100"
-            />
-            <Button
-              size="icon"
-              variant="secondary"
-              className="absolute top-3 right-3 rounded-full bg-white shadow-md hover:scale-105 transition-transform z-10 cursor-pointer"
-              onClick={() => setIsEditing(true)}
+            <Link
+              to="/listing-page"
+              search={{ propertyId: property?.id ?? "" }}
+              className="[&.active]:underline"
             >
-              <Pencil className="w-4 h-4 text-muted-foreground" />
-            </Button>
+              <img
+                src={
+                  property?.images.find((img) => img.isPrimary)?.imageUrl || ""
+                }
+                alt={property?.title}
+                className="rounded-t-xl w-full h-48 object-cover bg-gray-100"
+              />
+            </Link>
+            {property?.status === "active" && (
+              <Button
+                size="icon"
+                variant="secondary"
+                className="absolute top-3 right-3 rounded-full bg-white shadow-md hover:scale-105 transition-transform z-10 cursor-pointer"
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil className="w-4 h-4 text-muted-foreground" />
+              </Button>
+            )}
             <div className="absolute top-3 left-3 flex gap-2">
               <span
                 className={`px-2 py-1 text-xs font-medium rounded-full ${

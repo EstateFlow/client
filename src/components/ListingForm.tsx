@@ -120,8 +120,6 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
           ? (price * 0.1).toFixed(2)
           : price.toFixed(2);
 
-      console.log(selectedProperty.id);
-
       const response = await $api.post(
         `${import.meta.env.VITE_API_URL}/api/paypal/create-order`,
         {
