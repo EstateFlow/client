@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/pagination";
 
 export function PropertyList() {
-  const { properties, loading, error, fetchAll } = usePropertiesStore();
+  const { properties, loading, error, fetchChouse } = usePropertiesStore();
   const { price, area, rooms, types, propertyTypes, searchQuery, sortBy } =
     useFilterStore();
 
@@ -22,9 +22,9 @@ export function PropertyList() {
 
   useEffect(() => {
     if (properties.length === 0) {
-      fetchAll("active");
+      fetchChouse("active");
     }
-  }, [properties.length, fetchAll]);
+  }, [properties.length, fetchChouse]);
 
   useEffect(() => {
     setCurrentPage(1);
