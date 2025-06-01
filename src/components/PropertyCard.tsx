@@ -5,13 +5,13 @@ import { Link } from "@tanstack/react-router";
 import { Home, MapPin, Calendar, User } from "lucide-react";
 
 export function PropertyCard({ property }: any) {
-  const { properties, fetchAll } = usePropertiesStore();
+  const { properties, fetchChouse } = usePropertiesStore();
 
   useEffect(() => {
     if (properties.length === 0) {
-      fetchAll("active");
+      fetchChouse("active");
     }
-  }, [properties.length, fetchAll]);
+  }, [properties.length, fetchChouse]);
 
   const formatDate = (dateString: any) => {
     return new Date(dateString).toLocaleDateString("en-US", {

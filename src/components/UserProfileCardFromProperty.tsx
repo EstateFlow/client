@@ -88,7 +88,7 @@ export default function UserProfile({ userId }: { userId: string }) {
             </p>
           </div>
         </div>
-
+        </div>
         {/* Правая часть с деталями профиля */}
         <div className="grid grid-cols-2 gap-6 flex-1 text-sm text-gray-700 dark:text-gray-300">
           {[

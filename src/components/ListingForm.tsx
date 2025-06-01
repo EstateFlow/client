@@ -296,7 +296,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               <li key={facility}>• {facility}</li>
             ))}
           </ul>
-          {user && (
+          {user && user.role === "renter_buyer" ? (
             <PayPalButtons
               createOrder={onCreateOrder}
               onApprove={onApprove}
@@ -305,7 +305,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               className="mt-4"
               fundingSource="paypal"
             />
-          )}
+          ): null }
         </div>
       </div>
     </div>
