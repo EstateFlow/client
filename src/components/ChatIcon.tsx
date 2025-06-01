@@ -15,7 +15,7 @@ export function ChatIcon({
       onClick={onClick}
       size="icon"
       className={`
-        fixed bottom-6 right-2 sm:right-6 z-50 h-14 w-14 rounded-full shadow-lg
+        fixed bottom-6 right-2 sm:right-6 z-100 h-14 w-14 rounded-full shadow-lg
         bg-primary hover:bg-primary/90 text-primary-foreground
         transition-all duration-200 ease-in-out
         hover:scale-110 active:scale-95

@@ -10,6 +10,7 @@ interface AiStore {
   messages: Message[];
   isLoading: boolean;
   newMessage: string;
+  isInitializing: boolean;
   setNewMessage: (message: string) => void;
   sendMessage: () => Promise<void>;
   initializeConversation: () => Promise<void>;
@@ -18,6 +19,7 @@ interface AiStore {
 export const aiStore = create<AiStore>((set, get) => ({
   messages: [],
   isLoading: false,
+  isInitializing: false,
   newMessage: "",
   setNewMessage: (message: string) => set({ newMessage: message }),
   sendMessage: async () => {
@@ -68,13 +70,14 @@ export const aiStore = create<AiStore>((set, get) => ({
     }
   },
   initializeConversation: async () => {
+    set({ isInitializing: true });
     try {
       const historyResponse = await $api.get(
         `${API_URL}/api/ai/conversations/visible-history`,
       );
       const visibleHistory = historyResponse.data.messages.messages || [];
 
-      set({ messages: visibleHistory });
+      set({ messages: visibleHistory, isInitializing: false });
     } catch (error: any) {
       if (error.response?.status === 404) {
         const createResponse = await $api.post(
@@ -86,13 +89,21 @@ export const aiStore = create<AiStore>((set, get) => ({
           const newHistoryResponse = await $api.get(
             `${API_URL}/api/ai/conversations/visible-history`,
           );
-          set({ messages: newHistoryResponse.data.messages.messages || [] });
+          set({
+            messages: newHistoryResponse.data.messages.messages || [],
+            isInitializing: false,
+          });
         }
       } else if (error.response?.status === 409) {
         const historyResponse = await $api.get(
           `${API_URL}/api/ai/conversations/visible-history`,
         );
-        set({ messages: historyResponse.data.messages.messages || [] });
+        set({
+          messages: historyResponse.data.messages.messages || [],
+          isInitializing: false,
+        });
+      } else {
+        set({ isInitializing: false });
       }
     }
   },

@@ -2,12 +2,14 @@ import { create } from "zustand";
 
 const ALL_TYPES = ["sale", "rent"] as const;
 const ALL_ROOMS = [1, 2, 3, 4, 5] as const;
+const ALL_PROPERTY_TYPES = ["apartment", "house"] as const;
 
 export interface FilterState {
   price: [number, number];
   area: [number, number];
   types: string[];
   rooms: number[];
+  propertyTypes: string[];
   searchQuery: string;
   sortBy: string;
 
@@ -16,6 +18,7 @@ export interface FilterState {
   toggleType: (type: string) => void;
   toggleRoom: (room: number) => void;
   setSearchQuery: (query: string) => void;
+  togglePropertyType: (propertyType: string) => void;
   setSortBy: (sortBy: string) => void;
   resetFilters: () => void;
 }
@@ -26,6 +29,7 @@ export const useFilterStore = create<FilterState>((set, get) => ({
   area: [0, 0],
   types: [...ALL_TYPES],
   rooms: [...ALL_ROOMS],
+  propertyTypes: [...ALL_PROPERTY_TYPES],
   searchQuery: "",
   sortBy: "newest",
 
@@ -60,6 +64,17 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       };
     }),
 
+  togglePropertyType: (propertyType) =>
+    set((state) => {
+      const isSelected = state.propertyTypes.includes(propertyType);
+      // не даём снять последнюю галочку
+      if (isSelected && state.propertyTypes.length === 1) return state;
+      return {
+        propertyTypes: isSelected
+          ? state.propertyTypes.filter((pt) => pt !== propertyType)
+          : [...state.propertyTypes, propertyType],
+      };
+    }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSortBy: (sortBy) => set({ sortBy }),
 
