@@ -117,6 +117,8 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
 
   if (!user || !subscription) return null;
 
+  console.log(user);
+
   return (
     <Card className="border-l-4 border-l-blue-500 py-2">
       <CardContent className="p-4">
@@ -130,7 +132,7 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground">
-              0 / {hasActiveSubscription ? "∞" : listingLimit} listings
+              {5 - listingLimit} / {hasActiveSubscription ? "∞" : 5} listings
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -179,7 +181,8 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
               <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                 <p className="text-muted-foreground">Used</p>
                 <p className="font-medium">
-                  0 / {hasActiveSubscription ? "∞" : listingLimit}
+                  {5 - listingLimit} / {hasActiveSubscription ? "∞" : 5}{" "}
+                  listings
                 </p>
               </div>
               <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
