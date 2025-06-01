@@ -1,4 +1,3 @@
-// src/store/wishlist.ts
 import { create } from 'zustand';
 import {
   fetchWishlist,
@@ -22,10 +21,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
   error: null,
 
   loadWishlist: async () => {
-    const token = localStorage.getItem('accessToken'); // можно и через useAuthStore.getState().isAuthenticated, но так проще
+    const token = localStorage.getItem('accessToken');
 
     if (!token) {
-      set({ error: "Вы не авторизованы" });
+      set({ error: "You are not authorized" });
       return;
     }
 
@@ -35,10 +34,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
       set({ wishlist: data });
     } catch (err: any) {
       if (err?.response?.status === 401) {
-        set({ error: "Вы не авторизованы" });
+        set({ error: "You are not authorized" });
         return;
       }
-      set({ error: err?.response?.data?.message || 'Ошибка загрузки вишлиста' });
+      set({ error: err?.response?.data?.message || 'Failed to load wishlist' });
     } finally {
       set({ loading: false });
     }
@@ -47,22 +46,22 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
   addProperty: async (propertyId: string) => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      set({ error: "Вы не авторизованы" });
+      set({ error: "You are not authorized" });
       return;
     }
 
     try {
       await addToWishlist(propertyId, token);
-      await get().loadWishlist(); // обновим список
+      await get().loadWishlist(); // refresh the list
     } catch (err: any) {
-      set({ error: err?.response?.data?.message || 'Ошибка добавления в вишлист' });
+      set({ error: err?.response?.data?.message || 'Failed to add to wishlist' });
     }
   },
 
   removeProperty: async (propertyId: string) => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      set({ error: "Вы не авторизованы" });
+      set({ error: "You are not authorized" });
       return;
     }
 
@@ -72,7 +71,7 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
         wishlist: state.wishlist.filter((item) => item.id !== propertyId),
       }));
     } catch (err: any) {
-      set({ error: err?.response?.data?.message || 'Ошибка удаления из вишлиста' });
+      set({ error: err?.response?.data?.message || 'Failed to remove from wishlist' });
     }
   },
 }));

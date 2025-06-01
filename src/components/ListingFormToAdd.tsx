@@ -78,6 +78,9 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
     });
   };
 
+  const isValidNumber = (value: string) =>
+    /[0-9.]/.test(value.trim());
+
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
     const requiredFields = [
@@ -93,20 +96,20 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
       const value =
         field.name === "ownerId" ? ownerId : (form as any)[field.name];
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        errors[field.name] = `Поле "${field.label}" обязательно для заполнения`;
+        errors[field.name] = `"${field.label}" field is required`;
       }
     }
 
-    if (form.rooms && (isNaN(Number(form.rooms)) || Number(form.rooms) < 0)) {
-      errors["rooms"] = "Количество комнат должно быть положительным числом";
+    if (form.rooms && (!isValidNumber(form.rooms) || Number(form.rooms) < 0)) {
+      errors["rooms"] = "Number of rooms must be a positive number";
     }
 
-    if (form.price && (isNaN(Number(form.price)) || Number(form.price) < 0)) {
-      errors["price"] = "Цена должна быть положительным числом";
+    if (form.price && (!isValidNumber(form.price) || Number(form.price) < 0)) {
+      errors["price"] = "Price must be a positive number";
     }
 
-    if (form.size && (isNaN(Number(form.size)) || Number(form.size) < 0)) {
-      errors["size"] = "Размер должен быть положительным числом";
+    if (form.size && (!isValidNumber(form.size) || Number(form.size) < 0)) {
+      errors["size"] = "Size must be a positive number";
     }
 
     setFormErrors(errors);
@@ -118,6 +121,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
     return true;
   };
+
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
@@ -144,11 +148,11 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
     try {
       await createProperty(payload);
-      toast.success("Объявление успешно создано!");
+      toast.success("Listing created successfully!");
       navigate({ to: "/user-dashboard" });
     } catch (error) {
-      console.error("Ошибка при создании объявления:", error);
-      toast.error("Произошла ошибка при создании объявления.");
+      console.error("Error while creating listing:", error);
+      toast.error("An error occurred while creating the listing.");
     } finally {
       setLoading(false);
     }
@@ -242,14 +246,18 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
               <Input
                 id="price"
                 name="price"
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
                 placeholder="Enter price"
                 value={form.price}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 required
-                className={formErrors["title"] ? "border-red-500" : ""}
+                className={formErrors["price"] ? "border-red-500" : ""}
               />
               {formErrors["price"] && (
                 <p className="text-red-500 text-sm mt-1">
@@ -284,12 +292,16 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
               <Input
                 id="size"
                 name="size"
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
                 placeholder="Enter size"
                 value={form.size}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 className={formErrors["size"] ? "border-red-500" : ""}
               />
               {formErrors["size"] && (
@@ -304,11 +316,16 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
               <Input
                 id="rooms"
                 name="rooms"
-                type="number"
-                min="0"
+                type="text"
                 placeholder="Enter number of rooms"
                 value={form.rooms}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 className={formErrors["rooms"] ? "border-red-500" : ""}
               />
               {formErrors["rooms"] && (
@@ -439,7 +456,6 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
                 variant="destructive"
                 onClick={() => {
                   const newImages = form.images.filter((_, i) => i !== index);
-                  // Ensure at least one primary image remains
                   if (
                     newImages.length &&
                     !newImages.some((img) => img.isPrimary)
@@ -477,21 +493,20 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                Это действие создаст новое объявление. Вы действительно хотите
-                продолжить?
+                This action will create a new listing. Do you really want to proceed?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Отмена</AlertDialogCancel>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => {
                   setIsDialogOpen(false);
                   handleSubmit();
                 }}
               >
-                Подтвердить
+                Confirm
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

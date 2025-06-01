@@ -34,9 +34,7 @@ function Header() {
       <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm border-b">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            {/* Левый блок */}
             <div className="flex items-center gap-6">
-              {/* Логотип */}
               <Link to="/">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-md">
@@ -125,17 +123,7 @@ function Header() {
                 )}
               </nav>
             </div>
-
-            {/* Правый блок */}
             <div className="flex items-center gap-3">
-              {/* <Button */}
-              {/*   variant="outline" */}
-              {/*   size="sm" */}
-              {/*   className="flex items-center gap-1 rounded-full px-3 hover:bg-accent/50 transition-colors" */}
-              {/* > */}
-              {/*   <Globe size={14} /> */}
-              {/*   <span className="text-xs font-medium">EN</span> */}
-              {/* </Button> */}
               <ThemeSwitcher />
 
               <div className="hidden md:flex items-center gap-2">
@@ -202,7 +190,6 @@ function Header() {
             </div>
           </div>
 
-          {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="md:hidden border-t backdrop-blur flex-row gap-2 p-2">
               <nav className="flex flex-col gap-1">

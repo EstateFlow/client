@@ -25,13 +25,11 @@ export default function PropertyFilters() {
   
   const { properties } = usePropertiesStore();
 
-  // Инициализируем максимальные значения на основе данных
   useEffect(() => {
     if (properties.length > 0) {
       const maxPrice = Math.max(...properties.map(p => Number(p.price) || 0));
       const maxArea = Math.max(...properties.map(p => Number(p.size) || 0));
-      
-      // Устанавливаем максимальные значения только если они еще не установлены
+
       if (price[1] === 0) {
         setPrice([0, maxPrice]);
       }
@@ -46,7 +44,6 @@ export default function PropertyFilters() {
       <DrawerTrigger asChild>
         <Button variant="ghost">
           <Menu className="w-5 h-5" />
-          {/* Показываем индикатор активных фильтров */}
           {(types.length > 0 || rooms.length > 0) && (
             <span className="ml-1 w-2 h-2 bg-blue-500 rounded-full"></span>
           )}

@@ -7,14 +7,12 @@ export const $api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Inject token
 $api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Handle 401 & refresh
 $api.interceptors.response.use(
   (res) => res,
   async (err) => {
@@ -22,7 +20,6 @@ $api.interceptors.response.use(
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true;
       try {
-        console.log("bbbb");
         const refreshToken = localStorage.getItem("refreshToken");
         const { data } = await $api.post(
           `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,

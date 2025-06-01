@@ -21,7 +21,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
   const { wishlist, loadWishlist, addProperty, removeProperty } =
     useWishlistStore();
-  const { isAuthenticated } = useAuthStore(); // <--- добавим user
+  const { isAuthenticated } = useAuthStore();
   const { user } = useUserStore();
   const navigate = useNavigate();
 
@@ -192,7 +192,6 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Image viewer */}
         <div className="flex flex-col gap-2">
           <img
             src={activeImage}
@@ -221,10 +220,8 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
           </div>
         </div>
 
-        {/* Info panel */}
         <div className="flex flex-col gap-4">
           <Card className="relative">
-            {/* Wishlist button в правом верхнем углу */}
             <Button
               variant={isWished ? "destructive" : "outline"}
               onClick={handleToggleWishlist}

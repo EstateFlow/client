@@ -295,14 +295,18 @@ export default function ListingFormToUpdate({
               <Input
                 id="price"
                 name="price"
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
                 placeholder="Enter price"
                 value={form.price}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 required
-                className={formErrors["title"] ? "border-red-500" : ""}
+                className={formErrors["price"] ? "border-red-500" : ""}
               />
               {formErrors["price"] && (
                 <p className="text-red-500 text-sm mt-1">{formErrors["price"]}</p>
@@ -335,12 +339,16 @@ export default function ListingFormToUpdate({
               <Input
                 id="size"
                 name="size"
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
                 placeholder="Enter size"
                 value={form.size}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 className={formErrors["size"] ? "border-red-500" : ""}
               />
               {formErrors["size"] && (
@@ -350,14 +358,19 @@ export default function ListingFormToUpdate({
 
             <div className="grid gap-1">
               <Label htmlFor="rooms">Rooms</Label>
-                <Input
+              <Input
                 id="rooms"
                 name="rooms"
-                type="number"
-                min="0"
+                type="text"
                 placeholder="Enter number of rooms"
                 value={form.rooms}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 className={formErrors["rooms"] ? "border-red-500" : ""}
               />
               {formErrors["rooms"] && (
@@ -479,7 +492,6 @@ export default function ListingFormToUpdate({
                 variant="destructive"
                 onClick={() => {
                   const newImages = form.images.filter((_, i) => i !== index);
-                  // Ensure at least one primary image remains
                   if (newImages.length && !newImages.some(img => img.isPrimary)) {
                     newImages[0].isPrimary = true;
                   }

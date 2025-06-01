@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-// import { FaFacebook } from "react-icons/fa";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
@@ -103,11 +102,6 @@ export function LoginForm() {
       </div>
 
       <GoogleLogin />
-
-      {/* <Button className="w-full flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground cursor-pointer"> */}
-      {/*   <FaFacebook className="w-5 h-5" /> */}
-      {/*   Continue with Facebook */}
-      {/* </Button> */}
 
       <Link to="/register-form" className="[&.active]:underline">
         <div className="text-sm text-center underline">

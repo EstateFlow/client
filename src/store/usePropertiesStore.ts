@@ -14,7 +14,7 @@ interface PropertiesState {
   error: string | null;
   selectedProperty: Property | null;
   filter: "active" | "sold_rented" | "inactive" | null;
-  isVerified: boolean | null; // <--- добавлено
+  isVerified: boolean | null;
 
   update: (propertyId: string, updatedData: CreateProperty) => Promise<void>;
   fetchChouse: (filter?: "active" | "sold_rented" | "inactive", isVerified?: boolean) => Promise<void>;

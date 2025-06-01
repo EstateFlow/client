@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-// import { FaFacebook } from "react-icons/fa";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import {
@@ -285,27 +284,6 @@ export function RegisterForm() {
             })
           }
         />
-        {/**/}
-        {/* <Button */}
-        {/*   className="w-full flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground cursor-pointer" */}
-        {/*   disabled={isLoading || !socialRole} */}
-        {/*   onClick={() => { */}
-        {/*     if (!socialRole) { */}
-        {/*       setErrors({ */}
-        {/*         ...errors, */}
-        {/*         socialRole: */}
-        {/*           "Please select a role before signing in with Facebook.", */}
-        {/*       }); */}
-        {/*       return; */}
-        {/*     } */}
-        {/*     toast("Info", { */}
-        {/*       description: "Facebook login is not implemented yet", */}
-        {/*     }); */}
-        {/*   }} */}
-        {/* > */}
-        {/*   <FaFacebook className="w-5 h-5" /> */}
-        {/*   Continue with Facebook */}
-        {/* </Button> */}
       </div>
 
       <Link to="/login-form" className="[&.active]:underline">

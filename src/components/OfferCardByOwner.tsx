@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Pencil, HeartMinus, MapPin, Home } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { PropertyWishlist, Property } from "@/lib/types";
-//import { useTempStore } from "@/store/tempStore";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ListingFormToUpdate from "@/components/ListingFormToUpdate";
 import { useState } from "react";
@@ -112,7 +111,6 @@ export default function OfferCardByOwner({
         </div>
       );
     case "renter_buyer":
-      //const setTempWishlist = useTempStore((s) => s.setTempWishlist);
       if (propertyWishlist?.status === "active") {
         return (
           <div className="overflow-hidden">
@@ -120,7 +118,6 @@ export default function OfferCardByOwner({
               <Link
                 to="/listing-page"
                 search={{ propertyId: propertyWishlist!.id }}
-                //  onClick={() => setTempWishlist(propertyWishlist)}
                 className="[&.active]:underline"
               >
                 <img

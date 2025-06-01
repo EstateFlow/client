@@ -1,4 +1,3 @@
-// components/RealEstatePreview.tsx
 import { Star } from "lucide-react";
 
 type PreviewItem = {

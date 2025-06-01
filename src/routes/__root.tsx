@@ -27,7 +27,7 @@ function RootComponent() {
 
   useEffect(() => {
     if (!isInitialized) {
-      checkAuth(); // перевірка при завантаженні
+      checkAuth();
     }
   }, [checkAuth, isInitialized]);
 

@@ -1,7 +1,7 @@
 import OfferCarByOwner from "@/components/OfferCardByOwner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, PlusCircle, AlertTriangle } from "lucide-react";
-import { usePropertiesStore } from "@/store/usePropertiesStore";
+import { usePropertiesStore } from "@/store/propertiesStore";
 import { useEffect, useState, useMemo } from "react";
 import type { UserInfo } from "@/lib/types";
 import { ourListingsLimit } from "@/lib/types";
@@ -13,7 +13,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
   const {
     properties,
     loading: propertiesLoading,
-    fetchMultiple,
+    fetchAll,
   } = usePropertiesStore();
 
   const {
@@ -27,18 +27,18 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
 
 useEffect(() => {
   if (user.role === "admin" || user.role === "private_seller" || user.role === "agency") {
-    fetchMultiple(["active", "inactive", "sold_rented"]);
+    fetchAll();
   } else if (user.role === "renter_buyer") {
     loadWishlist();
   }
 }, [user.role]);
 
 const handleRefresh = () => {
-  fetchMultiple(["active", "inactive", "sold_rented"]);
+  fetchAll();
 };
 
 const filteredProperties = useMemo(() => {
-  if (user.role !== "admin" && user.role !== "private_seller" && user.role !== "agency") {
+  if (user.role !== "private_seller" && user.role !== "agency") {
     return [];
   }
 

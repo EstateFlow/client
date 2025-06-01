@@ -1,5 +1,6 @@
-import { createFileRoute, useSearch } from '@tanstack/react-router';
+import { createFileRoute, useSearch, useNavigate } from '@tanstack/react-router';
 import ListingFormToAddPage from '@/pages/ListingFormToAddPage';
+import { useUserStore } from "@/store/userStore";
 
 export const Route = createFileRoute('/listing-form-to-add-page')({
   validateSearch: (search: Record<string, unknown>) => {
@@ -15,6 +16,13 @@ export const Route = createFileRoute('/listing-form-to-add-page')({
 })
 
 function ListingRouteComponent() {
-  const search = useSearch({ from: '/listing-form-to-add-page' });
-  return <ListingFormToAddPage userId = {search.userId}/>;
+    const { user } = useUserStore();
+    const navigate = useNavigate();
+  if(user && (user.role === "private_seller" || user.role === "agency")){
+    const search = useSearch({ from: '/listing-form-to-add-page' });
+    return <ListingFormToAddPage userId = {search.userId}/>;
+  }else{
+    navigate({ to: "/" });
+  }
+
 }

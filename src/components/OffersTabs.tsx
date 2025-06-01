@@ -1,4 +1,3 @@
-// components/OffersTabs.tsx
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function OffersTabs() {

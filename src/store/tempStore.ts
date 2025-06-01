@@ -1,4 +1,3 @@
-// src/store/tempStore.ts
 import { create } from 'zustand';
 import type { Property, PropertyWishlist } from '@/lib/types';
 
