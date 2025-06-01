@@ -120,6 +120,8 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
           ? (price * 0.1).toFixed(2)
           : price.toFixed(2);
 
+      console.log(selectedProperty.id);
+
       const response = await $api.post(
         `${import.meta.env.VITE_API_URL}/api/paypal/create-order`,
         {
@@ -149,6 +151,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         `${import.meta.env.VITE_API_URL}/api/paypal/capture-order`,
         {
           orderId: data?.orderID,
+          propertyId: selectedProperty.id,
           email: user?.email,
         },
       );
@@ -165,29 +168,29 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     navigate({ to: "/cancel-payment" });
   };
   const handleShare = async () => {
-  const shareUrl = `${window.location.origin}/listing-page?propertyId=${propertyId}`;
-  const shareData = {
-    title: selectedProperty.title,
-    text: selectedProperty.description,
-    url: shareUrl,
-  };
+    const shareUrl = `${window.location.origin}/listing-page?propertyId=${propertyId}`;
+    const shareData = {
+      title: selectedProperty.title,
+      text: selectedProperty.description,
+      url: shareUrl,
+    };
 
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-    } catch (err) {
-      console.error("Sharing failed:", err);
-      toast.error("Sharing failed");
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Sharing failed:", err);
+        toast.error("Sharing failed");
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+      } catch (err) {
+        toast.error("Failed to copy link");
+      }
     }
-  } else {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success("Link copied to clipboard!");
-    } catch (err) {
-      toast.error("Failed to copy link");
-    }
-  }
-};
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
@@ -302,7 +305,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               className="mt-4"
               fundingSource="paypal"
             />
-          ): null }
+          ) : null}
         </div>
       </div>
     </div>
