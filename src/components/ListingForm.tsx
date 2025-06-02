@@ -26,6 +26,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
   const navigate = useNavigate();
 
   const [activeImage, setActiveImage] = useState("");
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   useEffect(() => {
     fetchById(propertyId);
@@ -165,8 +166,17 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     console.log(data);
     navigate({ to: "/cancel-payment" });
   };
-  const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/listing-page?propertyId=${propertyId}`;
+
+  const getShareUrl = () => {
+    return `${window.location.origin}/listing-page?propertyId=${propertyId}`;
+  };
+
+  const getShareText = () => {
+    return `Check out this property: ${selectedProperty.title} - $${selectedProperty.price} in ${selectedProperty.address}`;
+  };
+
+  const handleNativeShare = async () => {
+    const shareUrl = getShareUrl();
     const shareData = {
       title: selectedProperty.title,
       text: selectedProperty.description,
@@ -176,6 +186,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
+        setShowShareOptions(false);
       } catch (err) {
         console.error("Sharing failed:", err);
         toast.error("Sharing failed");
@@ -184,10 +195,27 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
       try {
         await navigator.clipboard.writeText(shareUrl);
         toast.success("Link copied to clipboard!");
+        setShowShareOptions(false);
       } catch (err) {
         toast.error("Failed to copy link");
       }
     }
+  };
+
+  const handleTelegramShare = () => {
+    const shareText = getShareText();
+    const shareUrl = getShareUrl();
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+    window.open(telegramUrl, "_blank", "noopener,noreferrer");
+    setShowShareOptions(false);
+  };
+
+  const handleXShare = () => {
+    const shareText = getShareText();
+    const shareUrl = getShareUrl();
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(twitterUrl, "_blank", "noopener,noreferrer");
+    setShowShareOptions(false);
   };
 
   return (
@@ -261,15 +289,77 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                   <Button variant="secondary">View seller's profile</Button>
                 </Link>
 
-                <Button variant="outline" onClick={handleShare}>
-                  <Share2 className="w-4 h-4 mr-1" />
-                  Share
-                </Button>
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowShareOptions(!showShareOptions)}
+                  >
+                    <Share2 className="w-4 h-4 mr-1" />
+                    Share
+                  </Button>
+
+                  {showShareOptions && (
+                    <div className="absolute top-full mt-2 right-0 bg-background border rounded-lg shadow-lg p-2 z-20 min-w-48">
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleTelegramShare}
+                          className="justify-start"
+                        >
+                          <svg
+                            className="w-4 h-4 mr-2"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.787l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z" />
+                          </svg>
+                          Share on Telegram
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleXShare}
+                          className="justify-start"
+                        >
+                          <svg
+                            className="w-4 h-4 mr-2"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                          </svg>
+                          Share on X
+                        </Button>
+
+                        {!navigator.share && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleNativeShare}
+                            className="justify-start"
+                          >
+                            📋 Copy link
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Click outside to close share options */}
+      {showShareOptions && (
+        <div
+          className="fixed inset-0 z-10"
+          onClick={() => setShowShareOptions(false)}
+        />
+      )}
 
       <Separator />
 
