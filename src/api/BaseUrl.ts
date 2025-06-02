@@ -21,6 +21,11 @@ $api.interceptors.response.use(
       original._retry = true;
       try {
         const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) {
+          localStorage.clear();
+          return Promise.reject(err);
+        }
+
         const { data } = await $api.post(
           `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,
           {

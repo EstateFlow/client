@@ -12,6 +12,7 @@ import {
   Filter,
   AlertTriangle,
   CheckCircle,
+  FileText,
 } from "lucide-react";
 import {
   Dialog,
@@ -73,6 +74,16 @@ const PropertyManagement = () => {
         [`delete-${propertyId}`]: false,
       }));
     }
+  };
+
+  const handleViewDocument = (documentUrl: string, propertyTitle: string) => {
+    if (!documentUrl) {
+      toast.error("No document available for this property");
+      return;
+    }
+
+    window.open(documentUrl, "_blank");
+    toast.info(`Opening document for "${propertyTitle}"`);
   };
 
   const filteredProperties = properties.filter((property) => {
@@ -211,6 +222,14 @@ const PropertyManagement = () => {
                       {property.transactionType}
                     </span>
                   </div>
+
+                  {!property.isVerified && property.documentUrl && (
+                    <div className="absolute top-3 right-3">
+                      <div className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 p-1 rounded-full">
+                        <FileText size={12} />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-4 space-y-3">
@@ -251,19 +270,40 @@ const PropertyManagement = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-2 border-t">
+                  <div className="flex flex-wrap gap-2 pt-2 border-t">
                     {!property.isVerified && (
-                      <Button
-                        size="sm"
-                        className="flex-1 gap-2 cursor-pointer"
-                        onClick={() => handleVerifyProperty(property.id)}
-                        disabled={actionLoading[`verify-${property.id}`]}
-                      >
-                        <Check size={14} />
-                        {actionLoading[`verify-${property.id}`]
-                          ? "Verifying..."
-                          : "Verify"}
-                      </Button>
+                      <>
+                        {/* View Document Button - only for unverified properties */}
+                        {property.documentUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1 cursor-pointer"
+                            onClick={() =>
+                              handleViewDocument(
+                                property.documentUrl,
+                                property.title,
+                              )
+                            }
+                          >
+                            <FileText size={14} />
+                            Document
+                          </Button>
+                        )}
+
+                        {/* Verify Button */}
+                        <Button
+                          size="sm"
+                          className="gap-1 cursor-pointer"
+                          onClick={() => handleVerifyProperty(property.id)}
+                          disabled={actionLoading[`verify-${property.id}`]}
+                        >
+                          <Check size={14} />
+                          {actionLoading[`verify-${property.id}`]
+                            ? "Verifying..."
+                            : "Verify"}
+                        </Button>
+                      </>
                     )}
 
                     <Link
@@ -273,7 +313,7 @@ const PropertyManagement = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="gap-2 cursor-pointer"
+                        className="gap-1 cursor-pointer"
                       >
                         <Eye size={14} />
                         View
@@ -281,11 +321,11 @@ const PropertyManagement = () => {
                     </Link>
 
                     <Dialog>
-                      <DialogTrigger>
+                      <DialogTrigger asChild>
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="cursor-pointer"
+                          className="gap-1 cursor-pointer"
                         >
                           <Trash2 size={14} />
                           {actionLoading[`delete-${property.id}`]
