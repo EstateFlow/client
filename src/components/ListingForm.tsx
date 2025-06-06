@@ -6,11 +6,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Share2, Heart, HeartOff } from "lucide-react";
+import { Share2, Heart, HeartOff, Eye } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
-import { useWishlistStore } from "@/store/wishlist";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
@@ -45,7 +45,17 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         selectedProperty.images[0].imageUrl;
       setActiveImage(defaultImage);
     }
-  }, [selectedProperty]);
+
+    const viewProperty = async () => {
+      await $api.post(`${import.meta.env.VITE_API_URL}/api/views`, {
+        propertyId: selectedProperty?.id,
+      });
+    };
+
+    if (selectedProperty?.id) {
+      viewProperty();
+    }
+  }, [selectedProperty?.id]);
 
   if (loading) {
     return (
@@ -221,12 +231,20 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6">
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 relative">
           <img
             src={activeImage}
             alt={selectedProperty.title}
             className="w-full h-[400px] rounded-2xl object-cover"
           />
+
+          <div className="absolute top-3 left-3 flex gap-2">
+            <span className="flex gap-1 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+              <Eye className="w-4 h-4" />
+              {selectedProperty.views.length}{" "}
+              {selectedProperty.views.length === 1 ? "view" : "views"}
+            </span>
+          </div>
           <div className="flex gap-2 overflow-x-auto">
             {selectedProperty.images
               .filter(
@@ -268,9 +286,10 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               )}
             </Button>
 
-            <CardContent className="p-4 space-y-2">
-              <CardTitle className="text-2xl">
-                {selectedProperty.price}$
+            <CardContent className="space-y-2">
+              <CardTitle>
+                <h1 className="text-2xl">{selectedProperty.title}</h1>
+                <h2 className="text-xl">{selectedProperty.price}$</h2>
               </CardTitle>
               <CardDescription>{selectedProperty.address}</CardDescription>
               <div className="text-sm text-muted-foreground">
@@ -353,7 +372,6 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         </div>
       </div>
 
-      {/* Click outside to close share options */}
       {showShareOptions && (
         <div
           className="fixed inset-0 z-10"

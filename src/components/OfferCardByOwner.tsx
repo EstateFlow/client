@@ -1,6 +1,6 @@
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Pencil, HeartMinus, MapPin, Home } from "lucide-react";
+import { Pencil, HeartMinus, MapPin, Home, Eye } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { PropertyWishlist, Property } from "@/lib/types";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -30,6 +30,8 @@ export default function OfferCardByOwner({
       currency: currency || "USD",
     }).format(Number(price));
   };
+
+  console.log(propertyWishlist);
 
   switch (role) {
     case "admin":
@@ -81,9 +83,14 @@ export default function OfferCardByOwner({
           </div>
           <CardContent className="p-4 space-y-1">
             <div>
-              <h3 className="font-semibold text-lg line-clamp-1">
-                {property?.title}
-              </h3>
+              <div className="flex justify-between">
+                <h3 className="font-semibold text-lg line-clamp-1">
+                  {property?.title}
+                </h3>
+                <div className="text-sm flex gap-1 items-center text-muted-foreground">
+                  {property?.views.length} <Eye className="w-4 h-4" />
+                </div>
+              </div>
               <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
                 {property?.description}
               </p>
@@ -159,9 +166,14 @@ export default function OfferCardByOwner({
             </div>
             <CardContent className="p-4 space-y-1">
               <div>
-                <h3 className="font-semibold text-lg line-clamp-1">
-                  {propertyWishlist?.title}
-                </h3>
+                <div className="flex justify-between">
+                  <h3 className="font-semibold text-lg line-clamp-1">
+                    {propertyWishlist?.title}
+                  </h3>
+                  <div className="text-sm flex gap-1 items-center text-muted-foreground">
+                    {propertyWishlist?.views.length} <Eye className="w-4 h-4" />
+                  </div>
+                </div>
                 <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
                   {propertyWishlist?.description}
                 </p>
