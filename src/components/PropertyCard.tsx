@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { CardContent } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
-import { Home, MapPin, Calendar, User } from "lucide-react";
+import { Home, MapPin, Calendar, User, Eye } from "lucide-react";
 
 export function PropertyCard({ property }: any) {
   const { properties, fetchChouse } = usePropertiesStore();
@@ -54,15 +54,26 @@ export function PropertyCard({ property }: any) {
             <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full capitalize">
               {property.transactionType}
             </span>
+
+            {/* <span className="flex gap-1 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"> */}
+            {/*   <Eye className="w-4 h-4" /> */}
+            {/*   {property.views.length}{" "} */}
+            {/*   {property.views.length === 1 ? "view" : "views"} */}
+            {/* </span> */}
           </div>
         </Link>
       </div>
 
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-4 space-y-3 relative">
         <div>
-          <h3 className="font-semibold text-lg line-clamp-1">
-            {property.title}
-          </h3>
+          <div className="flex justify-between">
+            <h3 className="font-semibold text-lg line-clamp-1">
+              {property.title}
+            </h3>
+            <div className="text-sm flex gap-1 items-center text-muted-foreground">
+              {property.views.length} <Eye className="w-4 h-4" />
+            </div>
+          </div>
           <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
             {property.description}
           </p>

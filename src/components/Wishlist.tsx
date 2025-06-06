@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWishlistStore } from "@/store/wishlist";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { Button } from "@/components/ui/button";
 
 export function WishlistPage() {

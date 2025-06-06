@@ -112,6 +112,7 @@ export interface PropertyWishlist {
   createdAt: string;
   updatedAt: string;
   images: string[];
+  views: string[];
 }
 
 export const FACILITY_OPTIONS = [
