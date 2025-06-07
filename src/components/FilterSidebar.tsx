@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -18,17 +18,31 @@ export function FilterSidebar() {
     setPrice,
     area,
     setArea,
+    availableRooms,
     rooms,
     toggleRoom,
+    availableTypes,
     types,
     toggleType,
+    availablePropertyTypes,
     propertyTypes,
     togglePropertyType,
+    fetchFilters,
+    isLoading,
+    error,
   } = useFilterStore();
-  const [isOpen, setIsOpen] = useState(false);
 
-  const transactionTypes = ["sale", "rent"];
-  const propertyTypeOptions = ["apartment", "house"];
+  useEffect(() => {
+    if (
+      availableTypes.length === 0 ||
+      availableRooms.length === 0 ||
+      availablePropertyTypes.length === 0
+    ) {
+      fetchFilters();
+    }
+  }, [fetchFilters, availableTypes, availableRooms, availablePropertyTypes]);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const handlePriceChange = (index: number, value: string) => {
     const newPrice = [...price];
@@ -41,6 +55,43 @@ export function FilterSidebar() {
     newArea[index] = Number(value) || 0;
     setArea(newArea as [number, number]);
   };
+
+  const handleApplyFilters = () => {
+    setIsOpen(false);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="hidden md:block w-64 p-4 rounded-lg">
+        <div className="animate-pulse">
+          <div className="h-6 bg-muted rounded w-20 mb-4"></div>
+          <div className="space-y-4">
+            <div className="h-20 bg-muted rounded"></div>
+            <div className="h-20 bg-muted rounded"></div>
+            <div className="h-32 bg-muted rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="hidden md:block w-64 p-4 rounded-lg">
+        <div className="text-red-500 text-sm">
+          <p>Error loading filters: {error}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchFilters}
+            className="mt-2"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -92,7 +143,7 @@ export function FilterSidebar() {
           <div>
             <h4 className="text-sm font-medium mb-2">Rooms</h4>
             <div className="grid grid-cols-2 gap-2">
-              {[1, 2, 3, 4, 5].map((room) => (
+              {availableRooms.map((room) => (
                 <div key={room} className="flex items-center space-x-2">
                   <Checkbox
                     id={`room-${room}`}
@@ -110,7 +161,7 @@ export function FilterSidebar() {
           <div>
             <h4 className="text-sm font-medium mb-2">Transaction Type</h4>
             <div className="grid grid-cols-2 gap-2">
-              {transactionTypes.map((type) => (
+              {availableTypes.map((type) => (
                 <div key={type} className="flex items-center space-x-2">
                   <Checkbox
                     id={`type-${type}`}
@@ -131,7 +182,7 @@ export function FilterSidebar() {
           <div>
             <h4 className="text-sm font-medium mb-2">Property Type</h4>
             <div className="grid grid-cols-2 gap-2">
-              {propertyTypeOptions.map((propertyType) => (
+              {availablePropertyTypes.map((propertyType) => (
                 <div key={propertyType} className="flex items-center space-x-2">
                   <Checkbox
                     id={`property-${propertyType}`}
@@ -209,7 +260,7 @@ export function FilterSidebar() {
               <div>
                 <h4 className="text-sm font-medium mb-2">Rooms</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  {[1, 2, 3, 4, 5].map((room) => (
+                  {availableRooms.map((room) => (
                     <div key={room} className="flex items-center space-x-2">
                       <Checkbox
                         id={`room-${room}-mobile`}
@@ -230,7 +281,7 @@ export function FilterSidebar() {
               <div>
                 <h4 className="text-sm font-medium mb-2">Transaction Type</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  {transactionTypes.map((type) => (
+                  {availableTypes.map((type) => (
                     <div key={type} className="flex items-center space-x-2">
                       <Checkbox
                         id={`type-${type}-mobile`}
@@ -251,7 +302,7 @@ export function FilterSidebar() {
               <div>
                 <h4 className="text-sm font-medium mb-2">Property Type</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  {propertyTypeOptions.map((propertyType) => (
+                  {availablePropertyTypes.map((propertyType) => (
                     <div
                       key={propertyType}
                       className="flex items-center space-x-2"
@@ -272,7 +323,7 @@ export function FilterSidebar() {
                 </div>
               </div>
             </div>
-            <Button className="mt-4 w-full" onClick={() => setIsOpen(false)}>
+            <Button className="mt-4 w-full" onClick={handleApplyFilters}>
               Apply Filters
             </Button>
           </DrawerContent>
