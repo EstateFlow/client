@@ -19,20 +19,20 @@ export function GoogleLogin({ role, onValidationError }: GoogleLoginProps) {
     onSuccess: async ({ code }) => {
       try {
         const response = await googleLogin(code, role);
-        toast("Success", {
-          description: response.message || "Logged in via Google",
+        toast(t("success"), {
+          description: response.message || t("googleLoginSuccess"),
         });
         navigate({ to: "/" });
       } catch (error: any) {
-        toast("Error", {
-          description: error.message || "Google login failed",
+        toast(t("error"), {
+          description: error.message || t("googleLoginFailed"),
         });
       }
     },
     onError: (error) => {
       console.error("Google OAuth error:", error);
-      toast("Error", {
-        description: "Failed to initiate Google login. Please try again.",
+      toast(t("error"), {
+        description: t("googleLoginInitiateFailed"),
       });
     },
     flow: "auth-code",
@@ -45,8 +45,8 @@ export function GoogleLogin({ role, onValidationError }: GoogleLoginProps) {
       return;
     }
     if (!role) {
-      toast("Error", {
-        description: "Please select a role before signing in with Google.",
+      toast(t("error"), {
+        description: t("googleLoginRoleRequired"),
       });
       onValidationError?.();
       return;

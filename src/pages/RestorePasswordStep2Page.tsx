@@ -37,15 +37,15 @@ export default function RestorePasswordStep2Page({
     };
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("passwordRequired");
       isValid = false;
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t("passwordMinLength");
       isValid = false;
     }
 
     if (formData.password !== formData.repeatPassword) {
-      newErrors.repeatPassword = "Passwords do not match";
+      newErrors.repeatPassword = t("passwordsDoNotMatch");
       isValid = false;
     }
 
@@ -83,16 +83,16 @@ export default function RestorePasswordStep2Page({
       if (response.status === 200) {
         setIsLoading(false);
         setError(null);
-        toast("Success", {
-          description: "Password successfully changed!",
+        toast(t("success"), {
+          description: t("passwordResetSuccess"),
         });
         setTimeout(() => navigate({ to: "/login-form" }), 2000);
       }
     } catch (error: any) {
       setIsLoading(false);
       setError("Invalid or expired token");
-      toast("Error", {
-        description: error.message || "Password reset process failed",
+      toast(t("error"), {
+        description: error.message || t("passwordResetFailed"),
       });
     }
   };

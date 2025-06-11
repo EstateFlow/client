@@ -96,15 +96,13 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
 
   const handleToggleWishlist = () => {
     if (!isAuthenticated) {
-      toast("You must be logged in to add to wishlist", {
-        description: "Please log in or sign up to continue.",
-      });
+      toast.error(t("loginRequired"), { description: t("loginPrompt") });
       return;
     }
 
     if (user?.role !== "renter_buyer") {
-      toast("Access restricted", {
-        description: "Please sign in as a buyer to use this feature.",
+      toast.error(t("accessRestricted"), {
+        description: t("buyerRoleRequired"),
       });
       return;
     }
@@ -129,7 +127,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     try {
       const price = parseFloat(selectedProperty.price);
       if (isNaN(price)) {
-        toast.error("Invalid price format. Please contact support.");
+        toast.error(t("invalidPriceFormat"));
         throw new Error("Invalid price format");
       }
 
@@ -151,7 +149,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
       );
       return response.data.id;
     } catch (error) {
-      toast.error("Failed to create PayPal order. Please try again.");
+      toast.error(t("failedToCreateOrder"));
       throw new Error("Failed to create PayPal order");
     }
   };
@@ -159,7 +157,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
   const onApprove = async (data: any) => {
     try {
       if (!data?.orderID) {
-        toast.error("Invalid order ID. Please try again.");
+        toast.error(t("invalidOrderId"));
         return;
       }
 
@@ -172,15 +170,17 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         },
       );
       console.log(response);
+      toast.success(t("success"), { description: t("paymentSuccessful") });
       navigate({ to: "/complete-payment" });
     } catch (error) {
-      toast.error("Failed to capture payment. Please try again.");
+      toast.error(t("failedToCapturePayment"));
       console.error(error);
     }
   };
 
   const onError = async (data: any) => {
     console.log(data);
+    toast.error(t("failedToCapturePayment"));
     navigate({ to: "/cancel-payment" });
   };
 
@@ -206,15 +206,15 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         setShowShareOptions(false);
       } catch (err) {
         console.error("Sharing failed:", err);
-        toast.error("Sharing failed");
+        toast.error(t("copyLinkFailed"));
       }
     } else {
       try {
         await navigator.clipboard.writeText(shareUrl);
-        toast.success("Link copied to clipboard!");
+        toast.success(t("success"), { description: t("linkCopied") });
         setShowShareOptions(false);
       } catch (err) {
-        toast.error("Failed to copy link");
+        console.error("Copying failed:", err);
       }
     }
   };

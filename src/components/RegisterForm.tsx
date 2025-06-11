@@ -50,8 +50,8 @@ export function RegisterForm() {
 
   useEffect(() => {
     if (user) {
-      toast("Success", {
-        description: "Registration successful. Please verify your email.",
+      toast(t("success"), {
+        description: t("registrationSuccess"),
       });
       clearError();
     }
@@ -69,50 +69,47 @@ export function RegisterForm() {
     };
 
     if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+      newErrors.username = t("usernameRequired");
       isValid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("emailRequired");
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t("invalidEmailFormat");
       isValid = false;
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("passwordRequired");
       isValid = false;
     } else {
       if (formData.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters";
+        newErrors.password = t("passwordMinLength8");
         isValid = false;
       } else if (!/[A-Z]/.test(formData.password)) {
-        newErrors.password =
-          "Password must contain at least one uppercase letter";
+        newErrors.password = t("passwordUppercaseRequired");
         isValid = false;
       } else if (!/[a-z]/.test(formData.password)) {
-        newErrors.password =
-          "Password must contain at least one lowercase letter";
+        newErrors.password = t("passwordLowercaseRequired");
         isValid = false;
       } else if (!/[0-9]/.test(formData.password)) {
-        newErrors.password = "Password must contain at least one number";
+        newErrors.password = t("passwordNumberRequired");
         isValid = false;
       } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-        newErrors.password =
-          "Password must contain at least one special character";
+        newErrors.password = t("passwordSpecialCharRequired");
         isValid = false;
       }
     }
 
     if (formData.password !== formData.repeatPassword) {
-      newErrors.repeatPassword = "Passwords do not match";
+      newErrors.repeatPassword = t("passwordsDoNotMatch");
       isValid = false;
     }
 
     if (!formData.role) {
-      newErrors.role = "Please select a role";
+      newErrors.role = t("roleRequired");
       isValid = false;
     }
 
@@ -143,8 +140,8 @@ export function RegisterForm() {
         role: "",
       });
     } catch (error: any) {
-      toast("Error", {
-        description: error.message || "Registration failed",
+      toast(t("error"), {
+        description: error.message || t("registrationFailed"),
       });
     }
   };
@@ -304,7 +301,7 @@ export function RegisterForm() {
           onValidationError={() =>
             setErrors({
               ...errors,
-              socialRole: "Please select a role before signing in with Google.",
+              socialRole: t("googleLoginRoleRequired"),
             })
           }
         />

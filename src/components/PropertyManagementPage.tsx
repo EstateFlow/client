@@ -49,9 +49,13 @@ const PropertyManagement = () => {
 
     try {
       await verifyProperty(propertyId);
-      toast.success("Property verified successfully");
+      toast(t("success"), {
+        description: t("propertyVerifiedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to verify property");
+      toast(t("error"), {
+        description: t("propertyVerifyFailed"),
+      });
       console.error("Error verifying property:", error);
     } finally {
       setActionLoading((prev) => ({
@@ -66,9 +70,13 @@ const PropertyManagement = () => {
 
     try {
       await remove(propertyId);
-      toast.success("Property deleted successfully");
+      toast(t("success"), {
+        description: t("propertyDeletedSuccess"),
+      });
     } catch (error: any) {
-      toast.error(error || "Failed to delete property");
+      toast(t("error"), {
+        description: error || t("propertyDeleteFailed"),
+      });
       console.error("Error deleting property:", error);
     } finally {
       setActionLoading((prev) => ({
@@ -80,12 +88,14 @@ const PropertyManagement = () => {
 
   const handleViewDocument = (documentUrl: string, propertyTitle: string) => {
     if (!documentUrl) {
-      toast.error("No document available for this property");
+      toast(t("error"), {
+        description: t("noDocumentAvailable"),
+      });
       return;
     }
 
     window.open(documentUrl, "_blank");
-    toast.info(`Opening document for "${propertyTitle}"`);
+    toast.info(t("openingDocument", { propertyTitle }));
   };
 
   const filteredProperties = properties.filter((property) => {
@@ -111,7 +121,9 @@ const PropertyManagement = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast(t("error"), {
+        description: t(error) || error || t("genericError"),
+      });
     }
   }, [error]);
 

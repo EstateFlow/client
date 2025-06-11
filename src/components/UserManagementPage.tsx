@@ -89,7 +89,9 @@ const UserManagementPage = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast(t("error"), {
+        description: t(error) || error || t("genericError"),
+      });
     }
   }, [error]);
 
@@ -97,9 +99,13 @@ const UserManagementPage = () => {
     setActionLoading((prev) => ({ ...prev, [`delete-${userId}`]: true }));
     try {
       await deleteUser(userId);
-      toast.success("User deleted successfully");
+      toast(t("success"), {
+        description: t("userDeletedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to delete user");
+      toast(t("error"), {
+        description: t("userDeleteFailed"),
+      });
       console.error("Error deleting user:", error);
     } finally {
       setActionLoading((prev) => ({
@@ -122,9 +128,13 @@ const UserManagementPage = () => {
         bio: "This section is yet empty.",
       });
       setIsAddDialogOpen(false);
-      toast.success("User added successfully");
+      toast(t("success"), {
+        description: t("userAddedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to add user");
+      toast(t("error"), {
+        description: t("userAddFailed"),
+      });
       console.error("Error adding user:", error);
     } finally {
       setActionLoading((prev) => ({ ...prev, "add-user": false }));
@@ -138,9 +148,13 @@ const UserManagementPage = () => {
       await updateUser(editingUser);
       setEditingUser(null);
       setIsEditDialogOpen(false);
-      toast.success("User updated successfully");
+      toast(t("success"), {
+        description: t("userUpdatedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to update user");
+      toast(t("error"), {
+        description: t("userUpdateFailed"),
+      });
       console.error("Error updating user:", error);
     } finally {
       setActionLoading((prev) => ({

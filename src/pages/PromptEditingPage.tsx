@@ -87,7 +87,6 @@ export default function PromptEditingPage() {
 
   const handleSave = async (type: string) => {
     try {
-      console.log("a");
       await updateSystemPrompt(
         type === "renter" ? "default-renter-buyer" : "default-seller-agency",
         systemPrompts[type],
@@ -97,11 +96,15 @@ export default function PromptEditingPage() {
         [type]: systemPrompts[type],
       }));
       setHasChanges((prev) => ({ ...prev, [type]: false }));
-      toast.success(
-        `${type === "renter" ? "Renter/Buyer" : "Seller/Agency"} prompt saved successfully`,
-      );
+      toast(t("success"), {
+        description: t(
+          type === "renter" ? "renterPromptSaved" : "sellerPromptSaved",
+        ),
+      });
     } catch (error: any) {
-      toast.error(error.message || "Failed to save prompt");
+      toast(t("error"), {
+        description: error.message || t("promptSaveFailed"),
+      });
     }
   };
 
@@ -112,7 +115,7 @@ export default function PromptEditingPage() {
     }));
     setHasChanges((prev) => ({ ...prev, [type]: false }));
     toast.info(
-      `${type === "renter" ? "Renter/Buyer" : "Seller/Agency"} prompt reset`,
+      t(type === "renter" ? "renterPromptReset" : "sellerPromptReset"),
     );
   };
 
@@ -120,12 +123,16 @@ export default function PromptEditingPage() {
     try {
       await navigator.clipboard.writeText(systemPrompts[type]);
       setCopied((prev) => ({ ...prev, [type]: true }));
-      toast.success("Prompt copied to clipboard");
+      toast(t("success"), {
+        description: t("promptCopySuccess"),
+      });
       setTimeout(() => {
         setCopied((prev) => ({ ...prev, [type]: false }));
       }, 2000);
     } catch (err) {
-      toast.error("Failed to copy prompt");
+      toast(t("error"), {
+        description: t("promptCopyFailed"),
+      });
     }
   };
 

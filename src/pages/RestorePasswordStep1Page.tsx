@@ -21,27 +21,30 @@ export default function RestorePasswordStep1Page() {
     e.preventDefault();
 
     setIsLoading(true);
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/user/password-reset-request`,
-      {
-        email,
-      },
-    );
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/user/password-reset-request`,
+        {
+          email,
+        },
+      );
 
-    if (response.status === 200) {
+      if (response.status === 200) {
+        setIsLoading(false);
+        setError(null);
+        toast(t("success"), {
+          description: t("passwordResetRequestSuccess"),
+        });
+      }
+    } catch (error: any) {
       setIsLoading(false);
-      setError(null);
-      toast("Success", {
-        description: "Please check your email!",
-      });
-    } else {
-      setIsLoading(false);
-      setError("There are no user with such email");
-      toast("Error", {
-        description: "There are no user with such email",
+      setError(t("passwordResetRequestFailed"));
+      toast(t("error"), {
+        description: t("passwordResetRequestFailed"),
       });
     }
   };
+
   return (
     <div className="flex gap-8 p-8 justify-center items-start">
       <form
@@ -71,7 +74,7 @@ export default function RestorePasswordStep1Page() {
         >
           {isLoading ? t("sendingMessage") : t("continue")}
         </Button>
-        <Link to="/login-form" className="[&.active]:underline ">
+        <Link to="/login-form" className="[&.active]:underline">
           <Button
             variant="ghost"
             className="w-full cursor-pointer transition-all ease-in-out duration-200"

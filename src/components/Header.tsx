@@ -23,7 +23,7 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    toast.success("Logged out successfully");
+    toast.success(t("success"), { description: t("loggedOutSuccessfully") });
     navigate({ to: "/" });
   };
 

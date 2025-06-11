@@ -39,8 +39,10 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
+  const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -78,50 +80,50 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
     });
   };
 
-  const isValidNumber = (value: string) =>
-    /[0-9.]/.test(value.trim());
+  const isValidNumber = (value: string) => /[0-9.]/.test(value.trim());
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
     const requiredFields = [
-      { name: "title", label: "Title" },
-      { name: "propertyType", label: "Property Type" },
-      { name: "transactionType", label: "Transaction Type" },
-      { name: "price", label: "Price" },
-      { name: "address", label: "Address" },
-      { name: "ownerId", label: "Owner ID" },
+      { name: "title", label: t("title") },
+      { name: "propertyType", label: t("propertyType") },
+      { name: "transactionType", label: t("transactionType") },
+      { name: "price", label: t("price") },
+      { name: "address", label: t("address") },
+      { name: "ownerId", label: t("ownerId") },
     ];
 
     for (const field of requiredFields) {
       const value =
         field.name === "ownerId" ? ownerId : (form as any)[field.name];
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        errors[field.name] = `"${field.label}" field is required`;
+        errors[field.name] = t("fieldRequired", { field: field.label });
       }
     }
 
     if (form.rooms && (!isValidNumber(form.rooms) || Number(form.rooms) < 0)) {
-      errors["rooms"] = "Number of rooms must be a positive number";
+      errors["rooms"] = t("invalidRooms");
     }
 
     if (form.price && (!isValidNumber(form.price) || Number(form.price) < 0)) {
-      errors["price"] = "Price must be a positive number";
+      errors["price"] = t("invalidPrice");
     }
 
     if (form.size && (!isValidNumber(form.size) || Number(form.size) < 0)) {
-      errors["size"] = "Size must be a positive number";
+      errors["size"] = t("invalidSize");
     }
 
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      Object.values(errors).forEach((error) => toast.error(error));
+      Object.values(errors).forEach((error) =>
+        toast(t("error"), { description: error }),
+      );
       return false;
     }
 
     return true;
   };
-
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
@@ -148,11 +150,15 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
     try {
       await createProperty(payload);
-      toast.success("Listing created successfully!");
+      toast(t("success"), {
+        description: t("listingCreatedSuccess"),
+      });
       navigate({ to: "/user-dashboard" });
     } catch (error) {
+      toast(t("error"), {
+        description: t("listingCreationFailed"),
+      });
       console.error("Error while creating listing:", error);
-      toast.error("An error occurred while creating the listing.");
     } finally {
       setLoading(false);
     }
@@ -160,23 +166,21 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(e) => e.preventDefault()}
       className="max-w-3xl mx-auto space-y-8 mt-6 px-4 sm:px-0"
     >
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
-          <CardDescription>
-            Provide core details about the listing
-          </CardDescription>
+          <CardTitle>{t("basicInformation")}</CardTitle>
+          <CardDescription>{t("basicInformationDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="grid gap-1">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t("title")}</Label>
             <Input
               id="title"
               name="title"
-              placeholder="Enter title"
+              placeholder={t("titlePlaceholder")}
               value={form.title}
               onChange={handleChange}
               required
@@ -187,11 +191,11 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t("description")}</Label>
             <Textarea
               id="description"
               name="description"
-              placeholder="Enter a detailed description"
+              placeholder={t("descriptionPlaceholder")}
               value={form.description}
               onChange={handleChange}
               rows={4}
@@ -200,20 +204,20 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="grid gap-1">
-              <Label htmlFor="propertyType">Property Type</Label>
+              <Label htmlFor="propertyType">{t("propertyType")}</Label>
               <Select
                 value={form.propertyType}
                 onValueChange={(value) =>
                   setForm((prev) => ({ ...prev, propertyType: value }))
                 }
               >
-                <SelectTrigger aria-label="Property Type">
-                  <SelectValue placeholder="Select Property Type" />
+                <SelectTrigger aria-label={t("propertyType")}>
+                  <SelectValue placeholder={t("selectPropertyType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {propertyTypeOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                      {t(option)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -221,20 +225,20 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="transactionType">Transaction Type</Label>
+              <Label htmlFor="transactionType">{t("transactionType")}</Label>
               <Select
                 value={form.transactionType}
                 onValueChange={(value) =>
                   setForm((prev) => ({ ...prev, transactionType: value }))
                 }
               >
-                <SelectTrigger aria-label="Transaction Type">
-                  <SelectValue placeholder="Select Transaction Type" />
+                <SelectTrigger aria-label={t("transactionType")}>
+                  <SelectValue placeholder={t("selectTransactionType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {transactionTypeOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                      {t(option)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -242,16 +246,22 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">{t("price")}</Label>
               <Input
                 id="price"
                 name="price"
                 type="text"
-                placeholder="Enter price"
+                placeholder={t("pricePlaceholder")}
                 value={form.price}
                 onChange={handleChange}
                 onKeyDown={(e) => {
-                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  const allowed = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Delete",
+                  ];
                   if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
                     e.preventDefault();
                   }
@@ -267,20 +277,20 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency">{t("currency")}</Label>
               <Select
                 value={form.currency}
                 onValueChange={(value) =>
                   setForm((prev) => ({ ...prev, currency: value }))
                 }
               >
-                <SelectTrigger aria-label="Currency">
-                  <SelectValue placeholder="Select Currency" />
+                <SelectTrigger aria-label={t("currency")}>
+                  <SelectValue placeholder={t("selectCurrency")} />
                 </SelectTrigger>
                 <SelectContent>
                   {currencyOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option}
+                      {t(option)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -288,16 +298,22 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="size">Size (sq.m.)</Label>
+              <Label htmlFor="size">{t("size")}</Label>
               <Input
                 id="size"
                 name="size"
                 type="text"
-                placeholder="Enter size"
+                placeholder={t("sizePlaceholder")}
                 value={form.size}
                 onChange={handleChange}
                 onKeyDown={(e) => {
-                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  const allowed = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Delete",
+                  ];
                   if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
                     e.preventDefault();
                   }
@@ -312,16 +328,22 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="rooms">Rooms</Label>
+              <Label htmlFor="rooms">{t("rooms")}</Label>
               <Input
                 id="rooms"
                 name="rooms"
                 type="text"
-                placeholder="Enter number of rooms"
+                placeholder={t("roomsPlaceholder")}
                 value={form.rooms}
                 onChange={handleChange}
                 onKeyDown={(e) => {
-                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  const allowed = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Delete",
+                  ];
                   if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
                     e.preventDefault();
                   }
@@ -337,11 +359,11 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t("address")}</Label>
             <Input
               id="address"
               name="address"
-              placeholder="Enter full address"
+              placeholder={t("addressPlaceholder")}
               value={form.address}
               onChange={handleChange}
               required
@@ -355,20 +377,20 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("status")}</Label>
             <Select
               value={form.status}
               onValueChange={(value) =>
                 setForm((prev) => ({ ...prev, status: value }))
               }
             >
-              <SelectTrigger aria-label="Status">
-                <SelectValue placeholder="Select Status" />
+              <SelectTrigger aria-label={t("status")}>
+                <SelectValue placeholder={t("selectStatus")} />
               </SelectTrigger>
               <SelectContent>
                 {statusOptions.map((option) => (
                   <SelectItem key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                    {t(option)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -376,12 +398,12 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="documentUrl">Document URL</Label>
+            <Label htmlFor="documentUrl">{t("documentUrl")}</Label>
             <Input
               id="documentUrl"
               name="documentUrl"
               type="url"
-              placeholder="Enter document URL"
+              placeholder={t("documentUrlPlaceholder")}
               value={form.documentUrl}
               onChange={handleChange}
             />
@@ -391,8 +413,8 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Facilities</CardTitle>
-          <CardDescription>Select available facilities</CardDescription>
+          <CardTitle>{t("facilities")}</CardTitle>
+          <CardDescription>{t("facilitiesDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
@@ -407,9 +429,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
                   onChange={() => handleFacilityChange(facility)}
                   className="cursor-pointer"
                 />
-                <span>
-                  {facility.charAt(0).toUpperCase() + facility.slice(1)}
-                </span>
+                <span>{t(facility)}</span>
               </label>
             ))}
           </div>
@@ -418,8 +438,8 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Images</CardTitle>
-          <CardDescription>Manage property images</CardDescription>
+          <CardTitle>{t("images")}</CardTitle>
+          <CardDescription>{t("imagesDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {form.images.map((img, index) => (
@@ -428,7 +448,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
               className="flex flex-col sm:flex-row sm:items-center gap-3"
             >
               <Input
-                placeholder={`Image URL ${index + 1}`}
+                placeholder={t("imageUrlPlaceholder", { index: index + 1 })}
                 value={img.imageUrl}
                 onChange={(e) => {
                   const newImages = [...form.images];
@@ -449,7 +469,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
                   }}
                   className="cursor-pointer"
                 />
-                Primary
+                {t("primaryImage")}
               </label>
               <Button
                 type="button"
@@ -464,9 +484,9 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
                   }
                   setForm((prev) => ({ ...prev, images: newImages }));
                 }}
-                aria-label={`Delete Image ${index + 1}`}
+                aria-label={t("deleteImage")}
               >
-                Delete
+                {t("deleteImage")}
               </Button>
             </div>
           ))}
@@ -479,7 +499,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
               }))
             }
           >
-            Add Image
+            {t("addImage")}
           </Button>
         </CardContent>
       </Card>
@@ -488,25 +508,25 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
         <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <AlertDialogTrigger asChild>
             <Button type="button" disabled={loading}>
-              {loading ? "Submitting..." : "Create Listing"}
+              {loading ? t("submitting") : t("createListing")}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogTitle>{t("confirmListingCreation")}</AlertDialogTitle>
               <AlertDialogDescription>
-                This action will create a new listing. Do you really want to proceed?
+                {t("confirmListingCreationDescription")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => {
                   setIsDialogOpen(false);
                   handleSubmit();
                 }}
               >
-                Confirm
+                {t("confirm")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

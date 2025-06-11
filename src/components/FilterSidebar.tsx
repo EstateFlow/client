@@ -126,7 +126,7 @@ export function FilterSidebar() {
             <div className="flex items-center gap-2">
               <Input
                 type="number"
-                placeholder="Min"
+                placeholder={t("min")}
                 value={area[0] || ""}
                 onChange={(e) => handleAreaChange(0, e.target.value)}
                 className="h-9"
@@ -134,7 +134,7 @@ export function FilterSidebar() {
               <span>-</span>
               <Input
                 type="number"
-                placeholder="Max"
+                placeholder={t("max")}
                 value={area[1] || ""}
                 onChange={(e) => handleAreaChange(1, e.target.value)}
                 className="h-9"
