@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { $api, fetchUserById } from "@/api/BaseUrl";
 import { useSubscriptionStore } from "@/store/subscriptionStore";
+import { useTranslation } from "react-i18next";
 
 interface SubscriptionCardProps {
   userId: string;
@@ -22,6 +23,7 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
     setSubscription,
     toggleExpanded,
   } = useSubscriptionStore();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
 
   const hasActiveSubscription = user?.subscription?.status === "active";
   const listingLimit = user?.listingLimit || 5;
-  const plan = hasActiveSubscription ? "Premium" : "Free";
+  const plan = hasActiveSubscription ? t("premium") : t("free");
   const formattedDate = user?.subscription?.endDate
     ? new Date(user.subscription.endDate).toLocaleDateString("en-US", {
         month: "short",
@@ -126,13 +128,14 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Crown className="w-4 h-4 text-yellow-500" />
-              <span className="font-medium">Subscription</span>
+              <span className="font-medium">{t("subscription")}</span>
               <Badge variant={hasActiveSubscription ? "default" : "secondary"}>
                 {plan}
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground">
-              {5 - listingLimit} / {hasActiveSubscription ? "∞" : 5} listings
+              {5 - listingLimit} / {hasActiveSubscription ? "∞" : 5}{" "}
+              {t("lowerListings")}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -175,19 +178,19 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
               }`}
             >
               <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                <p className="text-muted-foreground">Plan</p>
+                <p className="text-muted-foreground">{t("plan")}</p>
                 <p className="font-medium">{plan}</p>
               </div>
               <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                <p className="text-muted-foreground">Used</p>
+                <p className="text-muted-foreground">{t("used")}</p>
                 <p className="font-medium">
                   {5 - listingLimit} / {hasActiveSubscription ? "∞" : 5}{" "}
-                  listings
+                  {t("lowerListings")}
                 </p>
               </div>
               <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                 <p className="text-muted-foreground">
-                  {hasActiveSubscription ? "Expires" : "Price"}
+                  {hasActiveSubscription ? t("expires") : t("price")}
                 </p>
                 <p className="font-medium">{price}</p>
               </div>
@@ -200,7 +203,7 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
               }`}
             >
               <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
-                <span>Unlimited Listings</span>
+                <span>{t("unlimitedListings")}</span>
                 {hasActiveSubscription ? (
                   <Check className="w-4 h-4 text-green-500 transition-all duration-200" />
                 ) : (

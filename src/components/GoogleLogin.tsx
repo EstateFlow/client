@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface GoogleLoginProps {
   role?: string;
@@ -10,6 +11,7 @@ interface GoogleLoginProps {
 }
 
 export function GoogleLogin({ role, onValidationError }: GoogleLoginProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { googleLogin, isLoading } = useAuthStore();
 
@@ -65,7 +67,7 @@ export function GoogleLogin({ role, onValidationError }: GoogleLoginProps) {
           d="M12.24 10.4V14.8H16.4C15.6 17.3 13.8 19 11.5 19C8.4 19 5.9 16.5 5.9 13.5C5.9 10.5 8.4 8 11.5 8C13 8 14.3 8.6 15.3 9.7L17.8 7.2C16.1 5.6 14.1 4.5 11.5 4.5C6.5 4.5 2.4 8.6 2.4 13.5C2.4 18.4 6.5 22.5 11.5 22.5C16.2 22.5 20 19.2 20 13.5C20 12.7 19.9 11.9 19.7 11.2H12.24Z"
         />
       </svg>
-      {isLoading ? "Signing in..." : "Sign in with Google"}
+      {isLoading ? t("signingIn") : t("googleSignIn")}
     </Button>
   );
 }

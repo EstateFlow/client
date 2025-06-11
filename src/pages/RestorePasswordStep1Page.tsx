@@ -5,8 +5,10 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function RestorePasswordStep1Page() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,15 +49,13 @@ export default function RestorePasswordStep1Page() {
         onSubmit={handleSubmit}
       >
         <div className="text-center text-2xl">🔒</div>
-        <div className="text-center text-sm">
-          Please enter your email and wait for a notice to arrive
-        </div>
+        <div className="text-center text-sm">{t("enterEmailNotice")}</div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="Enter email"
+            placeholder={t("emailPlaceholder")}
             value={email}
             onChange={handleChange}
           />
@@ -69,14 +69,14 @@ export default function RestorePasswordStep1Page() {
           className="w-full cursor-pointer transition-all ease-in-out duration-200"
           disabled={isLoading}
         >
-          {isLoading ? "Sending message..." : "Continue"}
+          {isLoading ? t("sendingMessage") : t("continue")}
         </Button>
         <Link to="/login-form" className="[&.active]:underline ">
           <Button
             variant="ghost"
             className="w-full cursor-pointer transition-all ease-in-out duration-200"
           >
-            ← Back
+            ← {t("back")}
           </Button>
         </Link>
       </form>

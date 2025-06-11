@@ -29,8 +29,10 @@ import { usePromptsStore } from "@/store/promptsStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MarkdownComponents } from "../components/MarkdownCompoents";
 import Markdown from "markdown-to-jsx";
+import { useTranslation } from "react-i18next";
 
 export default function PromptEditingPage() {
+  const { t } = useTranslation();
   const { prompts, fetchAllPrompts, isLoading, updateSystemPrompt } =
     usePromptsStore();
   const [activeTab, setActiveTab] = useState("renter");
@@ -144,11 +146,10 @@ export default function PromptEditingPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
-                AI Prompt Editor
+                {t("promptEditingTitle")}
               </h1>
               <p className="text-muted-foreground mt-1">
-                Configure AI prompts for different user types to enhance their
-                experience
+                {t("promptEditingDescription")}
               </p>
             </div>
           </div>
@@ -159,7 +160,7 @@ export default function PromptEditingPage() {
             ) : (
               <Badge variant="outline" className="gap-1">
                 <MessageSquare size={12} />
-                Active Prompts: {prompts.length}
+                {t("activePrompts")}: {prompts.length}
               </Badge>
             )}
             <Badge
@@ -170,8 +171,8 @@ export default function PromptEditingPage() {
               }
             >
               {hasChanges.renter || hasChanges.seller
-                ? "Unsaved Changes"
-                : "All Saved"}
+                ? t("unsavedChanges")
+                : t("allSaved")}
             </Badge>
           </div>
 
@@ -208,14 +209,14 @@ export default function PromptEditingPage() {
             <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
               <TabsTrigger value="renter" className="gap-2">
                 <User size={16} />
-                Renter/Buyer
+                {t("renter_buyer")}
                 {hasChanges.renter && (
                   <div className="w-2 h-2 bg-destructive rounded-full" />
                 )}
               </TabsTrigger>
               <TabsTrigger value="seller" className="gap-2">
                 <Building2 size={16} />
-                Seller/Agency
+                {t("seller_agency")}
                 {hasChanges.seller && (
                   <div className="w-2 h-2 bg-destructive rounded-full" />
                 )}
@@ -229,11 +230,10 @@ export default function PromptEditingPage() {
                     <div>
                       <CardTitle className="flex items-center gap-2 text-xl">
                         <User className="w-5 h-5 text-primary" />
-                        Renter/Buyer AI Prompt
+                        {t("renter_buyer_prompt")}
                       </CardTitle>
                       <CardDescription className="mt-2">
-                        This prompt guides the AI when helping users find and
-                        rent or buy properties
+                        {t("renter_buyer_promptDescription")}
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function PromptEditingPage() {
                         className="gap-2"
                       >
                         {showPreview ? <EyeOff size={14} /> : <Eye size={14} />}
-                        {showPreview ? "Hide" : "Preview"}
+                        {showPreview ? t("hide") : t("preview")}
                       </Button>
                     </div>
                   </div>
@@ -257,12 +257,15 @@ export default function PromptEditingPage() {
                         htmlFor="renter-prompt"
                         className="text-sm font-medium"
                       >
-                        Prompt Content
+                        {t("promptContent")}
                       </Label>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>{getWordCount(systemPrompts.renter)} words</span>
                         <span>
-                          {getCharacterCount(systemPrompts.renter)} characters
+                          {getWordCount(systemPrompts.renter)} {t("words")}
+                        </span>
+                        <span>
+                          {getCharacterCount(systemPrompts.renter)}
+                          {t("characters")}
                         </span>
                       </div>
                     </div>
@@ -300,7 +303,7 @@ export default function PromptEditingPage() {
                           variant="outline"
                           className="text-amber-600 border-amber-600/50"
                         >
-                          Unsaved changes
+                          {t("unsavedChanges")}
                         </Badge>
                       )}
                     </div>
@@ -317,7 +320,7 @@ export default function PromptEditingPage() {
                         ) : (
                           <Copy size={14} />
                         )}
-                        {copied.renter ? "Copied!" : "Copy"}
+                        {copied.renter ? t("copied") : t("copy")}
                       </Button>
 
                       {hasChanges.renter && (
@@ -328,7 +331,7 @@ export default function PromptEditingPage() {
                           className="gap-2"
                         >
                           <RefreshCw size={14} />
-                          Reset
+                          {t("reset")}
                         </Button>
                       )}
 
@@ -339,7 +342,7 @@ export default function PromptEditingPage() {
                         className="gap-2"
                       >
                         <Save size={14} />
-                        Save Changes
+                        {t("saveChanges")}
                       </Button>
                     </div>
                   </div>
@@ -354,11 +357,10 @@ export default function PromptEditingPage() {
                     <div>
                       <CardTitle className="flex items-center gap-2 text-xl">
                         <Building2 className="w-5 h-5 text-primary" />
-                        Seller/Agency AI Prompt
+                        {t("seller_agency_prompt")}
                       </CardTitle>
                       <CardDescription className="mt-2">
-                        This prompt guides the AI when helping sellers and
-                        agencies market their properties
+                        {t("seller_agency_promptDescription")}
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
@@ -369,7 +371,7 @@ export default function PromptEditingPage() {
                         className="gap-2"
                       >
                         {showPreview ? <EyeOff size={14} /> : <Eye size={14} />}
-                        {showPreview ? "Hide" : "Preview"}
+                        {showPreview ? t("hide") : t("preview")}
                       </Button>
                     </div>
                   </div>
@@ -382,12 +384,15 @@ export default function PromptEditingPage() {
                         htmlFor="seller-prompt"
                         className="text-sm font-medium"
                       >
-                        Prompt Content
+                        {t("promptContent")}
                       </Label>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>{getWordCount(systemPrompts.seller)} words</span>
                         <span>
-                          {getCharacterCount(systemPrompts.seller)} characters
+                          {getWordCount(systemPrompts.seller)} {t("words")}
+                        </span>
+                        <span>
+                          {getCharacterCount(systemPrompts.seller)}{" "}
+                          {t("characters")}
                         </span>
                       </div>
                     </div>
@@ -425,7 +430,7 @@ export default function PromptEditingPage() {
                           variant="outline"
                           className="text-amber-600 border-amber-600/50"
                         >
-                          Unsaved changes
+                          {t("unsavedChanges")}
                         </Badge>
                       )}
                     </div>
@@ -442,7 +447,7 @@ export default function PromptEditingPage() {
                         ) : (
                           <Copy size={14} />
                         )}
-                        {copied.seller ? "Copied!" : "Copy"}
+                        {copied.seller ? t("copied") : t("copy")}
                       </Button>
 
                       {hasChanges.seller && (
@@ -453,7 +458,7 @@ export default function PromptEditingPage() {
                           className="gap-2"
                         >
                           <RefreshCw size={14} />
-                          Reset
+                          {t("reset")}
                         </Button>
                       )}
 
@@ -464,7 +469,7 @@ export default function PromptEditingPage() {
                         className="gap-2"
                       >
                         <Save size={14} />
-                        Save Changes
+                        {t("saveChanges")}
                       </Button>
                     </div>
                   </div>
@@ -484,10 +489,10 @@ export default function PromptEditingPage() {
                   </div>
                   <div>
                     <p className="font-medium text-amber-900 dark:text-amber-100">
-                      You have unsaved changes
+                      {t("haveUnsavedChanges")}
                     </p>
                     <p className="text-sm text-amber-700 dark:text-amber-300">
-                      Save your changes to update the AI prompts
+                      {t("saveYourChanges")}
                     </p>
                   </div>
                 </div>
@@ -501,7 +506,7 @@ export default function PromptEditingPage() {
                     }}
                     className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-950"
                   >
-                    Reset All
+                    {t("resetAll")}
                   </Button>
                   <Button
                     onClick={() => {
@@ -510,7 +515,7 @@ export default function PromptEditingPage() {
                     }}
                     className="bg-amber-600 hover:bg-amber-700 text-white"
                   >
-                    Save All Changes
+                    {t("saveAllChanges")}
                   </Button>
                 </div>
               </div>

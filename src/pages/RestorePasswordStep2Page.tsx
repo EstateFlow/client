@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface RestorePasswordStep2PageProps {
   emailToken: string;
@@ -13,6 +14,7 @@ interface RestorePasswordStep2PageProps {
 export default function RestorePasswordStep2Page({
   emailToken,
 }: RestorePasswordStep2PageProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: "",
@@ -104,11 +106,11 @@ export default function RestorePasswordStep2Page({
         <div className="text-center text-2xl">🔑</div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="password">New password</Label>
+          <Label htmlFor="password">{t("newPassword")}</Label>
           <Input
             id="password"
             type="password"
-            placeholder="Enter new password"
+            placeholder={t("newPasswordPlaceholder")}
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
@@ -118,11 +120,11 @@ export default function RestorePasswordStep2Page({
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="repeat-password">Repeat password</Label>
+          <Label htmlFor="repeat-password">{t("repeatPassword")}</Label>
           <Input
             id="repeatPassword"
             type="password"
-            placeholder="Repeat new password"
+            placeholder={t("repeatPassword")}
             value={formData.repeatPassword}
             onChange={handleChange}
             disabled={isLoading}
@@ -142,14 +144,14 @@ export default function RestorePasswordStep2Page({
           className="w-full cursor-pointer transition-all ease-in-out duration-200"
           disabled={isLoading}
         >
-          {isLoading ? "Sending message..." : "Continue"}
+          {isLoading ? t("sendingMessage") : t("continue")}
         </Button>
         <Link to="/restore-password-step1" className="[&.active]:underline">
           <Button
             variant="ghost"
             className="w-full cursor-pointer transition-all ease-in-out duration-200"
           >
-            ← Back
+            ← {t("back")}
           </Button>
         </Link>
       </form>

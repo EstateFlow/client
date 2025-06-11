@@ -10,8 +10,10 @@ import { SortAsc, Star, TrendingUp, TrendingDown, Clock } from "lucide-react";
 import { useFilterStore } from "@/store/filterStore";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterSidebar } from "@/components/FilterSidebar";
+import { useTranslation } from "react-i18next";
 
 export default function ListingsMainPage() {
+  const { t } = useTranslation();
   const { sortBy, setSortBy } = useFilterStore();
 
   return (
@@ -27,7 +29,9 @@ export default function ListingsMainPage() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <SortAsc className="h-4 w-4" />
-              <span className="hidden sm:inline font-medium">Sort by:</span>
+              <span className="hidden sm:inline font-medium">
+                {t("sortBy")}:
+              </span>
             </div>
 
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -41,7 +45,7 @@ export default function ListingsMainPage() {
                 >
                   <div className="flex items-center gap-2 w-full">
                     <Clock className="h-4 w-4 text-blue-500" />
-                    <span>Newest First</span>
+                    <span>{t("newestFirst")}</span>
                   </div>
                 </SelectItem>
                 <SelectItem
@@ -50,7 +54,7 @@ export default function ListingsMainPage() {
                 >
                   <div className="flex items-center gap-2 w-full">
                     <TrendingUp className="h-4 w-4 text-green-500" />
-                    <span>Price: High to Low</span>
+                    <span>{t("priceHigh")}</span>
                   </div>
                 </SelectItem>
                 <SelectItem
@@ -59,7 +63,7 @@ export default function ListingsMainPage() {
                 >
                   <div className="flex items-center gap-2 w-full">
                     <TrendingDown className="h-4 w-4 text-orange-500" />
-                    <span>Price: Low to High</span>
+                    <span>{t("priceLow")}</span>
                   </div>
                 </SelectItem>
                 <SelectItem
@@ -68,7 +72,7 @@ export default function ListingsMainPage() {
                 >
                   <div className="flex items-center gap-2 w-full">
                     <Star className="h-4 w-4 text-yellow-500" />
-                    <span>Featured Properties</span>
+                    <span>{t("featuredProperties")}</span>
                   </div>
                 </SelectItem>
               </SelectContent>

@@ -26,12 +26,14 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { usePropertiesStore } from "@/store/propertiesStore";
+import { useTranslation } from "react-i18next";
 
 interface ActionLoading {
   [key: string]: boolean;
 }
 
 const PropertyManagement = () => {
+  const { t } = useTranslation();
   const { properties, loading, error, fetchAll, remove, verifyProperty } =
     usePropertiesStore();
 
@@ -145,10 +147,10 @@ const PropertyManagement = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Property Management
+              {t("propertyManagement")}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Manage and moderate property listings
+              {t("propertyManagementDescription")}
             </p>
           </div>
 
@@ -159,7 +161,7 @@ const PropertyManagement = () => {
               onClick={() => setFilter("all")}
               className="rounded-md"
             >
-              All ({properties.length})
+              {t("all")} ({properties.length})
             </Button>
             <Button
               variant={filter === "unverified" ? "default" : "ghost"}
@@ -168,7 +170,8 @@ const PropertyManagement = () => {
               className="rounded-md"
             >
               <AlertTriangle size={14} className="mr-1" />
-              Unverified ({properties.filter((p) => !p.isVerified).length})
+              {t("unverified")} (
+              {properties.filter((p) => !p.isVerified).length})
             </Button>
             <Button
               variant={filter === "verified" ? "default" : "ghost"}
@@ -177,7 +180,7 @@ const PropertyManagement = () => {
               className="rounded-md"
             >
               <CheckCircle size={14} className="mr-1" />
-              Verified ({properties.filter((p) => p.isVerified).length})
+              {t("verified")} ({properties.filter((p) => p.isVerified).length})
             </Button>
           </div>
         </div>
@@ -185,10 +188,12 @@ const PropertyManagement = () => {
         {filteredProperties.length === 0 ? (
           <div className="text-center py-12">
             <Filter className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">No properties found</h3>
+            <h3 className="mt-4 text-lg font-semibold">
+              {t("noPropertiesFound")}
+            </h3>
             <p className="text-muted-foreground">
               {filter === "all"
-                ? "No properties available."
+                ? t("noPropertiesAvailable")
                 : `No ${filter} properties found.`}
             </p>
           </div>
@@ -273,7 +278,6 @@ const PropertyManagement = () => {
                   <div className="flex flex-wrap gap-2 pt-2 border-t">
                     {!property.isVerified && (
                       <>
-                        {/* View Document Button - only for unverified properties */}
                         {property.documentUrl && (
                           <Button
                             variant="outline"
@@ -287,11 +291,10 @@ const PropertyManagement = () => {
                             }
                           >
                             <FileText size={14} />
-                            Document
+                            {t("document")}
                           </Button>
                         )}
 
-                        {/* Verify Button */}
                         <Button
                           size="sm"
                           className="gap-1 cursor-pointer"
@@ -300,8 +303,8 @@ const PropertyManagement = () => {
                         >
                           <Check size={14} />
                           {actionLoading[`verify-${property.id}`]
-                            ? "Verifying..."
-                            : "Verify"}
+                            ? t("verifying")
+                            : t("verify")}
                         </Button>
                       </>
                     )}
@@ -316,7 +319,7 @@ const PropertyManagement = () => {
                         className="gap-1 cursor-pointer"
                       >
                         <Eye size={14} />
-                        View
+                        {t("view")}
                       </Button>
                     </Link>
 
@@ -329,17 +332,16 @@ const PropertyManagement = () => {
                         >
                           <Trash2 size={14} />
                           {actionLoading[`delete-${property.id}`]
-                            ? "..."
-                            : "Delete"}
+                            ? t("deleting")
+                            : t("delete")}
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Delete Property Listing</DialogTitle>
+                          <DialogTitle>{t("deleteProperty")}</DialogTitle>
                           <DialogDescription>
-                            Are you sure you want to permanently delete the
-                            property "{property.title}"? This action cannot be
-                            undone.
+                            {t("deletePropertyConfirmation1")} "{property.title}
+                            "? {t("deletePropertyConfirmation2")}
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -350,15 +352,15 @@ const PropertyManagement = () => {
                             disabled={actionLoading[`delete-${property.id}`]}
                           >
                             {actionLoading[`delete-${property.id}`]
-                              ? "..."
-                              : "Delete"}
+                              ? t("deleting")
+                              : t("delete")}
                           </Button>
                           <DialogClose asChild>
                             <Button
                               variant="outline"
                               className="gap-2 cursor-pointer"
                             >
-                              Cancel
+                              {t("cancel")}
                             </Button>
                           </DialogClose>
                         </DialogFooter>

@@ -15,8 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "react-i18next";
 
 export default function UserProfileCard({ user }: { user: UserInfo }) {
+  const { t } = useTranslation();
   const {
     updateProfile,
     isLoading,
@@ -37,22 +39,22 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+      newErrors.username = t("usernameRequired");
     }
     if (formData.avatarUrl && !/^https?:\/\/.*/i.test(formData.avatarUrl)) {
-      newErrors.avatarUrl = "Invalid URL format";
+      newErrors.avatarUrl = t("invalidUrlFormat");
     }
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t("invalidEmailFormat");
     }
     if (formData.password && formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t("passwordMinLength");
     }
     if (
       formData.paypalCredentials &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.paypalCredentials)
     ) {
-      newErrors.paypalCredentials = "Invalid PayPal email format";
+      newErrors.paypalCredentials = t("invalidPaypalEmail");
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -94,14 +96,13 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
         await requestPasswordChange(formData.password);
       }
 
-      toast("Success", {
-        description:
-          "Profile updated! Check your email for confirmation links if you changed email or password.",
+      toast(t("success"), {
+        description: t("profileUpdated"),
       });
       setIsEditing(false);
     } catch (error) {
-      toast("Error", {
-        description: "Failed to update profile. Please try again.",
+      toast(t("error"), {
+        description: t("profileUpdateFailed"),
       });
       console.error("Profile update error:", error);
     }
@@ -110,9 +111,9 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(user.email);
-      toast("Copied!", { description: "Email copied to clipboard." });
+      toast(t("copied"), { description: t("emailCopied") });
     } catch {
-      toast("Error", { description: "Failed to copy email." });
+      toast(t("error"), { description: t("copyEmailFailed") });
     }
   };
 
@@ -139,7 +140,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
               className="hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-200"
               onClick={handleEditClick}
             >
-              Edit profile
+              {t("editProfile")}
             </Button>
           </div>
 
@@ -157,14 +158,14 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
               )}
             </div>
             <div className="text-center sm:text-left space-y-1">
-              <p className="font-semibold text-lg">About me:</p>
+              <p className="font-semibold text-lg">{t("aboutMe")}</p>
               <p className="text-gray-700 dark:text-gray-300 min-h-[3rem] whitespace-pre-wrap">
-                {user.bio || "No bio provided."}
+                {user.bio || t("noBioProvided")}
               </p>
               <p
                 className="text-sm mt-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded px-3 py-1 select-all cursor-pointer transition-colors duration-200"
                 onClick={handleCopyEmail}
-                title="Click to copy email"
+                title={t("clickToCopyEmail")}
               >
                 {user.email}
               </p>
@@ -173,35 +174,35 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
 
           <div className="grid grid-cols-2 gap-6 flex-1 text-sm text-gray-700 dark:text-gray-300">
             {[
-              { label: "Username", value: user.username },
-              { label: "Status", value: user.role },
+              { label: t("usernameLabel"), value: user.username },
+              { label: t("status"), value: user.role },
               {
-                label: "Paypal",
+                label: t("paypal"),
                 value:
                   user.role === "private_seller" || user.role === "agency"
-                    ? user.paypalCredentials || "N/A"
-                    : "N/A",
+                    ? user.paypalCredentials || t("notApplicable")
+                    : t("notApplicable"),
               },
               {
-                label: "Offer limit",
+                label: t("offerLimit"),
                 value:
                   user.listingLimit && user.role === "private_seller"
                     ? user.listingLimit
                     : user.role === "agency"
-                    ? "∞"
-                    : "N/A",
+                      ? "∞"
+                      : t("notApplicable"),
               },
               {
-                label: "Date of registration",
+                label: t("dateOfRegistration"),
                 value: user.createdAt
                   ? format(new Date(user.createdAt), "dd MMM yyyy, HH:mm")
-                  : "N/A",
+                  : t("notApplicable"),
               },
               {
-                label: "Last profile update",
+                label: t("lastProfileUpdate"),
                 value: user.updatedAt
                   ? format(new Date(user.updatedAt), "dd MMM yyyy, HH:mm")
-                  : "N/A",
+                  : t("notApplicable"),
               },
             ].map(({ label, value }) => (
               <div key={label} className="space-y-1">
@@ -216,7 +217,7 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogTitle>{t("editProfileTitle")}</DialogTitle>
           </DialogHeader>
           <form
             className="grid gap-5 py-4"
@@ -227,13 +228,13 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
             noValidate
           >
             <div className="grid gap-1">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{t("username")}</Label>
               <Input
                 id="username"
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                placeholder="Your username"
+                placeholder={t("usernamePlaceholder")}
                 className={errors.username ? "border-red-500" : ""}
                 autoFocus
                 required
@@ -243,14 +244,14 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
               )}
             </div>
             <div className="grid gap-1">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("email")}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="you@example.com"
+                placeholder={t("emailPlaceholder")}
                 className={errors.email ? "border-red-500" : ""}
                 required
               />
@@ -259,14 +260,14 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
               )}
             </div>
             <div className="grid gap-1">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t("newPassword")}</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="At least 6 characters"
+                placeholder={t("passwordPlaceholder")}
                 className={errors.password ? "border-red-500" : ""}
                 autoComplete="new-password"
               />
@@ -276,14 +277,16 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
             </div>
             {(user.role === "private_seller" || user.role === "agency") && (
               <div className="grid gap-1">
-                <Label htmlFor="paypalCredentials">PayPal Credentials</Label>
+                <Label htmlFor="paypalCredentials">
+                  {t("paypalCredentials")}
+                </Label>
                 <Input
                   id="paypalCredentials"
                   name="paypalCredentials"
                   type="email"
                   value={formData.paypalCredentials}
                   onChange={handleInputChange}
-                  placeholder="PayPal email"
+                  placeholder={t("paypalPlaceholder")}
                   className={errors.paypalCredentials ? "border-red-500" : ""}
                 />
                 {errors.paypalCredentials && (
@@ -294,14 +297,14 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
               </div>
             )}
             <div className="grid gap-1">
-              <Label htmlFor="avatarUrl">Avatar URL</Label>
+              <Label htmlFor="avatarUrl">{t("avatarUrl")}</Label>
               <Input
                 id="avatarUrl"
                 name="avatarUrl"
                 type="url"
                 value={formData.avatarUrl}
                 onChange={handleInputChange}
-                placeholder="https://example.com/avatar.jpg"
+                placeholder={t("avatarPlaceholder")}
                 className={errors.avatarUrl ? "border-red-500" : ""}
               />
               {errors.avatarUrl && (
@@ -309,14 +312,14 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
               )}
             </div>
             <div className="grid gap-1">
-              <Label htmlFor="bio">Bio</Label>
+              <Label htmlFor="bio">{t("bio")}</Label>
               <Textarea
                 id="bio"
                 name="bio"
                 value={formData.bio}
                 onChange={handleInputChange}
                 rows={4}
-                placeholder="Tell us about yourself..."
+                placeholder={t("bioPlaceholder")}
               />
             </div>
             <DialogFooter className="flex justify-end gap-3 pt-6">
@@ -326,10 +329,10 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
                 disabled={isLoading}
                 type="button"
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button disabled={isLoading} type="submit">
-                {isLoading ? "Saving..." : "Save changes"}
+                {isLoading ? t("saving") : t("saveChanges")}
               </Button>
             </DialogFooter>
           </form>
@@ -338,3 +341,4 @@ export default function UserProfileCard({ user }: { user: UserInfo }) {
     </>
   );
 }
+
