@@ -1,49 +1,67 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Home, User } from "lucide-react";
+import { XCircle, Home, ArrowLeft, User } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
-const CompleteSubscriptionPage: React.FC = () => {
+const CancelSubscriptionPayment: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Card className="border-0 shadow-lg">
-          <CardContent className="pt-8 pb-8 text-center">
-            <div className="mb-6">
-              <CheckCircle className="h-20 w-20 text-green-500 mx-auto mb-6" />
-              <h1 className="text-3xl font-bold text-foreground mb-3">
-                Subscription Activated
+        <Card className="border-red-600 shadow-lg">
+          <CardContent className="pt-10 pb-12 text-center space-y-6">
+            <div className="mb-8">
+              <XCircle
+                className="h-16 w-16 text-red-600 mx-auto mb-6"
+                aria-hidden="true"
+              />
+              <h1 className="text-3xl font-semibold text-foreground mb-3">
+                {t("subscriptionCancelled")}
               </h1>
-              <p className="text-muted-foreground text-lg">
-                Your subscription has been activated successfully
+              <p className="text-muted-foreground text-base">
+                {t("subscriptionSetupCancelled")}
               </p>
             </div>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-green-700">
-                Welcome! Your subscription is now active and you have full
-                access to all features.
+
+            <div className="bg-red-50 border border-red-600 rounded-lg p-6 mb-8">
+              <p className="text-sm text-red-700">
+                {t("noSubscriptionCreated")}
               </p>
             </div>
-            <div className="space-y-3">
+
+            <div className="space-y-4">
               <Button
-                className="w-full cursor-pointer"
+                className="w-full bg-red-600 hover:bg-red-700"
                 size="lg"
-                onClick={() => navigate({ to: "/" })}
+                onClick={() => window.history.back()}
+                aria-label={t("tryAgain")}
               >
-                <Home className="h-4 w-4 mr-2" />
-                Return to Home
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {t("tryAgain")}
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full cursor-pointer"
+                className="w-full border-red-600 text-red-600 hover:bg-red-50"
+                onClick={() => navigate({ to: "/" })}
+                aria-label={t("returnToHome")}
+              >
+                <Home className="h-4 w-4 mr-2" />
+                {t("returnToHome")}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full border-red-600 text-red-600 hover:bg-red-50"
                 onClick={() => navigate({ to: "/user-dashboard" })}
+                aria-label={t("viewMyAccount")}
               >
                 <User className="h-4 w-4 mr-2" />
-                View My Account
+                {t("viewMyAccount")}
               </Button>
             </div>
           </CardContent>
@@ -53,4 +71,4 @@ const CompleteSubscriptionPage: React.FC = () => {
   );
 };
 
-export default CompleteSubscriptionPage;
+export default CancelSubscriptionPayment;

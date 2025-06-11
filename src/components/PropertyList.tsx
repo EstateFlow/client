@@ -11,8 +11,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useTranslation } from "react-i18next";
 
 export function PropertyList() {
+  const { t } = useTranslation();
   const { properties, loading, error, fetchChouse } = usePropertiesStore();
   const { price, area, rooms, types, propertyTypes, searchQuery, sortBy } =
     useFilterStore();
@@ -162,9 +164,9 @@ export function PropertyList() {
     <div className="space-y-6">
       {filteredProperties.length > 0 && (
         <div className="px-4 text-sm text-muted-foreground">
-          Showing {startIndex + 1}-
-          {Math.min(endIndex, filteredProperties.length)} of{" "}
-          {filteredProperties.length} properties
+          {t("showing")} {startIndex + 1}-
+          {Math.min(endIndex, filteredProperties.length)} {t("of")}{" "}
+          {filteredProperties.length} {t("properties")}
         </div>
       )}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
@@ -174,7 +176,7 @@ export function PropertyList() {
 
         {filteredProperties.length === 0 && properties.length > 0 && (
           <div className="col-span-full text-center p-8 text-muted-foreground">
-            There are no such listings.
+            {t("noListings")}
           </div>
         )}
       </div>

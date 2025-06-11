@@ -16,8 +16,10 @@ import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { $api } from "@/api/BaseUrl";
+import { useTranslation } from "react-i18next";
 
 export default function ListingForm({ propertyId }: { propertyId: string }) {
+  const { t } = useTranslation();
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
   const { wishlist, loadWishlist, addProperty, removeProperty } =
     useWishlistStore();
@@ -82,22 +84,25 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     );
   }
 
-  if (error) return <p>Error: {error}</p>;
-  if (!selectedProperty) return <p>No property found</p>;
+  if (error)
+    return (
+      <p>
+        {t("error")}: {error}
+      </p>
+    );
+  if (!selectedProperty) return <p>{t("noPropertiesFound")}</p>;
 
   const isWished = wishlist.some((p) => p.id === propertyId);
 
   const handleToggleWishlist = () => {
     if (!isAuthenticated) {
-      toast("You must be logged in to add to wishlist", {
-        description: "Please log in or sign up to continue.",
-      });
+      toast.error(t("loginRequired"), { description: t("loginPrompt") });
       return;
     }
 
     if (user?.role !== "renter_buyer") {
-      toast("Access restricted", {
-        description: "Please sign in as a buyer to use this feature.",
+      toast.error(t("accessRestricted"), {
+        description: t("buyerRoleRequired"),
       });
       return;
     }
@@ -122,7 +127,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
     try {
       const price = parseFloat(selectedProperty.price);
       if (isNaN(price)) {
-        toast.error("Invalid price format. Please contact support.");
+        toast.error(t("invalidPriceFormat"));
         throw new Error("Invalid price format");
       }
 
@@ -144,7 +149,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
       );
       return response.data.id;
     } catch (error) {
-      toast.error("Failed to create PayPal order. Please try again.");
+      toast.error(t("failedToCreateOrder"));
       throw new Error("Failed to create PayPal order");
     }
   };
@@ -152,7 +157,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
   const onApprove = async (data: any) => {
     try {
       if (!data?.orderID) {
-        toast.error("Invalid order ID. Please try again.");
+        toast.error(t("invalidOrderId"));
         return;
       }
 
@@ -165,15 +170,17 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         },
       );
       console.log(response);
+      toast.success(t("success"), { description: t("paymentSuccessful") });
       navigate({ to: "/complete-payment" });
     } catch (error) {
-      toast.error("Failed to capture payment. Please try again.");
+      toast.error(t("failedToCapturePayment"));
       console.error(error);
     }
   };
 
   const onError = async (data: any) => {
     console.log(data);
+    toast.error(t("failedToCapturePayment"));
     navigate({ to: "/cancel-payment" });
   };
 
@@ -199,15 +206,15 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         setShowShareOptions(false);
       } catch (err) {
         console.error("Sharing failed:", err);
-        toast.error("Sharing failed");
+        toast.error(t("copyLinkFailed"));
       }
     } else {
       try {
         await navigator.clipboard.writeText(shareUrl);
-        toast.success("Link copied to clipboard!");
+        toast.success(t("success"), { description: t("linkCopied") });
         setShowShareOptions(false);
       } catch (err) {
-        toast.error("Failed to copy link");
+        console.error("Copying failed:", err);
       }
     }
   };
@@ -293,7 +300,8 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               </CardTitle>
               <CardDescription>{selectedProperty.address}</CardDescription>
               <div className="text-sm text-muted-foreground">
-                Area: {selectedProperty.size} | {selectedProperty.rooms} rooms
+                {t("area")}: {selectedProperty.size} | {selectedProperty.rooms}{" "}
+                {t("rooms")}
               </div>
               <p className="text-sm leading-relaxed">
                 {selectedProperty.description}
@@ -305,7 +313,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                   search={{ userId: selectedProperty.ownerId }}
                   className="[&.active]:underline"
                 >
-                  <Button variant="secondary">View seller's profile</Button>
+                  <Button variant="secondary">{t("viewSellersProfile")}</Button>
                 </Link>
 
                 <div className="relative">
@@ -314,7 +322,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                     onClick={() => setShowShareOptions(!showShareOptions)}
                   >
                     <Share2 className="w-4 h-4 mr-1" />
-                    Share
+                    {t("share")}
                   </Button>
 
                   {showShareOptions && (
@@ -333,7 +341,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                           >
                             <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.787l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z" />
                           </svg>
-                          Share on Telegram
+                          {t("shareOnTelegram")}
                         </Button>
 
                         <Button
@@ -349,7 +357,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                           >
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                           </svg>
-                          Share on X
+                          {t("shareOnX")}
                         </Button>
 
                         {!navigator.share && (
@@ -359,7 +367,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
                             onClick={handleNativeShare}
                             className="justify-start"
                           >
-                            📋 Copy link
+                            📋 {t("copyLink")}
                           </Button>
                         )}
                       </div>
@@ -383,7 +391,9 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
 
       <div className="grid md:grid-cols-2 gap-6 items-start">
         <div>
-          <h2 className="text-lg font-semibold mb-2">Where you will live:</h2>
+          <h2 className="text-lg font-semibold mb-2">
+            {t("whereYouWillLive")}:
+          </h2>
           <iframe
             width="100%"
             height="300"
@@ -396,7 +406,7 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold mb-2">Facilities:</h2>
+          <h2 className="text-lg font-semibold mb-2">{t("facilities")}:</h2>
           <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
             {facilities.map((facility) => (
               <li key={facility}>• {facility}</li>

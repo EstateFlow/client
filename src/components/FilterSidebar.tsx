@@ -11,8 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Filter } from "lucide-react";
 import { useFilterStore } from "@/store/filterStore";
+import { useTranslation } from "react-i18next";
 
 export function FilterSidebar() {
+  const { t } = useTranslation();
   const {
     price,
     setPrice,
@@ -96,14 +98,14 @@ export function FilterSidebar() {
   return (
     <>
       <div className="hidden md:block w-64 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-4">Filters</h3>
+        <h3 className="text-lg font-semibold mb-4">{t("filters")}</h3>
         <div className="space-y-6">
           <div>
-            <h4 className="text-sm font-medium mb-2">Price Range</h4>
+            <h4 className="text-sm font-medium mb-2">{t("priceRange")}</h4>
             <div className="flex items-center gap-2">
               <Input
                 type="number"
-                placeholder="Min"
+                placeholder={t("min")}
                 value={price[0] || ""}
                 onChange={(e) => handlePriceChange(0, e.target.value)}
                 className="h-9"
@@ -111,7 +113,7 @@ export function FilterSidebar() {
               <span>-</span>
               <Input
                 type="number"
-                placeholder="Max"
+                placeholder={t("max")}
                 value={price[1] || ""}
                 onChange={(e) => handlePriceChange(1, e.target.value)}
                 className="h-9"
@@ -120,11 +122,11 @@ export function FilterSidebar() {
           </div>
 
           <div>
-            <h4 className="text-sm font-medium mb-2">Area (sq ft)</h4>
+            <h4 className="text-sm font-medium mb-2">{t("area")} (sq ft)</h4>
             <div className="flex items-center gap-2">
               <Input
                 type="number"
-                placeholder="Min"
+                placeholder={t("min")}
                 value={area[0] || ""}
                 onChange={(e) => handleAreaChange(0, e.target.value)}
                 className="h-9"
@@ -132,7 +134,7 @@ export function FilterSidebar() {
               <span>-</span>
               <Input
                 type="number"
-                placeholder="Max"
+                placeholder={t("max")}
                 value={area[1] || ""}
                 onChange={(e) => handleAreaChange(1, e.target.value)}
                 className="h-9"
@@ -141,7 +143,7 @@ export function FilterSidebar() {
           </div>
 
           <div>
-            <h4 className="text-sm font-medium mb-2">Rooms</h4>
+            <h4 className="text-sm font-medium mb-2">{t("rooms")}</h4>
             <div className="grid grid-cols-2 gap-2">
               {availableRooms.map((room) => (
                 <div key={room} className="flex items-center space-x-2">
@@ -151,7 +153,7 @@ export function FilterSidebar() {
                     onCheckedChange={() => toggleRoom(room)}
                   />
                   <label htmlFor={`room-${room}`} className="text-sm">
-                    {room} {room === 1 ? "Room" : "Rooms"}
+                    {room} {room === 1 ? t("room") : t("rooms")}
                   </label>
                 </div>
               ))}
@@ -159,7 +161,7 @@ export function FilterSidebar() {
           </div>
 
           <div>
-            <h4 className="text-sm font-medium mb-2">Transaction Type</h4>
+            <h4 className="text-sm font-medium mb-2">{t("transactionType")}</h4>
             <div className="grid grid-cols-2 gap-2">
               {availableTypes.map((type) => (
                 <div key={type} className="flex items-center space-x-2">
@@ -180,7 +182,7 @@ export function FilterSidebar() {
           </div>
 
           <div>
-            <h4 className="text-sm font-medium mb-2">Property Type</h4>
+            <h4 className="text-sm font-medium mb-2">{t("propertyType")}</h4>
             <div className="grid grid-cols-2 gap-2">
               {availablePropertyTypes.map((propertyType) => (
                 <div key={propertyType} className="flex items-center space-x-2">
@@ -207,12 +209,12 @@ export function FilterSidebar() {
           <DrawerTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              <span>Filters</span>
+              <span>{t("filters")}</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent className="p-4">
             <DrawerHeader>
-              <DrawerTitle>Filters</DrawerTitle>
+              <DrawerTitle>{t("filters")}</DrawerTitle>
             </DrawerHeader>
             <div className="space-y-6">
               <div>

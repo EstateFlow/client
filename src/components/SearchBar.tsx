@@ -1,8 +1,10 @@
 import { Input } from "@/components/ui/input";
 import { X, Search } from "lucide-react";
 import { useFilterStore } from "@/store/filterStore";
+import { useTranslation } from "react-i18next";
 
 export function SearchBar() {
+  const { t } = useTranslation();
   const { searchQuery, setSearchQuery } = useFilterStore();
 
   const clearSearch = () => {
@@ -16,7 +18,7 @@ export function SearchBar() {
       </div>
       <Input
         className="px-10"
-        placeholder="Search properties"
+        placeholder={t("searchPlaceholder")}
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />

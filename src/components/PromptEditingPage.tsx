@@ -29,159 +29,127 @@ import { usePromptsStore } from "@/store/promptsStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MarkdownComponents } from "../components/MarkdownCompoents";
 import Markdown from "markdown-to-jsx";
+import { useTranslation } from "react-i18next";
+
+interface Prompt {
+  name: string;
+  content: string;
+}
+
+interface SystemPrompts {
+  renter: string;
+  seller: string;
+}
 
 export default function PromptEditingPage() {
+  const { t } = useTranslation();
   const { prompts, fetchAllPrompts, isLoading, updateSystemPrompt } =
     usePromptsStore();
-  const [activeTab, setActiveTab] = useState("renter");
+  const [activeTab, setActiveTab] = useState<"renter" | "seller">("renter");
   const [showPreview, setShowPreview] = useState(false);
   const [copied, setCopied] = useState({ renter: false, seller: false });
-
-  useEffect(() => {
-    fetchAllPrompts();
-  }, [fetchAllPrompts]);
-
-  const [systemPrompts, setSystemPrompts] = useState<any>({
-    renter:
-      prompts.find((p) => p.name === "renter")?.content ||
-      `You are an AI assistant helping renters and buyers find their ideal property...`,
-    seller:
-      prompts.find((p) => p.name === "seller")?.content ||
-      `You are an AI assistant helping private sellers and agencies market their properties effectively...`,
+  const [systemPrompts, setSystemPrompts] = useState<SystemPrompts>({
+    renter: "",
+    seller: "",
   });
-
-  const [originalPrompts, setOriginalPrompts] = useState(systemPrompts);
+  const [originalPrompts, setOriginalPrompts] = useState<SystemPrompts>({
+    renter: "",
+    seller: "",
+  });
   const [hasChanges, setHasChanges] = useState({
     renter: false,
     seller: false,
   });
 
   useEffect(() => {
-    setSystemPrompts({
-      renter:
-        prompts.find((p) => p.name === "default-renter-buyer")?.content ||
-        systemPrompts.renter,
-      seller:
-        prompts.find((p) => p.name === "default-seller-agency")?.content ||
-        systemPrompts.seller,
-    });
-    setOriginalPrompts({
-      renter:
-        prompts.find((p) => p.name === "default-renter-buyer")?.content ||
-        systemPrompts.renter,
-      seller:
-        prompts.find((p) => p.name === "default-seller-agency")?.content ||
-        systemPrompts.seller,
-    });
+    fetchAllPrompts();
+  }, [fetchAllPrompts]);
+
+  useEffect(() => {
+    const renterPrompt =
+      prompts.find((p: Prompt) => p.name === "default-renter-buyer")?.content ||
+      "";
+    const sellerPrompt =
+      prompts.find((p: Prompt) => p.name === "default-seller-agency")
+        ?.content || "";
+    const newPrompts = {
+      renter: renterPrompt,
+      seller: sellerPrompt,
+    };
+    setSystemPrompts(newPrompts);
+    setOriginalPrompts(newPrompts);
   }, [prompts]);
 
-  const handlePromptChange = (type: string, value: string) => {
-    setSystemPrompts((prev: any) => ({ ...prev, [type]: value }));
+  const handlePromptChange = (type: "renter" | "seller", value: string) => {
+    setSystemPrompts((prev) => ({ ...prev, [type]: value }));
     setHasChanges((prev) => ({
       ...prev,
       [type]: value !== originalPrompts[type],
     }));
   };
 
-  const handleSave = async (type: string) => {
+  const handleSave = async (type: "renter" | "seller") => {
     try {
-      console.log("a");
-      await updateSystemPrompt(
-        type === "renter" ? "default-renter-buyer" : "default-seller-agency",
-        systemPrompts[type],
-      );
-      setOriginalPrompts((prev: any) => ({
+      const promptName =
+        type === "renter" ? "default-renter-buyer" : "default-seller-agency";
+      await updateSystemPrompt(promptName, systemPrompts[type]);
+      setOriginalPrompts((prev) => ({
         ...prev,
         [type]: systemPrompts[type],
       }));
       setHasChanges((prev) => ({ ...prev, [type]: false }));
       toast.success(
-        `${type === "renter" ? "Renter/Buyer" : "Seller/Agency"} prompt saved successfully`,
+        t("promptSaved", {
+          type: t(type === "renter" ? "renterBuyer" : "sellerAgency"),
+        }),
       );
     } catch (error: any) {
-      toast.error(error.message || "Failed to save prompt");
+      toast.error(t("saveFailed"));
+      console.error(`Failed to save ${type} prompt:`, error);
     }
   };
 
-  const handleReset = (type: string) => {
-    setSystemPrompts((prev: any) => ({
+  const handleReset = (type: "renter" | "seller") => {
+    setSystemPrompts((prev) => ({
       ...prev,
       [type]: originalPrompts[type],
     }));
     setHasChanges((prev) => ({ ...prev, [type]: false }));
     toast.info(
-      `${type === "renter" ? "Renter/Buyer" : "Seller/Agency"} prompt reset`,
+      t("promptReset", {
+        type: t(type === "renter" ? "renterBuyer" : "sellerAgency"),
+      }),
     );
   };
 
-  const handleCopy = async (type: string) => {
+  const handleCopy = async (type: "renter" | "seller") => {
     try {
       await navigator.clipboard.writeText(systemPrompts[type]);
       setCopied((prev) => ({ ...prev, [type]: true }));
-      toast.success("Prompt copied to clipboard");
+      toast.success(t("promptCopied"));
       setTimeout(() => {
         setCopied((prev) => ({ ...prev, [type]: false }));
       }, 2000);
     } catch (err) {
-      toast.error("Failed to copy prompt");
+      toast.error(t("copyFailed"));
+      console.error(`Failed to copy ${type} prompt:`, err);
     }
   };
 
-  const getCharacterCount = (text: string) => text.length;
-  const getWordCount = (text: string) =>
+  const getCharacterCount = (text: string): number => text.length;
+  const getWordCount = (text: string): number =>
     text
       .trim()
       .split(/\s+/)
       .filter((word) => word.length > 0).length;
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                AI Prompt Editor
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Configure AI prompts for different user types to enhance their
-                experience
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 mb-4">
-            {isLoading ? (
-              <Skeleton className="h-6 w-24" />
-            ) : (
-              <Badge variant="outline" className="gap-1">
-                <MessageSquare size={12} />
-                Active Prompts: {prompts.length}
-              </Badge>
-            )}
-            <Badge
-              variant={
-                hasChanges.renter || hasChanges.seller
-                  ? "destructive"
-                  : "secondary"
-              }
-            >
-              {hasChanges.renter || hasChanges.seller
-                ? "Unsaved Changes"
-                : "All Saved"}
-            </Badge>
-          </div>
-
-          <Separator />
-        </div>
-
-        {isLoading ? (
-          <div className="space-y-4">
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="space-y-6">
             <Skeleton className="h-12 w-[400px]" />
-            <Card>
+            <Card className="shadow-lg rounded-lg">
               <CardHeader>
                 <Skeleton className="h-6 w-1/2" />
                 <Skeleton className="h-4 w-3/4" />
@@ -199,299 +167,347 @@ export default function PromptEditingPage() {
               </CardContent>
             </Card>
           </div>
-        ) : (
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="space-y-6"
-          >
-            <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
-              <TabsTrigger value="renter" className="gap-2">
-                <User size={16} />
-                Renter/Buyer
-                {hasChanges.renter && (
-                  <div className="w-2 h-2 bg-destructive rounded-full" />
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="seller" className="gap-2">
-                <Building2 size={16} />
-                Seller/Agency
-                {hasChanges.seller && (
-                  <div className="w-2 h-2 bg-destructive rounded-full" />
-                )}
-              </TabsTrigger>
-            </TabsList>
+        </div>
+      </div>
+    );
+  }
 
-            <TabsContent value="renter" className="space-y-6">
-              <Card className="shadow-sm border-border/50">
-                <CardHeader className="pb-4">
+  if (!prompts.length) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-6xl text-center text-gray-700 dark:text-gray-300">
+          {t("noPromptsFound")}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">
+                {t("aiPromptEditor")}
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                {t("configurePrompts")}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mb-4">
+            <Badge variant="outline" className="gap-1">
+              <MessageSquare className="w-3 h-3" />
+              {t("activePrompts")}: {prompts.length}
+            </Badge>
+            <Badge
+              variant={
+                hasChanges.renter || hasChanges.seller
+                  ? "destructive"
+                  : "secondary"
+              }
+              className={
+                hasChanges.renter || hasChanges.seller
+                  ? "bg-red-600 text-white"
+                  : ""
+              }
+            >
+              {hasChanges.renter || hasChanges.seller
+                ? t("unsavedChanges")
+                : t("allSaved")}
+            </Badge>
+          </div>
+          <Separator className="my-4" />
+        </div>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as "renter" | "seller")}
+          className="space-y-6"
+        >
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+            <TabsTrigger value="renter" className="gap-2">
+              <User className="w-4 h-4" />
+              {t("renterBuyer")}
+              {hasChanges.renter && (
+                <div className="w-2 h-2 bg-red-600 rounded-full" />
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="seller" className="gap-2">
+              <Building2 className="w-4 h-4" />
+              {t("sellerAgency")}
+              {hasChanges.seller && (
+                <div className="w-2 h-2 bg-red-600 rounded-full" />
+              )}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="renter" className="space-y-6">
+            <Card className="shadow-lg rounded-lg border-gray-200 dark:border-gray-700">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      {t("renterPromptTitle")}
+                    </CardTitle>
+                    <CardDescription className="mt-2">
+                      {t("renterPromptDesc")}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPreview(!showPreview)}
+                    className="gap-2"
+                    aria-label={showPreview ? t("hide") : t("preview")}
+                  >
+                    {showPreview ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                    {showPreview ? t("hide") : t("preview")}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2 text-xl">
-                        <User className="w-5 h-5 text-primary" />
-                        Renter/Buyer AI Prompt
-                      </CardTitle>
-                      <CardDescription className="mt-2">
-                        This prompt guides the AI when helping users find and
-                        rent or buy properties
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowPreview(!showPreview)}
-                        className="gap-2"
-                      >
-                        {showPreview ? <EyeOff size={14} /> : <Eye size={14} />}
-                        {showPreview ? "Hide" : "Preview"}
-                      </Button>
+                    <Label
+                      htmlFor="renter-prompt"
+                      className="text-sm font-medium"
+                    >
+                      {t("promptContent")}
+                    </Label>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>
+                        {getWordCount(systemPrompts.renter)} {t("words")}
+                      </span>
+                      <span>
+                        {getCharacterCount(systemPrompts.renter)}{" "}
+                        {t("characters")}
+                      </span>
                     </div>
                   </div>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label
-                        htmlFor="renter-prompt"
-                        className="text-sm font-medium"
+                  {showPreview ? (
+                    <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 min-h-[300px]">
+                      <Markdown
+                        options={{ overrides: MarkdownComponents }}
+                        className="text-sm whitespace-pre-wrap break-words"
                       >
-                        Prompt Content
-                      </Label>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>{getWordCount(systemPrompts.renter)} words</span>
-                        <span>
-                          {getCharacterCount(systemPrompts.renter)} characters
-                        </span>
-                      </div>
+                        {systemPrompts.renter}
+                      </Markdown>
                     </div>
-
-                    {showPreview ? (
-                      <div className="bg-muted/50 border rounded-lg p-4 min-h-[300px]">
-                        <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                          <Markdown
-                            options={{
-                              overrides: MarkdownComponents,
-                            }}
-                            className="text-sm whitespace-pre-wrap break-words"
-                          >
-                            {systemPrompts.renter}
-                          </Markdown>
-                        </div>
-                      </div>
-                    ) : (
-                      <Textarea
-                        id="renter-prompt"
-                        value={systemPrompts.renter}
-                        onChange={(e) =>
-                          handlePromptChange("renter", e.target.value)
-                        }
-                        className="min-h-[300px] text-sm leading-relaxed font-mono resize-none"
-                        placeholder="Enter the AI prompt for renter/buyer assistance..."
-                      />
+                  ) : (
+                    <Textarea
+                      id="renter-prompt"
+                      value={systemPrompts.renter}
+                      onChange={(e) =>
+                        handlePromptChange("renter", e.target.value)
+                      }
+                      className="min-h-[300px] text-sm font-mono resize-none"
+                      placeholder={t("renterPromptPlaceholder")}
+                      aria-label={t("renterPromptPlaceholder")}
+                    />
+                  )}
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2">
+                    {hasChanges.renter && (
+                      <Badge
+                        variant="outline"
+                        className="text-amber-600 border-amber-600 dark:text-amber-400 dark:border-amber-400"
+                      >
+                        {t("unsavedChanges")}
+                      </Badge>
                     )}
                   </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <div className="flex items-center gap-2">
-                      {hasChanges.renter && (
-                        <Badge
-                          variant="outline"
-                          className="text-amber-600 border-amber-600/50"
-                        >
-                          Unsaved changes
-                        </Badge>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCopy("renter")}
+                      className="gap-2"
+                      aria-label={copied.renter ? t("copied") : t("copy")}
+                    >
+                      {copied.renter ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
                       )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
+                      {copied.renter ? t("copied") : t("copy")}
+                    </Button>
+                    {hasChanges.renter && (
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleCopy("renter")}
+                        onClick={() => handleReset("renter")}
                         className="gap-2"
+                        aria-label={t("reset")}
                       >
-                        {copied.renter ? (
-                          <Check size={14} />
-                        ) : (
-                          <Copy size={14} />
-                        )}
-                        {copied.renter ? "Copied!" : "Copy"}
+                        <RefreshCw className="w-4 h-4" />
+                        {t("reset")}
                       </Button>
-
-                      {hasChanges.renter && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleReset("renter")}
-                          className="gap-2"
-                        >
-                          <RefreshCw size={14} />
-                          Reset
-                        </Button>
-                      )}
-
-                      <Button
-                        onClick={() => handleSave("renter")}
-                        disabled={!hasChanges.renter}
-                        size="sm"
-                        className="gap-2"
-                      >
-                        <Save size={14} />
-                        Save Changes
-                      </Button>
-                    </div>
+                    )}
+                    <Button
+                      onClick={() => handleSave("renter")}
+                      disabled={!hasChanges.renter}
+                      size="sm"
+                      className="gap-2 bg-blue-600 hover:bg-blue-700"
+                      aria-label={t("saveChanges")}
+                    >
+                      <Save className="w-4 h-4" />
+                      {t("saveChanges")}
+                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="seller" className="space-y-6">
-              <Card className="shadow-sm border-border/50">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2 text-xl">
-                        <Building2 className="w-5 h-5 text-primary" />
-                        Seller/Agency AI Prompt
-                      </CardTitle>
-                      <CardDescription className="mt-2">
-                        This prompt guides the AI when helping sellers and
-                        agencies market their properties
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowPreview(!showPreview)}
-                        className="gap-2"
-                      >
-                        {showPreview ? <EyeOff size={14} /> : <Eye size={14} />}
-                        {showPreview ? "Hide" : "Preview"}
-                      </Button>
-                    </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="seller" className="space-y-6">
+            <Card className="shadow-lg rounded-lg border-gray-200 dark:border-gray-700">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      {t("sellerPromptTitle")}
+                    </CardTitle>
+                    <CardDescription className="mt-2">
+                      {t("sellerPromptDesc")}
+                    </CardDescription>
                   </div>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label
-                        htmlFor="seller-prompt"
-                        className="text-sm font-medium"
-                      >
-                        Prompt Content
-                      </Label>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>{getWordCount(systemPrompts.seller)} words</span>
-                        <span>
-                          {getCharacterCount(systemPrompts.seller)} characters
-                        </span>
-                      </div>
-                    </div>
-
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPreview(!showPreview)}
+                    className="gap-2"
+                    aria-label={showPreview ? t("hide") : t("preview")}
+                  >
                     {showPreview ? (
-                      <div className="bg-muted/50 border rounded-lg p-4 min-h-[300px]">
-                        <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                          <Markdown
-                            options={{
-                              overrides: MarkdownComponents,
-                            }}
-                            className="text-sm whitespace-pre-wrap break-words"
-                          >
-                            {systemPrompts.seller}
-                          </Markdown>
-                        </div>
-                      </div>
+                      <EyeOff className="w-4 h-4" />
                     ) : (
-                      <Textarea
-                        id="seller-prompt"
-                        value={systemPrompts.seller}
-                        onChange={(e) =>
-                          handlePromptChange("seller", e.target.value)
-                        }
-                        className="min-h-[300px] text-sm leading-relaxed font-mono resize-none"
-                        placeholder="Enter the AI prompt for seller/agency assistance..."
-                      />
+                      <Eye className="w-4 h-4" />
+                    )}
+                    {showPreview ? t("hide") : t("preview")}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label
+                      htmlFor="seller-prompt"
+                      className="text-sm font-medium"
+                    >
+                      {t("promptContent")}
+                    </Label>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>
+                        {getWordCount(systemPrompts.seller)} {t("words")}
+                      </span>
+                      <span>
+                        {getCharacterCount(systemPrompts.seller)}{" "}
+                        {t("characters")}
+                      </span>
+                    </div>
+                  </div>
+                  {showPreview ? (
+                    <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 min-h-[300px]">
+                      <Markdown
+                        options={{ overrides: MarkdownComponents }}
+                        className="text-sm whitespace-pre-wrap break-words"
+                      >
+                        {systemPrompts.seller}
+                      </Markdown>
+                    </div>
+                  ) : (
+                    <Textarea
+                      id="seller-prompt"
+                      value={systemPrompts.seller}
+                      onChange={(e) =>
+                        handlePromptChange("seller", e.target.value)
+                      }
+                      className="min-h-[300px] text-sm font-mono resize-none"
+                      placeholder={t("sellerPromptPlaceholder")}
+                      aria-label={t("sellerPromptPlaceholder")}
+                    />
+                  )}
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2">
+                    {hasChanges.seller && (
+                      <Badge
+                        variant="outline"
+                        className="text-amber-600 border-amber-600 dark:text-amber-400 dark:border-amber-400"
+                      >
+                        {t("unsavedChanges")}
+                      </Badge>
                     )}
                   </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <div className="flex items-center gap-2">
-                      {hasChanges.seller && (
-                        <Badge
-                          variant="outline"
-                          className="text-amber-600 border-amber-600/50"
-                        >
-                          Unsaved changes
-                        </Badge>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCopy("seller")}
+                      className="gap-2"
+                      aria-label={copied.seller ? t("copied") : t("copy")}
+                    >
+                      {copied.seller ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
                       )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
+                      {copied.seller ? t("copied") : t("copy")}
+                    </Button>
+                    {hasChanges.seller && (
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleCopy("seller")}
+                        onClick={() => handleReset("seller")}
                         className="gap-2"
+                        aria-label={t("reset")}
                       >
-                        {copied.seller ? (
-                          <Check size={14} />
-                        ) : (
-                          <Copy size={14} />
-                        )}
-                        {copied.seller ? "Copied!" : "Copy"}
+                        <RefreshCw className="w-4 h-4" />
+                        {t("reset")}
                       </Button>
-
-                      {hasChanges.seller && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleReset("seller")}
-                          className="gap-2"
-                        >
-                          <RefreshCw size={14} />
-                          Reset
-                        </Button>
-                      )}
-
-                      <Button
-                        onClick={() => handleSave("seller")}
-                        disabled={!hasChanges.seller}
-                        size="sm"
-                        className="gap-2"
-                      >
-                        <Save size={14} />
-                        Save Changes
-                      </Button>
-                    </div>
+                    )}
+                    <Button
+                      onClick={() => handleSave("seller")}
+                      disabled={!hasChanges.seller}
+                      size="sm"
+                      className="gap-2 bg-blue-600 hover:bg-blue-700"
+                      aria-label={t("saveChanges")}
+                    >
+                      <Save className="w-4 h-4" />
+                      {t("saveChanges")}
+                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        )}
-
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
         {(hasChanges.renter || hasChanges.seller) && (
-          <Card className="mt-6 border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-950/20">
-            <CardContent className="pt-6">
+          <Card className="mt-6 border-amber-200 bg-amber-50 dark:border-amber-700 dark:bg-amber-900/10 shadow-lg rounded-lg">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-amber-500/10 rounded-full flex items-center justify-center">
-                    <MessageSquare className="w-4 h-4 text-amber-600" />
+                  <div className="w-8 h-8 bg-amber-100 dark:bg-amber-800 rounded-full flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 text-amber-600 dark:text-amber-300" />
                   </div>
                   <div>
                     <p className="font-medium text-amber-900 dark:text-amber-100">
-                      You have unsaved changes
+                      {t("youHaveUnsavedChanges")}
                     </p>
                     <p className="text-sm text-amber-700 dark:text-amber-300">
-                      Save your changes to update the AI prompts
+                      {t("savePromptsInstruction")}
                     </p>
                   </div>
                 </div>
-
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -499,9 +515,10 @@ export default function PromptEditingPage() {
                       handleReset("renter");
                       handleReset("seller");
                     }}
-                    className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-950"
+                    className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-300 dark:hover:bg-amber-800"
+                    aria-label={t("resetAll")}
                   >
-                    Reset All
+                    {t("resetAll")}
                   </Button>
                   <Button
                     onClick={() => {
@@ -509,8 +526,9 @@ export default function PromptEditingPage() {
                       if (hasChanges.seller) handleSave("seller");
                     }}
                     className="bg-amber-600 hover:bg-amber-700 text-white"
+                    aria-label={t("saveAllChanges")}
                   >
-                    Save All Changes
+                    {t("saveAllChanges")}
                   </Button>
                 </div>
               </div>

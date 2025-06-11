@@ -37,6 +37,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useUsersStore } from "@/store/usersStore";
+import { useTranslation } from "react-i18next";
 
 interface User {
   id: string;
@@ -57,6 +58,7 @@ interface ActionLoading {
 }
 
 const UserManagementPage = () => {
+  const { t } = useTranslation();
   const {
     users,
     isLoading,
@@ -87,7 +89,9 @@ const UserManagementPage = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast(t("error"), {
+        description: t(error) || error || t("genericError"),
+      });
     }
   }, [error]);
 
@@ -95,9 +99,13 @@ const UserManagementPage = () => {
     setActionLoading((prev) => ({ ...prev, [`delete-${userId}`]: true }));
     try {
       await deleteUser(userId);
-      toast.success("User deleted successfully");
+      toast(t("success"), {
+        description: t("userDeletedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to delete user");
+      toast(t("error"), {
+        description: t("userDeleteFailed"),
+      });
       console.error("Error deleting user:", error);
     } finally {
       setActionLoading((prev) => ({
@@ -120,9 +128,13 @@ const UserManagementPage = () => {
         bio: "This section is yet empty.",
       });
       setIsAddDialogOpen(false);
-      toast.success("User added successfully");
+      toast(t("success"), {
+        description: t("userAddedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to add user");
+      toast(t("error"), {
+        description: t("userAddFailed"),
+      });
       console.error("Error adding user:", error);
     } finally {
       setActionLoading((prev) => ({ ...prev, "add-user": false }));
@@ -136,9 +148,13 @@ const UserManagementPage = () => {
       await updateUser(editingUser);
       setEditingUser(null);
       setIsEditDialogOpen(false);
-      toast.success("User updated successfully");
+      toast(t("success"), {
+        description: t("userUpdatedSuccess"),
+      });
     } catch (error) {
-      toast.error("Failed to update user");
+      toast(t("error"), {
+        description: t("userUpdateFailed"),
+      });
       console.error("Error updating user:", error);
     } finally {
       setActionLoading((prev) => ({
@@ -222,10 +238,10 @@ const UserManagementPage = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              User Management
+              {t("userManagementTitle")}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Manage and moderate user accounts
+              {t("userManagementDescription")}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -233,14 +249,14 @@ const UserManagementPage = () => {
               <DialogTrigger asChild>
                 <Button className="gap-2 cursor-pointer">
                   <Plus size={16} />
-                  Add User
+                  {t("addUser")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
+                  <DialogTitle>{t("addNewUser")}</DialogTitle>
                   <DialogDescription>
-                    Create a new Moderator or Admin account for the platform.
+                    {t("addNewUserDescription")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
@@ -249,7 +265,7 @@ const UserManagementPage = () => {
                       htmlFor="username"
                       className="block text-sm font-medium"
                     >
-                      Username
+                      {t("username")}
                     </Label>
                     <Input
                       id="username"
@@ -270,7 +286,7 @@ const UserManagementPage = () => {
                       htmlFor="email"
                       className="block text-sm font-medium"
                     >
-                      Email
+                      {t("email")}
                     </Label>
                     <Input
                       id="email"
@@ -291,7 +307,7 @@ const UserManagementPage = () => {
                       htmlFor="password"
                       className="block text-sm font-medium"
                     >
-                      Password
+                      {t("password")}
                     </Label>
                     <div className="relative">
                       <Input
@@ -322,7 +338,7 @@ const UserManagementPage = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role" className="block text-sm font-medium">
-                      Role
+                      {t("role")}
                     </Label>
                     <Select
                       value={newUser.role}
@@ -338,16 +354,18 @@ const UserManagementPage = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Roles</SelectLabel>
-                          <SelectItem value="moderator">Moderator</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectLabel>{t("roles")}</SelectLabel>
+                          <SelectItem value="moderator">
+                            {t("moderator")}
+                          </SelectItem>
+                          <SelectItem value="admin">{t("admin")}</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bio" className="block text-sm font-medium">
-                      Bio
+                      {t("bio")}
                     </Label>
                     <Textarea
                       id="bio"
@@ -376,7 +394,7 @@ const UserManagementPage = () => {
                   </Button>
                   <DialogClose asChild>
                     <Button variant="outline" className="cursor-pointer">
-                      Cancel
+                      {t("cancel")}
                     </Button>
                   </DialogClose>
                 </DialogFooter>
@@ -389,7 +407,7 @@ const UserManagementPage = () => {
                 onClick={() => setFilter("all")}
                 className="rounded-md cursor-pointer"
               >
-                All ({users.length})
+                {t("all")} ({users.length})
               </Button>
               <Button
                 variant={filter === "moderator" ? "default" : "ghost"}
@@ -398,7 +416,7 @@ const UserManagementPage = () => {
                 className="rounded-md cursor-pointer"
               >
                 <Shield size={14} className="mr-1" />
-                Moderators (
+                {t("moderators")} (
                 {users.filter((user) => user.role === "moderator").length})
               </Button>
               <Button
@@ -408,7 +426,8 @@ const UserManagementPage = () => {
                 className="rounded-md cursor-pointer"
               >
                 <ShieldCheck size={14} className="mr-1" />
-                Admins ({users.filter((user) => user.role === "admin").length})
+                {t("admins")} (
+                {users.filter((user) => user.role === "admin").length})
               </Button>
             </div>
           </div>
@@ -416,10 +435,10 @@ const UserManagementPage = () => {
         {filteredUsers.length === 0 ? (
           <div className="text-center py-12">
             <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">No users found</h3>
+            <h3 className="mt-4 text-lg font-semibold">{t("noUsersFound")}</h3>
             <p className="text-muted-foreground">
               {filter === "all"
-                ? "No users available."
+                ? t("noUsersAvailable")
                 : `No ${filter} users found.`}
             </p>
           </div>
@@ -481,7 +500,9 @@ const UserManagementPage = () => {
                     </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Calendar size={12} />
-                      <span>Joined {formatDate(user.createdAt)}</span>
+                      <span>
+                        {t("joined")} {formatDate(user.createdAt)}
+                      </span>
                     </div>
                   </div>
                   <div className="flex gap-2 pt-2 border-t">
@@ -502,14 +523,14 @@ const UserManagementPage = () => {
                               onClick={() => setEditingUser(user)}
                             >
                               <Edit size={14} />
-                              Edit
+                              {t("edit")}
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-md">
                             <DialogHeader>
-                              <DialogTitle>Edit User</DialogTitle>
+                              <DialogTitle>{t("editUser")}</DialogTitle>
                               <DialogDescription>
-                                Update user account information.
+                                {t("userUpdate")}
                               </DialogDescription>
                             </DialogHeader>
                             {editingUser && (
@@ -519,7 +540,7 @@ const UserManagementPage = () => {
                                     htmlFor="edit-username"
                                     className="block text-sm font-medium"
                                   >
-                                    Username
+                                    {t("username")}
                                   </Label>
                                   <Input
                                     id="edit-username"
@@ -543,7 +564,7 @@ const UserManagementPage = () => {
                                     htmlFor="edit-email"
                                     className="block text-sm font-medium"
                                   >
-                                    Email
+                                    {t("email")}
                                   </Label>
                                   <Input
                                     id="edit-email"
@@ -564,7 +585,7 @@ const UserManagementPage = () => {
                                     htmlFor="edit-role"
                                     className="block text-sm font-medium"
                                   >
-                                    Role
+                                    {t("role")}
                                   </Label>
                                   <Select
                                     value={editingUser.role}
@@ -592,10 +613,10 @@ const UserManagementPage = () => {
                                       <SelectGroup>
                                         <SelectLabel>Roles</SelectLabel>
                                         <SelectItem value="moderator">
-                                          Moderator
+                                          {t("moderator")}
                                         </SelectItem>
                                         <SelectItem value="admin">
-                                          Admin
+                                          {t("admin")}
                                         </SelectItem>
                                       </SelectGroup>
                                     </SelectContent>
@@ -606,7 +627,7 @@ const UserManagementPage = () => {
                                     htmlFor="edit-bio"
                                     className="block text-sm font-medium"
                                   >
-                                    Bio
+                                    {t("bio")}
                                   </Label>
                                   <Textarea
                                     id="edit-bio"
@@ -635,11 +656,11 @@ const UserManagementPage = () => {
                                 className="gap-2 cursor-pointer"
                               >
                                 {actionLoading[`edit-${editingUser?.id}`]
-                                  ? "Updating..."
-                                  : "Update User"}
+                                  ? t("updating")
+                                  : t("updateUser")}
                               </Button>
                               <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t("cancel")}</Button>
                               </DialogClose>
                             </DialogFooter>
                           </DialogContent>
@@ -661,10 +682,9 @@ const UserManagementPage = () => {
                             <DialogHeader>
                               <DialogTitle>Delete User Account</DialogTitle>
                               <DialogDescription>
-                                Are you sure you want to permanently delete the
-                                user account for "{user.username}"? This action
-                                cannot be undone and will remove all associated
-                                data.
+                                {t("deleteUserDescriptionPart1")} "
+                                {user.username}"?{" "}
+                                {t("deleteUserDescriptionPart2")}
                               </DialogDescription>
                             </DialogHeader>
                             <DialogFooter>
@@ -675,15 +695,15 @@ const UserManagementPage = () => {
                                 className="gap-2 cursor-pointer"
                               >
                                 {actionLoading[`delete-${user.id}`]
-                                  ? "Deleting..."
-                                  : "Delete User"}
+                                  ? t("deleting")
+                                  : t("deleteUser")}
                               </Button>
                               <DialogClose asChild>
                                 <Button
                                   variant="outline"
                                   className="cursor-pointer"
                                 >
-                                  Cancel
+                                  {t("cancel")}
                                 </Button>
                               </DialogClose>
                             </DialogFooter>
@@ -692,7 +712,7 @@ const UserManagementPage = () => {
                       </>
                     ) : (
                       <div className="text-sm text-muted-foreground w-full text-center">
-                        User management restricted
+                        {t("userManagementRestricted")}
                       </div>
                     )}
                   </div>

@@ -15,8 +15,10 @@ import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { GoogleLogin } from "./GoogleLogin";
 import { useUserStore, type UserRole } from "@/store/userStore";
+import { useTranslation } from "react-i18next";
 
 export function RegisterForm() {
+  const { t } = useTranslation();
   const [socialRole, setSocialRole] = useState("");
   const [formData, setFormData] = useState({
     username: "",
@@ -48,8 +50,8 @@ export function RegisterForm() {
 
   useEffect(() => {
     if (user) {
-      toast("Success", {
-        description: "Registration successful. Please verify your email.",
+      toast(t("success"), {
+        description: t("registrationSuccess"),
       });
       clearError();
     }
@@ -67,50 +69,47 @@ export function RegisterForm() {
     };
 
     if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+      newErrors.username = t("usernameRequired");
       isValid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("emailRequired");
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t("invalidEmailFormat");
       isValid = false;
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("passwordRequired");
       isValid = false;
     } else {
       if (formData.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters";
+        newErrors.password = t("passwordMinLength8");
         isValid = false;
       } else if (!/[A-Z]/.test(formData.password)) {
-        newErrors.password =
-          "Password must contain at least one uppercase letter";
+        newErrors.password = t("passwordUppercaseRequired");
         isValid = false;
       } else if (!/[a-z]/.test(formData.password)) {
-        newErrors.password =
-          "Password must contain at least one lowercase letter";
+        newErrors.password = t("passwordLowercaseRequired");
         isValid = false;
       } else if (!/[0-9]/.test(formData.password)) {
-        newErrors.password = "Password must contain at least one number";
+        newErrors.password = t("passwordNumberRequired");
         isValid = false;
       } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-        newErrors.password =
-          "Password must contain at least one special character";
+        newErrors.password = t("passwordSpecialCharRequired");
         isValid = false;
       }
     }
 
     if (formData.password !== formData.repeatPassword) {
-      newErrors.repeatPassword = "Passwords do not match";
+      newErrors.repeatPassword = t("passwordsDoNotMatch");
       isValid = false;
     }
 
     if (!formData.role) {
-      newErrors.role = "Please select a role";
+      newErrors.role = t("roleRequired");
       isValid = false;
     }
 
@@ -141,8 +140,8 @@ export function RegisterForm() {
         role: "",
       });
     } catch (error: any) {
-      toast("Error", {
-        description: error.message || "Registration failed",
+      toast(t("error"), {
+        description: error.message || t("registrationFailed"),
       });
     }
   };
@@ -181,10 +180,10 @@ export function RegisterForm() {
 
       <form onSubmit={handleManualSubmit} className="space-y-4">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="username">Login</Label>
+          <Label htmlFor="username">{t("login")}</Label>
           <Input
             id="username"
-            placeholder="Choose login"
+            placeholder={t("loginPlaceholder")}
             value={formData.username}
             onChange={handleChange}
             disabled={isLoading}
@@ -195,11 +194,11 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="Enter email"
+            placeholder={t("emailPlaceholder")}
             value={formData.email}
             onChange={handleChange}
             disabled={isLoading}
@@ -210,11 +209,11 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("password")}</Label>
           <Input
             id="password"
             type="password"
-            placeholder="Create password"
+            placeholder={t("passwordPlaceholder")}
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
@@ -225,11 +224,11 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="repeatPassword">Repeat password</Label>
+          <Label htmlFor="repeatPassword">{t("repeatPassword")}</Label>
           <Input
             id="repeatPassword"
             type="password"
-            placeholder="Repeat password"
+            placeholder={t("repeatPassword")}
             value={formData.repeatPassword}
             onChange={handleChange}
             disabled={isLoading}
@@ -240,13 +239,16 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col gap-2">
+          <Label htmlFor="socialRole">{t("rolePlaceholder")}</Label>
           <Select onValueChange={handleManualRoleChange} disabled={isLoading}>
             <SelectTrigger className="w-full border-input focus:border-ring focus:ring-ring">
-              <SelectValue placeholder="Choose your role" />
+              <SelectValue placeholder={t("rolePlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="renter_buyer">Renter/Buyer</SelectItem>
-              <SelectItem value="private_seller">Private Seller</SelectItem>
+              <SelectItem value="renter_buyer">{t("renter_buyer")}</SelectItem>
+              <SelectItem value="private_seller">
+                {t("private_seller")}
+              </SelectItem>
             </SelectContent>
           </Select>
           {shouldShowErrors && errors.role && (
@@ -261,30 +263,32 @@ export function RegisterForm() {
         )}
 
         <Button className="w-full cursor-pointer" disabled={isLoading}>
-          {isLoading ? "Registering..." : "Continue"}
+          {isLoading ? t("registering") : t("continue")}
         </Button>
       </form>
 
       <div className="flex items-center gap-4">
         <div className="flex-grow h-px bg-border" />
-        <span className="text-xs text-muted-foreground">OR</span>
+        <span className="text-xs text-muted-foreground">{t("or")}</span>
         <div className="flex-grow h-px bg-border" />
       </div>
 
       <div className="space-y-4">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="socialRole">Choose your role for social login</Label>
+          <Label htmlFor="socialRole">{t("socialRolePlaceholder")}</Label>
           <Select
             onValueChange={handleSocialRoleChange}
             disabled={isLoading}
             value={socialRole}
           >
             <SelectTrigger className="w-full border-input focus:border-ring focus:ring-ring">
-              <SelectValue placeholder="Choose your role" />
+              <SelectValue placeholder={t("rolePlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="renter_buyer">Renter/Buyer</SelectItem>
-              <SelectItem value="private_seller">Private Seller</SelectItem>
+              <SelectItem value="renter_buyer">{t("renter_buyer")}</SelectItem>
+              <SelectItem value="private_seller">
+                {t("private_seller")}
+              </SelectItem>
             </SelectContent>
           </Select>
           {errors.socialRole && (
@@ -297,16 +301,14 @@ export function RegisterForm() {
           onValidationError={() =>
             setErrors({
               ...errors,
-              socialRole: "Please select a role before signing in with Google.",
+              socialRole: t("googleLoginRoleRequired"),
             })
           }
         />
       </div>
 
       <Link to="/login-form" className="[&.active]:underline">
-        <div className="text-sm text-center underline">
-          I already have an account
-        </div>
+        <div className="text-sm text-center underline">{t("haveAccount")}</div>
       </Link>
     </div>
   );

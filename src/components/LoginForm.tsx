@@ -7,8 +7,10 @@ import { X } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { GoogleLogin } from "./GoogleLogin";
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "react-i18next";
 
 export function LoginForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,11 +50,11 @@ export function LoginForm() {
         <X className="w-5 h-5 text-muted-foreground hover:text-foreground" />
       </Link>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t("email")}</Label>
         <Input
           id="email"
           type="email"
-          placeholder="Enter email"
+          placeholder={t("emailPlaceholder")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -62,11 +64,11 @@ export function LoginForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">{t("password")}</Label>
         <Input
           id="password"
           type="password"
-          placeholder="Enter password"
+          placeholder={t("passwordPlaceholder")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -77,7 +79,7 @@ export function LoginForm() {
 
       <Link to="/restore-password-step1" className="[&.active]:underline">
         <div className="text-right text-sm text-blue-500 cursor-pointer underline mb-2">
-          Forgot password?
+          {t("forgotPassword")}
         </div>
       </Link>
 
@@ -92,12 +94,12 @@ export function LoginForm() {
         className="w-full cursor-pointer"
         disabled={isLoading}
       >
-        {isLoading ? "Logging in..." : "Continue"}
+        {isLoading ? t("loggingIn") : t("continue")}
       </Button>
 
       <div className="flex items-center gap-4">
         <div className="flex-grow h-px bg-border" />
-        <span className="text-xs text-muted-foreground">OR</span>
+        <span className="text-xs text-muted-foreground">{t("or")}</span>
         <div className="flex-grow h-px bg-border" />
       </div>
 
@@ -105,7 +107,7 @@ export function LoginForm() {
 
       <Link to="/register-form" className="[&.active]:underline">
         <div className="text-sm text-center underline">
-          I don’t have an account
+          {t("dontHaveAccount")}
         </div>
       </Link>
     </form>

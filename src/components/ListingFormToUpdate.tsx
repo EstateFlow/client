@@ -11,7 +11,13 @@ import {
 } from "@/components/ui/card";
 import type { CreateProperty, Property } from "@/lib/types";
 import { createProperty, updateProperty } from "@/api/properties";
-import { FACILITY_OPTIONS, transactionTypeOptions, propertyTypeOptions, currencyOptions, statusOptions  } from "@/lib/types";
+import {
+  FACILITY_OPTIONS,
+  transactionTypeOptions,
+  propertyTypeOptions,
+  currencyOptions,
+  statusOptions,
+} from "@/lib/types";
 import { toast } from "sonner";
 import { usePropertiesStore } from "@/store/usePropertiesStore";
 import {
@@ -31,6 +37,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 export default function ListingFormToUpdate({
   ownerId,
@@ -41,10 +48,7 @@ export default function ListingFormToUpdate({
   propertyToEdit?: Property;
   onFinish?: () => void;
 }) {
-  console.log("1:" + propertyToEdit?.transactionType)
-    console.log("2:" +propertyToEdit?.propertyType)
-      console.log("3:" +propertyToEdit?.currency)
-        console.log("4:" +propertyToEdit?.status)
+  const { t } = useTranslation();
   const remove = usePropertiesStore((state) => state.remove);
   const [loading, setLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -52,32 +56,45 @@ export default function ListingFormToUpdate({
   const [form, setForm] = useState({
     title: propertyToEdit?.title || "",
     description: propertyToEdit?.description || "",
-    propertyType: propertyToEdit?.propertyType || "",
+    propertyType: propertyToEdit?.propertyType || "house",
     transactionType: propertyToEdit?.transactionType || "sale",
     price: propertyToEdit?.price || "",
-    currency: propertyToEdit?.currency || "",
+    currency: currencyOptions[0] || "USD",
     size: propertyToEdit?.size || "",
-    rooms: propertyToEdit?.rooms || "",
-    address: propertyToEdit?.address ||"",
+    rooms: propertyToEdit?.rooms?.toString() || "",
+    address: propertyToEdit?.address || "",
     status: "active",
     documentUrl: propertyToEdit?.documentUrl || "",
     verificationComments: propertyToEdit?.verificationComments || "",
-    facilities: [] as string[],
-    images: [{ imageUrl: "", isPrimary: true }],
+    facilities: propertyToEdit?.facilities
+      ? propertyToEdit.facilities.split(",").map((f) => f.trim())
+      : ([] as string[]),
+    images: propertyToEdit?.images?.length
+      ? propertyToEdit.images
+      : [{ imageUrl: "", isPrimary: true }],
   });
 
   useEffect(() => {
     if (propertyToEdit) {
       setForm({
-        ...propertyToEdit,
+        title: propertyToEdit.title,
+        description: propertyToEdit.description || "",
         propertyType: propertyToEdit.propertyType.trim(),
         transactionType: propertyToEdit.transactionType.trim(),
+        price: propertyToEdit.price.toString(),
         currency: propertyToEdit.currency.trim(),
-        status: propertyToEdit.status.trim(),
+        size: propertyToEdit.size || "",
         rooms: propertyToEdit.rooms.toString(),
+        address: propertyToEdit.address,
+        status: propertyToEdit.status.trim(),
+        documentUrl: propertyToEdit.documentUrl || "",
+        verificationComments: propertyToEdit.verificationComments || "",
         facilities: propertyToEdit.facilities
           ? propertyToEdit.facilities.split(",").map((f) => f.trim())
           : [],
+        images: propertyToEdit.images?.length
+          ? propertyToEdit.images
+          : [{ imageUrl: "", isPrimary: true }],
       });
     }
   }, [propertyToEdit]);
@@ -97,60 +114,65 @@ export default function ListingFormToUpdate({
       return { ...prev, facilities };
     });
   };
+
   const handleDelete = async () => {
     if (!propertyToEdit) return;
-    const confirm = window.confirm(
-      "Are you sure you want to delete this listing?",
-    );
-    if (!confirm) return;
 
     setLoading(true);
     try {
       await remove(propertyToEdit.id);
-      toast.success("Property successfully deleted!");
+      toast(t("success"), {
+        description: t("propertyDeletedSuccess"),
+      });
       onFinish?.();
     } catch (error) {
       console.error("Delete error:", error);
-      toast.error("An error occurred while deleting the property.");
+      toast(t("error"), {
+        description: t("propertyDeleteFailed"),
+      });
     } finally {
       setLoading(false);
+      setShowDeleteDialog(false);
     }
   };
-    const validateForm = () => {
+
+  const validateForm = () => {
     const errors: { [key: string]: string } = {};
     const requiredFields = [
-      { name: "title", label: "Title" },
-      { name: "propertyType", label: "Property Type" },
-      { name: "transactionType", label: "Transaction Type" },
-      { name: "price", label: "Price" },
-      { name: "address", label: "Address" },
-      { name: "ownerId", label: "Owner ID" },
+      { name: "title", label: t("title") },
+      { name: "propertyType", label: t("propertyType") },
+      { name: "transactionType", label: t("transactionType") },
+      { name: "price", label: t("price") },
+      { name: "address", label: t("address") },
+      { name: "ownerId", label: t("ownerId") },
     ];
 
     for (const field of requiredFields) {
       const value =
         field.name === "ownerId" ? ownerId : (form as any)[field.name];
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        errors[field.name] = `Поле "${field.label}" обязательно для заполнения`;
+        errors[field.name] = t("fieldRequired", { field: field.label });
       }
     }
 
     if (form.rooms && (isNaN(Number(form.rooms)) || Number(form.rooms) < 0)) {
-      errors["rooms"] = "Количество комнат должно быть положительным числом";
+      errors["rooms"] = t("invalidRooms");
     }
 
     if (form.price && (isNaN(Number(form.price)) || Number(form.price) < 0)) {
-      errors["price"] = "Цена должна быть положительным числом";
+      errors["price"] = t("invalidPrice");
     }
 
     if (form.size && (isNaN(Number(form.size)) || Number(form.size) < 0)) {
-      errors["size"] = "Размер должен быть положительным числом";
+      errors["size"] = t("invalidSize");
     }
 
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      Object.values(errors).forEach((error) => toast.error(error));
+      Object.values(errors).forEach((error) =>
+        toast(t("error"), { description: error }),
+      );
       return false;
     }
 
@@ -184,36 +206,43 @@ export default function ListingFormToUpdate({
     try {
       if (propertyToEdit) {
         await updateProperty(propertyToEdit.id, payload);
-        toast.success("Property successfully updated!");
+        toast(t("success"), {
+          description: t("propertyUpdatedSuccess"),
+        });
       } else {
         await createProperty(payload);
-        toast.success("Property successfully created!");
+        toast(t("success"), {
+          description: t("propertyCreatedSuccess"),
+        });
       }
       onFinish?.();
     } catch (error) {
       console.error("Error:", error);
-      toast.error("An error occurred while saving the property.");
+      toast(t("error"), {
+        description: t("propertySaveFailed"),
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 mt-6 px-4 sm:px-0">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-3xl mx-auto space-y-8 mt-6 px-4 sm:px-0"
+    >
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
-          <CardDescription>
-            Provide core details about the listing
-          </CardDescription>
+          <CardTitle>{t("basicInformation")}</CardTitle>
+          <CardDescription>{t("basicInformationDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="grid gap-1">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t("title")}</Label>
             <Input
               id="title"
               name="title"
-              placeholder="Enter title"
+              placeholder={t("titlePlaceholder")}
               value={form.title}
               onChange={handleChange}
               required
@@ -224,11 +253,11 @@ export default function ListingFormToUpdate({
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t("description")}</Label>
             <Textarea
               id="description"
               name="description"
-              placeholder="Enter a detailed description"
+              placeholder={t("descriptionPlaceholder")}
               value={form.description}
               onChange={handleChange}
               rows={4}
@@ -237,32 +266,24 @@ export default function ListingFormToUpdate({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="grid gap-1">
-              
-            <Label htmlFor="propertyType">Property Type</Label>
-            <Input
-              id="title"
-              name="title"
-              placeholder="Enter title"
-              value={propertyTypeOptions.includes(form.propertyType.trim()) ? form.propertyType.trim() : ""}
-              onChange={handleChange}
-              required
-              className={formErrors["title"] ? "border-red-500" : ""}
-            />
-              <Label htmlFor="propertyType">Property Type</Label>
+              <Label htmlFor="propertyType">{t("propertyType")}</Label>
               <Select
-              
-                value={propertyTypeOptions.includes(form.propertyType.trim()) ? form.propertyType.trim() : ""}
+                value={
+                  propertyTypeOptions.includes(form.propertyType.trim())
+                    ? form.propertyType.trim()
+                    : ""
+                }
                 onValueChange={(value) =>
                   setForm((prev) => ({ ...prev, propertyType: value }))
                 }
               >
-                <SelectTrigger aria-label="Property Type">
-                  <SelectValue placeholder="Select Property Type" />
+                <SelectTrigger aria-label={t("propertyType")}>
+                  <SelectValue placeholder={t("selectPropertyType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {propertyTypeOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                      {t(option)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -270,20 +291,24 @@ export default function ListingFormToUpdate({
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="transactionType">Transaction Type</Label>
+              <Label htmlFor="transactionType">{t("transactionType")}</Label>
               <Select
-                value={form.transactionType}
+                value={
+                  transactionTypeOptions.includes(form.transactionType.trim())
+                    ? form.transactionType.trim()
+                    : ""
+                }
                 onValueChange={(value) =>
                   setForm((prev) => ({ ...prev, transactionType: value }))
                 }
               >
-                <SelectTrigger aria-label="Transaction Type">
-                  <SelectValue placeholder="Select Transaction Type" />
+                <SelectTrigger aria-label={t("transactionType")}>
+                  <SelectValue placeholder={t("selectTransactionType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {transactionTypeOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                      {t(option)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -291,16 +316,22 @@ export default function ListingFormToUpdate({
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">{t("price")}</Label>
               <Input
                 id="price"
                 name="price"
                 type="text"
-                placeholder="Enter price"
+                placeholder={t("pricePlaceholder")}
                 value={form.price}
                 onChange={handleChange}
                 onKeyDown={(e) => {
-                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  const allowed = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Delete",
+                  ];
                   if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
                     e.preventDefault();
                   }
@@ -309,25 +340,31 @@ export default function ListingFormToUpdate({
                 className={formErrors["price"] ? "border-red-500" : ""}
               />
               {formErrors["price"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["price"]}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors["price"]}
+                </p>
               )}
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency">{t("currency")}</Label>
               <Select
-                value={form.currency}
+                value={
+                  currencyOptions.includes(form.currency.trim())
+                    ? form.currency.trim()
+                    : ""
+                }
                 onValueChange={(value) =>
                   setForm((prev) => ({ ...prev, currency: value }))
                 }
               >
-                <SelectTrigger aria-label="Currency">
-                  <SelectValue placeholder="Select Currency" />
+                <SelectTrigger aria-label={t("currency")}>
+                  <SelectValue placeholder={t("selectCurrency")} />
                 </SelectTrigger>
                 <SelectContent>
                   {currencyOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option}
+                      {t(option)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -335,16 +372,22 @@ export default function ListingFormToUpdate({
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="size">Size (sq.m.)</Label>
+              <Label htmlFor="size">{t("size")}</Label>
               <Input
                 id="size"
                 name="size"
                 type="text"
-                placeholder="Enter size"
+                placeholder={t("sizePlaceholder")}
                 value={form.size}
                 onChange={handleChange}
                 onKeyDown={(e) => {
-                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  const allowed = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Delete",
+                  ];
                   if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
                     e.preventDefault();
                   }
@@ -352,21 +395,29 @@ export default function ListingFormToUpdate({
                 className={formErrors["size"] ? "border-red-500" : ""}
               />
               {formErrors["size"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["size"]}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors["size"]}
+                </p>
               )}
             </div>
 
             <div className="grid gap-1">
-              <Label htmlFor="rooms">Rooms</Label>
+              <Label htmlFor="rooms">{t("rooms")}</Label>
               <Input
                 id="rooms"
                 name="rooms"
                 type="text"
-                placeholder="Enter number of rooms"
+                placeholder={t("roomsPlaceholder")}
                 value={form.rooms}
                 onChange={handleChange}
                 onKeyDown={(e) => {
-                  const allowed = ["Backspace", "Tab", "ArrowLeft", "ArrowRight", "Delete"];
+                  const allowed = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Delete",
+                  ];
                   if (!/[0-9.]/.test(e.key) && !allowed.includes(e.key)) {
                     e.preventDefault();
                   }
@@ -374,42 +425,50 @@ export default function ListingFormToUpdate({
                 className={formErrors["rooms"] ? "border-red-500" : ""}
               />
               {formErrors["rooms"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["rooms"]}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors["rooms"]}
+                </p>
               )}
             </div>
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="address">Address</Label>
-              <Input
+            <Label htmlFor="address">{t("address")}</Label>
+            <Input
               id="address"
               name="address"
-              placeholder="Enter full address"
+              placeholder={t("addressPlaceholder")}
               value={form.address}
               onChange={handleChange}
               required
-                className={formErrors["address"] ? "border-red-500" : ""}
-              />
-              {formErrors["address"] && (
-                <p className="text-red-500 text-sm mt-1">{formErrors["address"]}</p>
-              )}
+              className={formErrors["address"] ? "border-red-500" : ""}
+            />
+            {formErrors["address"] && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors["address"]}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("status")}</Label>
             <Select
-              value={form.status}
+              value={
+                statusOptions.includes(form.status.trim())
+                  ? form.status.trim()
+                  : ""
+              }
               onValueChange={(value) =>
                 setForm((prev) => ({ ...prev, status: value }))
               }
             >
-              <SelectTrigger aria-label="Status">
-                <SelectValue placeholder="Select Status" />
+              <SelectTrigger aria-label={t("status")}>
+                <SelectValue placeholder={t("selectStatus")} />
               </SelectTrigger>
               <SelectContent>
                 {statusOptions.map((option) => (
                   <SelectItem key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                    {t(option)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -417,23 +476,23 @@ export default function ListingFormToUpdate({
           </div>
 
           <div className="grid gap-1">
-            <Label htmlFor="documentUrl">Document URL</Label>
+            <Label htmlFor="documentUrl">{t("documentUrl")}</Label>
             <Input
               id="documentUrl"
               name="documentUrl"
               type="url"
-              placeholder="Enter document URL"
+              placeholder={t("documentUrlPlaceholder")}
               value={form.documentUrl}
               onChange={handleChange}
             />
           </div>
         </CardContent>
-      
+      </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Facilities</CardTitle>
-          <CardDescription>Select available facilities</CardDescription>
+          <CardTitle>{t("facilities")}</CardTitle>
+          <CardDescription>{t("facilitiesDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
@@ -448,7 +507,7 @@ export default function ListingFormToUpdate({
                   onChange={() => handleFacilityChange(facility)}
                   className="cursor-pointer"
                 />
-                <span>{facility.charAt(0).toUpperCase() + facility.slice(1)}</span>
+                <span>{t(facility)}</span>
               </label>
             ))}
           </div>
@@ -457,14 +516,17 @@ export default function ListingFormToUpdate({
 
       <Card>
         <CardHeader>
-          <CardTitle>Images</CardTitle>
-          <CardDescription>Manage property images</CardDescription>
+          <CardTitle>{t("images")}</CardTitle>
+          <CardDescription>{t("imagesDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {form.images.map((img, index) => (
-            <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row sm:items-center gap-3"
+            >
               <Input
-                placeholder={`Image URL ${index + 1}`}
+                placeholder={t("imageUrlPlaceholder", { index: index + 1 })}
                 value={img.imageUrl}
                 onChange={(e) => {
                   const newImages = [...form.images];
@@ -485,21 +547,24 @@ export default function ListingFormToUpdate({
                   }}
                   className="cursor-pointer"
                 />
-                Primary
+                {t("primaryImage")}
               </label>
               <Button
                 type="button"
                 variant="destructive"
                 onClick={() => {
                   const newImages = form.images.filter((_, i) => i !== index);
-                  if (newImages.length && !newImages.some(img => img.isPrimary)) {
+                  if (
+                    newImages.length &&
+                    !newImages.some((img) => img.isPrimary)
+                  ) {
                     newImages[0].isPrimary = true;
                   }
                   setForm((prev) => ({ ...prev, images: newImages }));
                 }}
-                aria-label={`Delete Image ${index + 1}`}
+                aria-label={t("deleteImage")}
               >
-                Delete
+                {t("deleteImage")}
               </Button>
             </div>
           ))}
@@ -512,44 +577,48 @@ export default function ListingFormToUpdate({
               }))
             }
           >
-            Add Image
+            {t("addImage")}
           </Button>
         </CardContent>
       </Card>
-      </Card>
-      <div className="flex justify-between items-center px-6 pb-6">
-      {propertyToEdit && (
-        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-          <DialogTrigger asChild>
-            <Button variant="destructive" type="button">
-              Delete Listing
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete this listing? This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-              >
-                Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-  <Button type="submit" disabled={loading}>
-    {propertyToEdit ? "Update Listing" : "Create Listing"}
-  </Button>
 
+      <div className="flex justify-between items-center px-6 pb-6">
+        {propertyToEdit && (
+          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" type="button" disabled={loading}>
+                {t("deleteListing")}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("confirmDeletion")}</DialogTitle>
+                <DialogDescription>
+                  {t("confirmDeletionDescription")}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteDialog(false)}
+                  disabled={loading}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={loading}
+                >
+                  {t("delete")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+        <Button type="submit" disabled={loading}>
+          {propertyToEdit ? t("updateListing") : t("createListing")}
+        </Button>
       </div>
     </form>
   );

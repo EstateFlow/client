@@ -30,8 +30,10 @@ import {
 } from "lucide-react";
 import { useStatisticsStore } from "../store/statisticsStore";
 import { usePropertiesStore } from "../store/propertiesStore";
+import { useTranslation } from "react-i18next";
 
 const StatisticsPage = () => {
+  const { t } = useTranslation();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
@@ -42,7 +44,7 @@ const StatisticsPage = () => {
     newUsers,
     propertyViews,
     loading: statsLoading,
-    propertyViewsLoading, // Add new loading state
+    propertyViewsLoading,
     error: statsError,
     setError: setStatsError,
     fetchTotalSales,
@@ -58,7 +60,6 @@ const StatisticsPage = () => {
     fetchAll: fetchProperties,
   } = usePropertiesStore();
 
-  // Initialize with current date range (last 30 days)
   useEffect(() => {
     const end = new Date();
     const start = new Date();
@@ -68,12 +69,10 @@ const StatisticsPage = () => {
     setStartDate(start.toISOString().split("T")[0]);
   }, []);
 
-  // Fetch properties on mount
   useEffect(() => {
-    fetchProperties(); // Fetch all properties without a filter
+    fetchProperties();
   }, [fetchProperties]);
 
-  // Load initial statistics data
   useEffect(() => {
     if (startDate && endDate) {
       handleRefreshAll();
@@ -113,7 +112,6 @@ const StatisticsPage = () => {
     }).format(Number(price));
   };
 
-  // Get property name by ID
   const getPropertyName = (propertyId: string) => {
     const property = properties.find((p) => p.id === propertyId);
     return property ? property.title : propertyId;
@@ -122,14 +120,13 @@ const StatisticsPage = () => {
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Statistics Dashboard
+              {t("statisticsTitle")}
             </h1>
             <p className="text-muted-foreground">
-              Monitor your property platform performance and analytics
+              {t("statisticsDescription")}
             </p>
           </div>
           <Button
@@ -140,25 +137,22 @@ const StatisticsPage = () => {
             <RefreshCw
               className={`w-4 h-4 mr-2 ${statsLoading ? "animate-spin" : ""}`}
             />
-            Refresh Data
+            {t("refreshData")}
           </Button>
         </div>
 
-        {/* Date Range Selector */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
-              Date Range
+              {t("dateRange")}
             </CardTitle>
-            <CardDescription>
-              Select the time period for statistics analysis
-            </CardDescription>
+            <CardDescription>{t("selectTimePeriod")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="startDate">Start Date</Label>
+                <Label htmlFor="startDate">{t("startDate")}</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -167,7 +161,7 @@ const StatisticsPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
+                <Label htmlFor="endDate">{t("endDate")}</Label>
                 <Input
                   id="endDate"
                   type="date"
@@ -179,16 +173,13 @@ const StatisticsPage = () => {
           </CardContent>
         </Card>
 
-        {/* Error Messages */}
         {(statsError || propertiesError) && (
           <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
             {statsError || propertiesError}
           </div>
         )}
 
-        {/* Statistics Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Combined Sales & Users Card */}
           <Card className="bg-gradient-to-r from-blue-50 via-indigo-50 to-green-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-green-950/20 border-gradient">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 gap-6 divide-y divide-border">
@@ -196,7 +187,7 @@ const StatisticsPage = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                      Total Sales
+                      {t("totalSales")}
                     </CardTitle>
                     <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
@@ -211,17 +202,17 @@ const StatisticsPage = () => {
                         {totalSales.totalSales}
                       </div>
                       <p className="text-sm text-blue-600 dark:text-blue-400 mb-8">
-                        {formatPrice(totalSales.totalAmount, "USD")} total value
+                        {formatPrice(totalSales.totalAmount, "USD")}{" "}
+                        {t("totalValue")}
                       </p>
                     </div>
                   )}
                 </div>
 
-                {/* New Users Section */}
                 <div className="space-y-3 pt-6 sm:pt-0">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">
-                      New Users
+                      {t("newUsers")}
                     </CardTitle>
                     <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
@@ -239,13 +230,13 @@ const StatisticsPage = () => {
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
                         <Badge variant="secondary" className="text-xs">
-                          {newUsers.new_buyers} Buyers
+                          {newUsers.new_buyers} {t("buyers")}
                         </Badge>
                         <Badge variant="secondary" className="text-xs">
-                          {newUsers.new_sellers} Sellers
+                          {newUsers.new_sellers} {t("sellers")}
                         </Badge>
                         <Badge variant="secondary" className="text-xs">
-                          {newUsers.new_agencies} Agencies
+                          {newUsers.new_agencies} {t("agencies")}
                         </Badge>
                       </div>
                     </div>
@@ -255,19 +246,17 @@ const StatisticsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Property Views Search Card - Enhanced */}
           <Card className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 border-purple-200 dark:border-purple-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                Property Views Analytics
+                {t("propertyViewAnalitics")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Property Selection */}
               <div className="space-y-2">
                 <Label htmlFor="propertySelect" className="text-sm font-medium">
-                  Select Property
+                  {t("selectProperty")}
                 </Label>
                 <div className="flex gap-2">
                   <Select
@@ -305,7 +294,7 @@ const StatisticsPage = () => {
                     size="sm"
                     onClick={handlePropertyViewsSearch}
                     disabled={
-                      propertyViewsLoading || // Use propertyViewsLoading
+                      propertyViewsLoading ||
                       propertiesLoading ||
                       !selectedPropertyId
                     }
@@ -316,13 +305,12 @@ const StatisticsPage = () => {
                 </div>
               </div>
 
-              {/* Results Display */}
-              {propertyViewsLoading && selectedPropertyId ? ( // Use propertyViewsLoading
+              {propertyViewsLoading && selectedPropertyId ? (
                 <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-950/10 border border-purple-200 dark:border-purple-800">
                   <div className="flex items-center gap-2">
                     <RefreshCw className="w-4 h-4 animate-spin text-purple-600" />
                     <span className="text-sm text-purple-600 dark:text-purple-400">
-                      Analyzing property views...
+                      {t("analyzingPropertyViews")}
                     </span>
                   </div>
                 </div>
@@ -338,7 +326,7 @@ const StatisticsPage = () => {
                           {propertyViews.views.toLocaleString()}
                         </div>
                         <p className="text-xs text-purple-600 dark:text-purple-400">
-                          total views
+                          {t("totalViews")}
                         </p>
                       </div>
                     </div>
@@ -348,21 +336,20 @@ const StatisticsPage = () => {
                       {getPropertyName(propertyViews.propertyId)}
                     </p>
                     <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
-                      From {startDate} to {endDate}
+                      {t("from")} {startDate} {t("to")} {endDate}
                     </p>
                   </div>
                 </div>
               ) : selectedPropertyId && !propertyViewsLoading ? (
                 <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700">
                   <p className="text-sm text-muted-foreground text-center">
-                    Click the search button to analyze views for the selected
-                    property
+                    {t("clickSearch")}
                   </p>
                 </div>
               ) : (
                 <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700">
                   <p className="text-sm text-muted-foreground text-center">
-                    Select a property to view its analytics
+                    {t("selectPropertyTo")}
                   </p>
                 </div>
               )}
@@ -370,16 +357,13 @@ const StatisticsPage = () => {
           </Card>
         </div>
 
-        {/* Top Viewed Properties */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5" />
-              Top Viewed Properties
+              {t("topViewed")}
             </CardTitle>
-            <CardDescription>
-              Most popular properties in the selected time period
-            </CardDescription>
+            <CardDescription>{t("mostPopular")}</CardDescription>
           </CardHeader>
           <CardContent>
             {statsLoading || topViewedProperties.length === 0 ? (
@@ -425,7 +409,9 @@ const StatisticsPage = () => {
                         <Eye className="w-4 h-4" />
                         {property.view_count.toLocaleString()}
                       </div>
-                      <p className="text-xs text-muted-foreground">views</p>
+                      <p className="text-xs text-muted-foreground">
+                        {t("views")}
+                      </p>
                     </div>
                   </div>
                 ))}

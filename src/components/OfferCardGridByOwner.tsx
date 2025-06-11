@@ -8,8 +8,11 @@ import { ourListingsLimit } from "@/lib/types";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
+  const { t } = useTranslation();
+
   const {
     properties,
     loading: propertiesLoading,
@@ -115,7 +118,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
             size="sm"
             onClick={() => setStatusFilter("all")}
           >
-            All
+            {t("all")}
           </Button>
           <Button
             variant={
@@ -128,7 +131,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
             size="sm"
             onClick={() => setStatusFilter(["active"])}
           >
-            Active
+            {t("active")}
           </Button>
           <Button
             variant={
@@ -141,7 +144,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
             size="sm"
             onClick={() => setStatusFilter(["inactive"])}
           >
-            Inactive
+            {t("inactive")}
           </Button>
           <Button
             variant={
@@ -154,7 +157,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
             size="sm"
             onClick={() => setStatusFilter(["sold", "rented"])}
           >
-            Sold / Rented
+            {t("sold_rented")}
           </Button>
           <Button
             variant={statusFilter === "unverified" ? "default" : "ghost"}
@@ -162,7 +165,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
             onClick={() => setStatusFilter("unverified")}
           >
             <AlertTriangle size={14} className="mr-1" />
-            Unverified (
+            {t("unverified")}(
             {
               properties.filter(
                 (p) => !p.isVerified && p.ownerId === user.userId,
@@ -220,4 +223,3 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
 
   return null;
 }
-

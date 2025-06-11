@@ -8,6 +8,9 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import logo from "@/assets/images/estateflow_logo.jpg";
 import { Skeleton } from "./ui/skeleton";
 import { useUserStore } from "@/store/userStore";
+import "../i18n";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,9 +19,11 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { t } = useTranslation();
+
   const handleLogout = () => {
     logout();
-    toast.success("Logged out successfully");
+    toast.success(t("success"), { description: t("loggedOutSuccessfully") });
     navigate({ to: "/" });
   };
 
@@ -59,7 +64,7 @@ function Header() {
                         isActiveLink("/") ? "bg-accent/90" : ""
                       }`}
                     >
-                      Property Editing
+                      {t("promptEditing")}
                     </Button>
                   </Link>
                 ) : user?.role === "moderator" ? (
@@ -70,7 +75,7 @@ function Header() {
                         isActiveLink("/") ? "bg-accent/90" : ""
                       }`}
                     >
-                      Statistics
+                      {t("statistics")}
                     </Button>
                   </Link>
                 ) : (
@@ -81,7 +86,7 @@ function Header() {
                         isActiveLink("/") ? "bg-accent/90" : ""
                       }`}
                     >
-                      Home
+                      {t("home")}
                     </Button>
                   </Link>
                 )}
@@ -95,7 +100,7 @@ function Header() {
                           : ""
                       }`}
                     >
-                      Property Management
+                      {t("propertyManagement")}
                     </Button>
                   </Link>
                 ) : user?.role === "admin" ? (
@@ -106,7 +111,7 @@ function Header() {
                         isActiveLink("/user-management") ? "bg-accent/90" : ""
                       }`}
                     >
-                      User Management
+                      {t("userManagement")}
                     </Button>
                   </Link>
                 ) : (
@@ -117,13 +122,14 @@ function Header() {
                         isActiveLink("/listings") ? "bg-accent/90" : ""
                       }`}
                     >
-                      Listings
+                      {t("listings")}
                     </Button>
                   </Link>
                 )}
               </nav>
             </div>
             <div className="flex items-center gap-3">
+              <LanguageSwitcher />
               <ThemeSwitcher />
 
               <div className="hidden md:flex items-center gap-2">
@@ -163,7 +169,7 @@ function Header() {
                         size="sm"
                         className="min-w-[70px] rounded-md"
                       >
-                        Log In
+                        {t("logIn")}
                       </Button>
                     </Link>
                     <Link to="/register-form" className="[&.active]:underline">
@@ -172,7 +178,7 @@ function Header() {
                         size="sm"
                         className="min-w-[70px] rounded-md"
                       >
-                        Sign Up
+                        {t("signUp")}
                       </Button>
                     </Link>
                   </>
@@ -193,16 +199,40 @@ function Header() {
           {isMenuOpen && (
             <div className="md:hidden border-t backdrop-blur flex-row gap-2 p-2">
               <nav className="flex flex-col gap-1">
-                <Link to="/" onClick={() => setIsMenuOpen(false)}>
-                  <Button
-                    variant="ghost"
-                    className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
-                      isActiveLink("/") ? "bg-accent/90" : ""
-                    }`}
-                  >
-                    Home
-                  </Button>
-                </Link>
+                {user && user.role === "moderator" ? (
+                  <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      {t("statistics")}
+                    </Button>
+                  </Link>
+                ) : user && user.role === "admin" ? (
+                  <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      {t("promptEditing")}
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      className={`w-full font-medium hover:bg-accent/90 ease-in-out duration-300 transition-colors cursor-pointer ${
+                        isActiveLink("/") ? "bg-accent/90" : ""
+                      }`}
+                    >
+                      {t("home")}
+                    </Button>
+                  </Link>
+                )}
                 {user && user.role === "moderator" ? (
                   <Link
                     to="/property-management"
@@ -216,7 +246,7 @@ function Header() {
                           : ""
                       }`}
                     >
-                      Property Management
+                      {t("propertyManagement")}
                     </Button>
                   </Link>
                 ) : user?.role === "admin" ? (
@@ -230,7 +260,7 @@ function Header() {
                       variant="ghost"
                       className="w-full justify-start cursor-pointer"
                     >
-                      User Management
+                      {t("userManagement")}
                     </Button>
                   </Link>
                 ) : (
@@ -241,7 +271,7 @@ function Header() {
                         isActiveLink("/listings") ? "bg-accent/90" : ""
                       }`}
                     >
-                      Listings
+                      {t("listings")}
                     </Button>
                   </Link>
                 )}
@@ -259,7 +289,7 @@ function Header() {
                         className="w-full justify-start gap-2"
                       >
                         <User size={16} />
-                        Profile Dashboard
+                        {t("profileDashboard")}
                       </Button>
                     </Link>
                     <Button
@@ -271,21 +301,21 @@ function Header() {
                       }}
                     >
                       <LogOut size={16} />
-                      Logout
+                      {t("logout")}
                     </Button>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
                     <Link to="/login-form" onClick={() => setIsMenuOpen(false)}>
                       <Button variant="outline" className="w-full">
-                        Log In
+                        {t("logIn")}
                       </Button>
                     </Link>
                     <Link
                       to="/register-form"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      <Button className="w-full">Sign Up</Button>
+                      <Button className="w-full">{t("signUp")}</Button>
                     </Link>
                   </div>
                 )}
