@@ -19,9 +19,12 @@ export async function createProperty(property: CreateProperty) {
 
 export const updateProperty = async (
   propertyId: string,
-  propertyData: CreateProperty
+  propertyData: CreateProperty,
 ) => {
-  const response = await $api.patch(`/api/properties/${propertyId}`, propertyData);
+  const response = await $api.patch(
+    `/api/properties/${propertyId}`,
+    propertyData,
+  );
   return response.data;
 };
 

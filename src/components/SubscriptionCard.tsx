@@ -197,18 +197,18 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
                   : "transform translate-y-4 opacity-0"
               }`}
             >
-              <div className="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                 <p className="text-muted-foreground">{t("plan")}</p>
                 <p className="font-medium">{plan}</p>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                 <p className="text-muted-foreground">{t("used")}</p>
                 <p className="font-medium">
                   {5 - listingLimit} / {hasActiveSubscription ? "∞" : 5}{" "}
                   {t("lowerListings")}
                 </p>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                 <p className="text-muted-foreground">
                   {hasActiveSubscription ? t("expires") : t("price")}
                 </p>
@@ -222,15 +222,18 @@ export default function SubscriptionCard({ userId }: SubscriptionCardProps) {
                   : "transform translate-y-4 opacity-0"
               }`}
             >
-              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
+              <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
                 <span>{t("unlimitedListings")}</span>
                 {hasActiveSubscription ? (
                   <Check
-                    className="w-5 h-5 text-green-600"
+                    className="w-4 h-4 text-green-500 transition-all duration-200"
                     aria-hidden="true"
                   />
                 ) : (
-                  <X className="w-5 h-5 text-red-600" aria-hidden="true" />
+                  <X
+                    className="w-4 h-4 text-red-500 transition-all duration-200"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
             </div>
