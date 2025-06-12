@@ -31,8 +31,6 @@ export default function OfferCardByOwner({
     }).format(Number(price));
   };
 
-  console.log(propertyWishlist);
-
   switch (role) {
     case "admin":
 
@@ -157,7 +155,9 @@ export default function OfferCardByOwner({
                       : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
                   }`}
                 >
-                  {property?.status === "active" ? "Active" : "Inactive"}
+                  {propertyWishlist?.status === "active"
+                    ? "Active"
+                    : "Inactive"}
                 </span>
                 <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full capitalize">
                   {propertyWishlist?.transactionType}

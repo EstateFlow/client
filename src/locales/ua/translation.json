@@ -39,6 +39,7 @@
   "emailPlaceholder": "Введіть електронну пошту",
   "password": "Пароль",
   "passwordPlaceholder": "Створіть пароль",
+  "enterPasswordPlaceholder": "Введіть пароль",
   "repeatPassword": "Повторіть пароль",
   "rolePlaceholder": "Оберіть вашу роль",
   "continue": "Продовжити",
