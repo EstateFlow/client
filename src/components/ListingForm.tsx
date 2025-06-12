@@ -412,7 +412,9 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
               <li key={facility}>• {facility}</li>
             ))}
           </ul>
-          {user && user.role === "renter_buyer" ? (
+          {user &&
+          user.role === "renter_buyer" &&
+          selectedProperty.status === "active" ? (
             <PayPalButtons
               createOrder={onCreateOrder}
               onApprove={onApprove}
