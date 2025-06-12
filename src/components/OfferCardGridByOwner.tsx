@@ -200,7 +200,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
                   </div>
                 </div>
                 <CardContent className="p-4 flex-1 flex items-center justify-center text-center text-muted-foreground">
-                  <p className="font-semibold">Add new listing</p>
+                  <p className="font-semibold">{t("addNewListing")}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -212,7 +212,7 @@ export default function OfferCardGridByOwner({ user }: { user: UserInfo }) {
                 </div>
               </div>
               <CardContent className="p-4 flex-1 flex items-center justify-center text-center text-muted-foreground">
-                <p className="font-semibold">For more, extend to agency</p>
+                <p className="font-semibold">{t("forMoreExtendToAgency")}</p>
               </CardContent>
             </Card>
           ) : null}

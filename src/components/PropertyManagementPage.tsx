@@ -269,7 +269,7 @@ const PropertyManagement = () => {
                       <div className="flex items-center gap-4 text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Home size={14} />
-                          <span>{property.rooms} rooms</span>
+                          <span>{property.rooms} {t("rooms")}</span>
                         </div>
                         <span>{property.size}</span>
                       </div>

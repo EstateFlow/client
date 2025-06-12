@@ -19,6 +19,8 @@ import { $api } from "@/api/BaseUrl";
 import { useTranslation } from "react-i18next";
 
 export default function ListingForm({ propertyId }: { propertyId: string }) {
+  const normalizeFacilityKey = (facility: string) =>
+    facility.toLowerCase().replace(/[\s/-]/g, "_");
   const { t } = useTranslation();
   const { selectedProperty, fetchById, loading, error } = usePropertiesStore();
   const { wishlist, loadWishlist, addProperty, removeProperty } =
@@ -407,9 +409,18 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
 
         <div>
           <h2 className="text-lg font-semibold mb-2">{t("facilities")}:</h2>
-          <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
+          {/* <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
             {facilities.map((facility) => (
               <li key={facility}>• {facility}</li>
+            ))}
+          </ul> */}
+          <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
+            {facilities.map((facility) => (
+              console.log(facility),
+              console.log(normalizeFacilityKey(facility)),
+              <li key={facility}>
+                {t(`facilitiesList.${normalizeFacilityKey(facility)}`)}
+              </li>
             ))}
           </ul>
           {user &&

@@ -487,7 +487,7 @@ const UserManagementPage = () => {
                         {user.role.replace("_", " ")}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        Listings:{" "}
+                        {t("listingsUserMagementPage")}{" "}
                         {user.role === "agency"
                           ? "∞"
                           : user.role === "private_seller"
@@ -675,12 +675,12 @@ const UserManagementPage = () => {
                               <Trash2 size={14} />
                               {actionLoading[`delete-${user.id}`]
                                 ? "..."
-                                : "Delete"}
+                                : t("deleteUser")}
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Delete User Account</DialogTitle>
+                              <DialogTitle>{t("Delete User Account")}</DialogTitle>
                               <DialogDescription>
                                 {t("deleteUserDescriptionPart1")} "
                                 {user.username}"?{" "}

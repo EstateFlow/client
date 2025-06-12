@@ -40,8 +40,11 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
+import "../i18n";
 
 export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
+  const normalizeFacilityKey = (facility: string) =>
+    facility.toLowerCase().replace(/[\s/-]/g, "_");
   const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -417,7 +420,7 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
           <CardDescription>{t("facilitiesDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
+          {/* <div className="flex flex-wrap gap-4">
             {FACILITY_OPTIONS.map((facility) => (
               <label
                 key={facility}
@@ -432,6 +435,26 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
                 <span>{t(facility)}</span>
               </label>
             ))}
+          </div> */}
+          <div className="flex flex-wrap gap-4">
+            {FACILITY_OPTIONS.map((facility) => {
+              console.log(facility);
+              console.log(normalizeFacilityKey(facility));
+              return (
+                <label
+                  key={facility}
+                  className="flex items-center space-x-2 text-sm cursor-pointer select-none"
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.facilities.includes(facility)}
+                    onChange={() => handleFacilityChange(facility)}
+                    className="cursor-pointer"
+                  />
+                  <span>{t(`facilitiesList.${normalizeFacilityKey(facility)}`)}</span>
+                </label>
+              );
+            })}
           </div>
         </CardContent>
       </Card>

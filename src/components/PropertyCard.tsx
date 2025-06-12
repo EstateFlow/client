@@ -3,10 +3,11 @@ import { usePropertiesStore } from "@/store/usePropertiesStore";
 import { CardContent } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
 import { Home, MapPin, Calendar, User, Eye } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function PropertyCard({ property }: any) {
   const { properties, fetchChouse } = usePropertiesStore();
-
+  const { t } = useTranslation();
   useEffect(() => {
     if (properties.length === 0) {
       fetchChouse("active");
@@ -89,7 +90,7 @@ export function PropertyCard({ property }: any) {
             <div className="flex items-center gap-4 text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Home size={14} />
-                <span>{property.rooms} rooms</span>
+                <span>{property.rooms} {t("rooms")}</span>
               </div>
               <span>{property.size}</span>
             </div>

@@ -15,6 +15,7 @@ import Markdown from "markdown-to-jsx";
 import { aiStore } from "@/store/aiStore";
 import type { Message } from "@/types/AiTypes";
 import { MarkdownComponents } from "./MarkdownCompoents";
+import { useTranslation } from "react-i18next";
 
 interface ChatInterfaceProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
+  const { t } = useTranslation();
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -101,7 +103,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
               <div className="flex flex-col items-center space-y-3">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 dark:border-gray-300"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Loading conversation...
+                  {t("loadingConversation")}
                 </p>
               </div>
             </div>
@@ -171,7 +173,7 @@ export function ChatInterface({ isOpen, onClose }: ChatInterfaceProps) {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={t("typeYourMessage")}
               className="w-full bg-gray-100 dark:bg-gray-800 border-0 rounded-2xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-gray-300 dark:focus-visible:ring-gray-600"
               disabled={isLoading}
             />
