@@ -438,8 +438,6 @@ export default function ListingFormToAdd({ ownerId }: { ownerId: string }) {
           </div> */}
           <div className="flex flex-wrap gap-4">
             {FACILITY_OPTIONS.map((facility) => {
-              console.log(facility);
-              console.log(normalizeFacilityKey(facility));
               return (
                 <label
                   key={facility}

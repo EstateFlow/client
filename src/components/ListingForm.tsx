@@ -416,8 +416,6 @@ export default function ListingForm({ propertyId }: { propertyId: string }) {
           </ul> */}
           <ul className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
             {facilities.map((facility) => (
-              console.log(facility),
-              console.log(normalizeFacilityKey(facility)),
               <li key={facility}>
                 {t(`facilitiesList.${normalizeFacilityKey(facility)}`)}
               </li>
