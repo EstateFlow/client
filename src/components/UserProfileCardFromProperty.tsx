@@ -47,7 +47,6 @@ export default function UserProfile({ userId }: UserProfileProps) {
     }
   };
 
-  // Select date-fns locale based on i18next language
   const locale = i18n.language === "uk" ? uk : enUS;
 
   const formatDate = (date: string | undefined) => {
@@ -156,4 +155,3 @@ export default function UserProfile({ userId }: UserProfileProps) {
     </Card>
   );
 }
-
